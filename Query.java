@@ -38,9 +38,35 @@ public class Query
      Parameters: int room - The rooms to search
      Description: Returns an array of days a given room is available
      */
-    public static int[] roomQuery (int room)
+    public static int[] roomQuery (int room) throws IOException
     {
+        // init file reader and variables
+        BufferedReader br = new BufferedReader(new FileReader(ROOMS));
         List<Integer> days = new ArrayList<>(); // ArrayList of the days a room is available
+
+        // loop through every day
+        boolean end = false;
+        while (!end)
+        {
+            String line = br.readLine();
+            // check if EOF
+            if (line == null) end = true;
+            // if not EOF continue
+            else {
+                int day = Integer.parseInt(line);
+
+                // loop through every available room on that day
+                boolean searching = true;
+                while (searching) {
+                    line = br.readLine();
+                    // check if there are no other rooms on the day
+                    if (line.equals("~")) searching = false;
+                        // check if the room is available under the current date, if it is, append to ArrayList
+                    else if (Integer.parseInt(line) == room) days.add(day);
+                }
+            }
+        }
+
         int[] arr = new int[days.size()]; // the array which will be returned
         for (int i=0; i<days.size(); i++) // converts ArrayList into array
         {
@@ -72,7 +98,7 @@ public class Query
      */
     public static int[] employeePinQuery (int id) throws IOException
     {
-        // Init variables and file reader
+        // init variables and file reader
         int pin = -1; // pin of the employee
         int admin = -1; // whether the employee is admin
         BufferedReader br = new BufferedReader(new FileReader(EMPLOYEES));
