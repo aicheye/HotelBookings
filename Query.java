@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 /*
  Programmer: Sean Yang
@@ -9,6 +10,11 @@ import java.util.*;
 
 public class Query
 {
+    // Create file readers
+    static final String ROOMS = "rooms.txt";
+    static final String RESERVATIONS = "reservations.txt";
+    static final String EMPLOYEES = "employees.txt";
+
     /*
      Method Name: dateQuery
      Return Type: int[] - An array of the rooms available on a certain date
@@ -58,16 +64,39 @@ public class Query
     }
 
     /*
-     Method Name: employeeQuery
+     Method Name: employeePinQuery
      Return Type: int[0] - The pin of the employee, -1 if the employee doesn't exist
                   int[1] - Whether the employee is admin or not (0 or 1)
      Parameters: int id - The employee id to search for
-     Description: Returns various details about an employee
+     Description: Returns the pin and admin status of an employee
      */
-    public static int[] employeeQuery (int id)
+    public static int[] employeePinQuery (int id) throws IOException
     {
+        // Init variables and file reader
         int pin = -1; // pin of the employee
-        boolean admin = false; // whether the employee is admin
-        return new int[]{pin, admin ? 1 : 0}; // returns an array with two indices
+        int admin = -1; // whether the employee is admin
+        BufferedReader br = new BufferedReader(new FileReader(EMPLOYEES));
+
+        boolean foundId = false;
+        while (!foundId)
+        {
+            // check if the employee id matches
+            if (Integer.parseInt(br.readLine()) == id) {
+                br.readLine();
+                br.readLine();
+
+                // update pin admin and foundId
+                pin = Integer.parseInt(br.readLine());
+                admin = Integer.parseInt(br.readLine());
+                foundId = true;
+            }
+
+            else {
+                // skip next lines
+                for (int i=0; i<4; i++) br.readLine();
+            }
+        }
+
+        return new int[]{pin, admin}; // returns an array with two indices
     }
 }
