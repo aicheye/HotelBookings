@@ -10,7 +10,7 @@ import java.io.*;
 
 public class Query
 {
-    // Create file readers
+    // Constants for filenames
     static final String DAYS = "days.txt";
     static final String CUSTOMERS = "customers.txt";
     static final String EMPLOYEES = "employees.txt";
