@@ -11,9 +11,10 @@ import java.io.*;
 public class Query
 {
     // Constants for filenames
-    static final String DAYS = "days.txt";
-    static final String CUSTOMERS = "customers.txt";
-    static final String EMPLOYEES = "employees.txt";
+    static final String DAYS_DB = "days.txt";
+    static final String CUSTOMERS_DB = "customers.txt";
+    static final String EMPLOYEES_DB = "employees.txt";
+    static final String ROOMS_DB = "rooms.txt";
 
     // Constants for file delimiters
     static final String DATE_DELIMITER = "~"; // used in days.txt
@@ -29,14 +30,26 @@ public class Query
     public static int[] dateQuery (int date) throws IOException
     {
         // init file reader and variables
-        BufferedReader br = new BufferedReader(new FileReader(DAYS));
+        BufferedReader readDays = new BufferedReader(new FileReader(DAYS_DB));
+        BufferedReader readRoom = new BufferedReader(new FileReader(ROOMS_DB));
         List<Integer> rooms = new ArrayList<>(); // ArrayList of the rooms available on a date
+        Set<Integer> allRooms = new HashSet<>(); // HashSet of all rooms in the system
+        Set<Integer> reserved = new HashSet<>(); // HashSet of all reserved rooms on a date
+        String line = readRoom.readLine(); // read the first line of rooms.txt
+
+        // loop until EOF (rooms.txt)
+        while (line != null)
+        {
+            // append the next line to allRooms
+            allRooms.add(Integer.parseInt(line));
+            line = readRoom.readLine();
+        }
 
         // loop through every day
         boolean end = false;
         while (!end)
         {
-            String line = br.readLine();
+            line = readDays.readLine();
             // check if EOF
             if (line == null) end = true;
             // if not EOF continue
@@ -49,11 +62,17 @@ public class Query
                     boolean searching = true;
                     while (searching)
                     {
-                        line = br.readLine();
+                        line = readDays.readLine();
                         // check if there are no other rooms available on that day
                         if (line.equals(DATE_DELIMITER)) searching = false;
                         // append to array
-                        else rooms.add(Integer.parseInt(line));
+                        else reserved.add(Integer.parseInt(line));
+                    }
+
+                    // if a room in allRooms is not in reserved, append it to the arrayList
+                    for (int e : allRooms)
+                    {
+                        if (!reserved.contains(e)) rooms.add(e);
                     }
                 }
 
@@ -62,7 +81,7 @@ public class Query
                     boolean searching = true;
                     while (searching)
                     {
-                        line = br.readLine();
+                        line = readDays.readLine();
                         if (line.equals(DATE_DELIMITER)) searching = false;
                     }
                 }
@@ -76,7 +95,7 @@ public class Query
         }
 
         // close file reader
-        br.close();
+        readDays.close();
 
         return arr;
     }
@@ -90,7 +109,7 @@ public class Query
     public static int[] roomQuery (int room) throws IOException
     {
         // init file reader and variables
-        BufferedReader br = new BufferedReader(new FileReader(DAYS));
+        BufferedReader br = new BufferedReader(new FileReader(DAYS_DB));
         List<Integer> days = new ArrayList<>(); // ArrayList of the days a room is available
 
         // loop through every day
@@ -106,6 +125,7 @@ public class Query
                 int day = Integer.parseInt(line);
 
                 // loop through every available room on that day
+                boolean contains = false; // whether the day contains the room
                 boolean searching = true;
                 while (searching)
                 {
@@ -113,8 +133,11 @@ public class Query
                     // check if there are no other rooms on the day
                     if (line.equals(DATE_DELIMITER)) searching = false;
                     // check if the room is available under the current date, if it is, append to ArrayList
-                    else if (Integer.parseInt(line) == room) days.add(day);
+                    else if (Integer.parseInt(line) == room) contains = true;
                 }
+
+                // if the day does not contain the room, append to ArrayList
+                if (!contains) days.add(day);
             }
         }
 
@@ -141,7 +164,7 @@ public class Query
     public static Map<Integer, List<Integer>> customerQuery(String firstName, String lastName) throws IOException
     {
         // init file reader and variables
-        BufferedReader br = new BufferedReader(new FileReader(CUSTOMERS));
+        BufferedReader br = new BufferedReader(new FileReader(CUSTOMERS_DB));
         Map<Integer, List<Integer>> reservations = new HashMap<>(); // HashMap to be returned
 
         // loop through every customer
@@ -219,7 +242,7 @@ public class Query
         // init variables and file reader
         int pin = -1; // pin of the employee
         int admin = -1; // whether the employee is admin
-        BufferedReader br = new BufferedReader(new FileReader(EMPLOYEES));
+        BufferedReader br = new BufferedReader(new FileReader(EMPLOYEES_DB));
 
         boolean foundId = false;
         while (!foundId)
