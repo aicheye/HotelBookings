@@ -21,9 +21,49 @@ public class Query
      Parameters: int date - The date to search
      Description: Returns an array of available rooms on a given date
      */
-    public static int[] dateQuery (int date)
+    public static int[] dateQuery (int date) throws IOException
     {
+        // init file reader and variables
+        BufferedReader br = new BufferedReader(new FileReader(ROOMS));
         List<Integer> rooms = new ArrayList<>(); // ArrayList of the rooms available on a date
+
+        // loop through every day
+        boolean end = false;
+        while (!end)
+        {
+            String line = br.readLine();
+            // check if EOF
+            if (line == null) end = true;
+            // if not EOF continue
+            else
+            {
+                int day = Integer.parseInt(line);
+
+                // check if date matches and loop through every room available on that day
+                if (day == date) {
+                    boolean searching = true;
+                    while (searching)
+                    {
+                        line = br.readLine();
+                        // check if there are no other rooms available on that day
+                        if (line.equals("~")) searching = false;
+                        // append to array
+                        else rooms.add(Integer.parseInt(line));
+                    }
+                }
+
+                // otherwise, keep reading until we reach a new date
+                else {
+                    boolean searching = true;
+                    while (searching)
+                    {
+                        line = br.readLine();
+                        if (line.equals("~")) searching = false;
+                    }
+                }
+            }
+        }
+
         int[] arr = new int[rooms.size()]; // the array which will be returned
         for (int i=0; i<rooms.size(); i++) // converts ArrayList into array
         {
@@ -52,7 +92,8 @@ public class Query
             // check if EOF
             if (line == null) end = true;
             // if not EOF continue
-            else {
+            else
+            {
                 int day = Integer.parseInt(line);
 
                 // loop through every available room on that day
@@ -61,7 +102,7 @@ public class Query
                     line = br.readLine();
                     // check if there are no other rooms on the day
                     if (line.equals("~")) searching = false;
-                        // check if the room is available under the current date, if it is, append to ArrayList
+                    // check if the room is available under the current date, if it is, append to ArrayList
                     else if (Integer.parseInt(line) == room) days.add(day);
                 }
             }
