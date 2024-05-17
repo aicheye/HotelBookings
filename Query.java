@@ -11,9 +11,14 @@ import java.io.*;
 public class Query
 {
     // Create file readers
-    static final String ROOMS = "rooms.txt";
-    static final String RESERVATIONS = "reservations.txt";
+    static final String DAYS = "days.txt";
+    static final String CUSTOMERS = "customers.txt";
     static final String EMPLOYEES = "employees.txt";
+
+    // Constants for file delimiters
+    static final String DATE_DELIMITER = "~"; // used in days.txt
+    static final String ROOM_DELIMITER = "-"; // used in customers.txt
+    static final String CUSTOMER_DELIMITER = "`"; // used in customers.txt
 
     /*
      Method Name: dateQuery
@@ -24,7 +29,7 @@ public class Query
     public static int[] dateQuery (int date) throws IOException
     {
         // init file reader and variables
-        BufferedReader br = new BufferedReader(new FileReader(ROOMS));
+        BufferedReader br = new BufferedReader(new FileReader(DAYS));
         List<Integer> rooms = new ArrayList<>(); // ArrayList of the rooms available on a date
 
         // loop through every day
@@ -46,7 +51,7 @@ public class Query
                     {
                         line = br.readLine();
                         // check if there are no other rooms available on that day
-                        if (line.equals("~")) searching = false;
+                        if (line.equals(DATE_DELIMITER)) searching = false;
                         // append to array
                         else rooms.add(Integer.parseInt(line));
                     }
@@ -58,7 +63,7 @@ public class Query
                     while (searching)
                     {
                         line = br.readLine();
-                        if (line.equals("~")) searching = false;
+                        if (line.equals(DATE_DELIMITER)) searching = false;
                     }
                 }
             }
@@ -81,7 +86,7 @@ public class Query
     public static int[] roomQuery (int room) throws IOException
     {
         // init file reader and variables
-        BufferedReader br = new BufferedReader(new FileReader(ROOMS));
+        BufferedReader br = new BufferedReader(new FileReader(DAYS));
         List<Integer> days = new ArrayList<>(); // ArrayList of the days a room is available
 
         // loop through every day
@@ -98,10 +103,11 @@ public class Query
 
                 // loop through every available room on that day
                 boolean searching = true;
-                while (searching) {
+                while (searching)
+                {
                     line = br.readLine();
                     // check if there are no other rooms on the day
-                    if (line.equals("~")) searching = false;
+                    if (line.equals(DATE_DELIMITER)) searching = false;
                     // check if the room is available under the current date, if it is, append to ArrayList
                     else if (Integer.parseInt(line) == room) days.add(day);
                 }
@@ -124,9 +130,69 @@ public class Query
                  String lastName - The last name of the customer
      Description: Returns the rooms a customer has booked and the days they have booked it for
      */
-    public static Map<Integer, List<Integer>> customerQuery(String firstName, String lastName)
+    public static Map<Integer, List<Integer>> customerQuery(String firstName, String lastName) throws IOException
     {
+        // init file reader and variables
+        BufferedReader br = new BufferedReader(new FileReader(CUSTOMERS));
         Map<Integer, List<Integer>> reservations = new HashMap<>(); // HashMap to be returned
+
+        // loop through every customer
+        boolean end = false;
+        while (!end)
+        {
+            String line = br.readLine();
+            // check if EOF
+            if (line == null) end = true;
+            // if not EOF continue
+            else
+            {
+                String f = line;
+                String l = br.readLine();
+
+                // if the first and last name matches, loop through all their reservations
+                if (f.equals(firstName) && l.equals(lastName))
+                {
+                    boolean searching = true;
+                    while (searching)
+                    {
+                        line = br.readLine();
+                        // check if we are at a new customer or not
+                        if (line.equals(CUSTOMER_DELIMITER)) searching = false;
+                        // if we are not at a new customer, continue looping
+                        else {
+                            int room = Integer.parseInt(line); // create a new variable for the current room
+
+                            // create a new key-value pair in reservations
+                            reservations.put(room, new ArrayList<>());
+
+                            // loop until we are at end of room
+                            boolean inRoom = true;
+                            while (inRoom) {
+                                line = br.readLine();
+                                // check if we are at a new room
+                                if (line.equals(ROOM_DELIMITER)) inRoom = false;
+                                    // if we are not at a new room add to the room ArrayList
+                                else {
+                                    reservations.get(room).add(Integer.parseInt(line));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // if the first and last name do not match, keep reading until we reach a new customer
+                else
+                {
+                    boolean searching = true;
+                    while (searching)
+                    {
+                        line = br.readLine();
+                        if (line.equals("`")) searching = false;
+                    }
+                }
+            }
+        }
+
         return reservations;
     }
 
