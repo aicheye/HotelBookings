@@ -74,6 +74,10 @@ public class Query
         {
             arr[i] = rooms.get(i);
         }
+
+        // close file reader
+        br.close();
+
         return arr;
     }
 
@@ -119,6 +123,10 @@ public class Query
         {
             arr[i] = days.get(i);
         }
+
+        // close file reader
+        br.close();
+
         return arr;
     }
 
@@ -193,6 +201,9 @@ public class Query
             }
         }
 
+        // close file reader
+        br.close();
+
         return reservations;
     }
 
@@ -229,6 +240,9 @@ public class Query
                 for (int i=0; i<4; i++) br.readLine();
             }
         }
+
+        // close file reader
+        br.close();
 
         return new int[]{pin, admin}; // returns an array with two indices
     }
