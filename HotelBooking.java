@@ -1,5 +1,5 @@
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*; // Import libraries
+import java.io.*;
 
 // TODO: Testing
 
@@ -8,45 +8,79 @@ import java.util.Scanner;
  Program name: HotelBooking
  Last Modified: 17/05/2024
  Description: Runs the main loop for the login screen and menu selection
+
+ Known Errors:
+    * Reservations class not yet implemented
+    * Query.employeePinQuery in login method (line ~264) causes IOException
+    * Update class not yet implemented
+    * Write.edtPin not yet implemented
 */
 
-
 public class HotelBooking {
+
+    // Constant for quit number
+    private static final int QUIT_NUM = 0;
+
+    // Current employee in the system
+    private static int employeeID = -1;
+
+    /*
+     Method Name: getEmployeeID
+     Return Type: int - The ID of the employee currently logged in to the system
+     Parameters: N/A
+     Description: Accessor method for ID of the currently logged in employee
+     Dates modified:
+     * 17/05/2024
+     * Raymond Zhang - Created and finished method.
+    */
+    public static int getEmployeeID() {
+        return employeeID;
+    }
 
     /*
      Method Name: getRoomInput
      Return Type: int - A valid room number inputted by the user
-     Parameters: N/A
-     Description: Continuously receives input from user until a valid (above 100) room number is entered
+     Parameters: int date - The date that the user wants to choose a room from
+     Description: Continuously receives input from user until an available room number is entered
      Dates modified:
      * 17/05/2024
-       Raymond Zhang - Created and finished method. Has yet to be tested.
+     * Raymond Zhang - Created and finished method. Has yet to be tested.
     */
-    public static int getRoomInput() {
-        // Declare variable
+    public static int getRoomInput(int date) {
+        // Declare variables
         int room = -1;
+        boolean validRoom = false;
 
         // Create new Scanner
         Scanner sc = new Scanner(System.in);
 
-        // Get the room number from user
+        // Get a valid room number from user
         do {
-            System.out.print("Enter the room number: ");
+            // Display available rooms on given date
+            Reservations.listAvailableRooms(date);
+
+            // Receive input for room number
+            System.out.print("Enter the room number (0 to cancel): ");
             try {
                 room = sc.nextInt();
+                // User cancels reservation
+                if(room == QUIT_NUM) {
+                    validRoom = true;
+                }
+                // Check if room is invalid
+                else {
+                    validRoom = Reservations.checkAvailability(date, room);
+                    if(!validRoom) {
+                        System.out.printf("Error: Room %d is not available on %d%n.", room, date);
+                    }
+                }
             }
             // User inputted non-numerical characters
-            // ? Should let user know that they can only enter numbers?
             catch (InputMismatchException e) {
-                room = -1;
+                System.out.println("Error: Room number must be an integer.");
             }
 
-            // Check if room is invalid
-            if(room < 100) {
-                System.out.println("Error: Room number must be at least 100.");
-            }
-
-        } while(room < 100);
+        } while(!validRoom);
 
         // Close the Scanner
         sc.close();
@@ -62,7 +96,7 @@ public class HotelBooking {
      Description: Continuously receives input from user until a valid (non-negative) date is entered
      Dates modified:
      * 17/05/2024
-       Raymond Zhang - Created and finished method. Has yet to be tested.
+     *  Raymond Zhang - Created and finished method. Has yet to be tested.
     */
     public static int getDateInput() {
         // Declare variable
@@ -78,7 +112,6 @@ public class HotelBooking {
                 date = sc.nextInt();
             }
             // User inputted non-numerical characters
-            // ? Should let user know that they can only enter numbers?
             catch (InputMismatchException e) {
                 date = -1;
             }
@@ -98,6 +131,97 @@ public class HotelBooking {
     }
 
     /*
+     Method Name: getReservation
+     Return Type: int[] - A reservation made on a room by the customer on a date ([date, room])
+     Parameters: String firstName, String lastName - The name of the customer
+     Description: Lists all reservations made by the user and allows user to select the date
+                  and room of one of them. Error will be thrown if customer has no reservations
+                  in file. User may choose to abort the cancellation by setting the room to 0.
+     Dates modified:
+     * 17/05/2024
+     * Raymond Zhang - Created and finished method. Has yet to be tested.
+    */
+    public static int[] getReservation(String firstName, String lastName) {
+        // Declare variables
+        Map<Integer, List<Integer>> customerReservations = Query.customerQuery(firstName, lastName); // Reservations made by the customer
+        List<Integer> customRooms;
+        int date = -1, room = -1;
+        boolean validDate = false, validRoom = false;
+
+        // Create new Scanner
+        Scanner sc = new Scanner(System.in);
+
+        // Customer has no reservations in file
+        if(customerReservations.isEmpty()) {
+            System.out.printf("Error: %s %s has no reservations in file.", firstName, lastName);
+            room = QUIT_NUM; // Quit current operation
+        }
+        else {
+            // Get the date from user
+            do {
+                Reservations.listReservations(firstName, lastName);
+
+                System.out.print("Enter the date: ");
+                try {
+                    date = sc.nextInt();
+                }
+                // User inputted non-numerical characters
+                catch (InputMismatchException e) {
+                    date = -1;
+                }
+
+                // Check if date is invalid
+                if(date < 0) {
+                    System.out.println("Error: Date must be an non-negative integer value.");
+                }
+                // Check if customer has reservations on that date
+                else if(!customerReservations.containsKey(date)) {
+                    System.out.printf("Error: Customer has no reservations on day %d%n", date);
+                } else {
+                    customRooms = customerReservations.get(date);
+                    validDate = true;
+                }
+
+            } while(!validDate);
+
+            // Get a valid room number from user
+            do {
+                // Display available rooms on given date
+                Reservations.listAvailableRooms(firstName, lastName, date);
+
+                // Receive input for room number
+                System.out.print("Enter the room number (0 to cancel): ");
+                try {
+                    room = sc.nextInt();
+                    // User aborts cancellation
+                    if(room == QUIT_NUM) {
+                        validRoom = true;
+                    }
+                    // Check if room is invalid
+                    else {
+                        validRoom = customRooms.contains(room);
+                        if(!validRoom) {
+                            System.out.printf("Error: %s %s has not reserved room %d%n.", firstName, lastName, room);
+                        }
+                    }
+                }
+                // User inputted non-numerical characters
+                catch (InputMismatchException e) {
+                    System.out.println("Error: Room number must be an integer.");
+                }
+
+            } while(!validRoom);
+        }
+
+
+        // Close the Scanner
+        sc.close();
+
+        // Return the reservation
+        return new int[]{date, room};
+    }
+
+    /*
      Method Name: login
      Return Type: void
      Parameters: N/A
@@ -109,14 +233,18 @@ public class HotelBooking {
                   be displayed depending on if the user is an admin or not.
      Dates Modified:
      * 16/05/2024
-       Raymond Zhang - Created method. Implemented user input for employee
+     * Raymond Zhang - Created method. Implemented user input for employee
        ID and PIN, with input validation loops. Method has yet to be tested,
        UI may need improvement.
+
+     * 17/05/2024
+     * Raymond Zhang - Reformatted input validation to be consistent with other methods.
+       Closed the Scanner. Testing still not done.
     */
     public static void login() {
         // Declare variables
-        int id = -1, pin = -1;
-        int[] queryPin;
+        int pin = -1;
+        int[] queryPin = {-1, -1};
         boolean validID = false, validPIN = false;
 
         // Create new Scanner
@@ -132,23 +260,19 @@ public class HotelBooking {
             System.out.print("Enter employee ID: ");
 
             try {
-                id = sc.nextInt();
-            }
-            // User inputted non-numerical characters
-            // ? Should let user know that they can only enter numbers?
-            catch (InputMismatchException e) {
-                id = -1;
-            }
+                employeeID = sc.nextInt();
 
-            // If id was invalid, skip query
-            if(id != -1){
                 // Check if employee is in system
-                queryPin = Query.employeeQuery(id);
+                queryPin = Query.employeePinQuery(employeeID);
                 if(queryPin[0] == -1) {
-                    System.out.println("ERROR: ID was not found in system.");
+                    System.out.println("Error: ID was not found in system.");
                 } else {
                     validID = true;
                 }
+            }
+            // User inputted non-numerical characters
+            catch (InputMismatchException e) {
+                System.out.println("Error: ID must be a six-digit integer.");
             }
 
         } while(!validID);
@@ -160,28 +284,31 @@ public class HotelBooking {
 
             try {
                 pin = sc.nextInt();
-            }
-            // User inputted non-numerical characters
-            // ? Should let user know that they can only enter numbers?
-            catch (InputMismatchException e) {
-                pin = -1;
-            }
 
-            // Break out of loop and return to log in screen
-            // ? Can use return?
-            if(pin == 0) {
-                queryPin[1] = -1;
-                validPIN = true;
-            }
-            // Check if pin matches system data
-            else if(pin != -1) {
+                // Inputted PIN matches with employee PIN
                 if(pin == queryPin[0]) {
                     validPIN = true;
-                } else {
-                    System.out.println("ERROR: Incorrect PIN.");
                 }
+                // User quit; return to login screen
+                else if(pin == QUIT_NUM) {
+                    queryPin[1] = -1; // Mark as invalid, skip menu display
+                    validPIN = true;
+                }
+                // PIN does not match
+                else {
+                    System.out.println("Error: Invalid PIN.");
+                }
+
             }
+            // User inputted non-numerical characters
+            catch (InputMismatchException e) {
+                System.out.println("Error: PIN must be a four-digit integer.");
+            }
+
         } while(!validPIN);
+
+        // Close Scanner
+        sc.close();
 
         // Display menu according to employee type
         switch(queryPin[1]) {
@@ -203,14 +330,18 @@ public class HotelBooking {
      Description: Displays the main menu for regular employees.
      Dates Modified:
      * 16/05/2024
-       Raymond Zhang - Created method. Created menu list and implemented selection
+     * Raymond Zhang - Created method. Created menu list and implemented selection
        functionality. Options for 1, 2, 3, 8, and invalid cases have been implemented
        but not tested. UI may need improvement.
+
+     * 17/05/2024
+     * Raymond Zhang - Finished all cases except 6. Testing has yet to be done.
     */
     public static void defaultMenu() {
         // Declare variables
-        int choice = -1, date = -1, room = -1;
-        boolean running = true;
+        int choice = -1, date = -1, room = -1, pin = -1, oldPIN, newPIN;
+        int[] res;
+        boolean running = true, validPIN = false;
         String firstName, lastName;
 
         // Create new Scanner
@@ -236,7 +367,6 @@ public class HotelBooking {
                 choice = sc.nextInt();
             }
             // User inputted non-numerical characters
-            // ? Should let user know that they can only enter numbers?
             catch (InputMismatchException e) {
                 choice = -1;
             }
@@ -279,22 +409,109 @@ public class HotelBooking {
 
                 // Make a reservation
                 case 4:
+                    // Get first name
+                    System.out.print("Enter the first name:");
+                    firstName = sc.nextLine();
 
+                    // Get last name
+                    System.out.println();
+                    System.out.print("Enter the last name: ");
+                    lastName = sc.nextLine();
 
+                    // Get reservation date
+                    date = getDateInput();
+
+                    // Get reservation room
+                    room = getRoomInput(date);
+
+                    // Make reservation if user did not exit
+                    if(room != QUIT_NUM)
+                        Update.reserveCreate(firstName, lastName, room, date);
                     break;
 
                 // Cancel a reservation
                 case 5:
+                    // Get first name
+                    System.out.print("Enter the first name:");
+                    firstName = sc.nextLine();
+
+                    // Get last name
+                    System.out.println();
+                    System.out.print("Enter the last name: ");
+                    lastName = sc.nextLine();
+
+                    // Get the reservation of choice
+                    res = getReservation(firstName, lastName);
+
+                    // User did not choose to abort
+                    if(res[1] != QUIT_NUM) {
+                        Update.reserveCancel(firstName, lastName, res[0], res[1]);
+                    }
 
                     break;
 
-                // Change a reservation
+                // TODO: Change a reservation
                 case 6:
 
                     break;
 
                 // Change PIN
                 case 7:
+                    // Get employee's previous PIN for reference
+                    oldPIN = Query.employeePinQuery(employeeID)[0];
+
+                    // Employee can only change PIN if they know their old PIN
+                    do {
+                        // Get old PIN
+                        System.out.print("Enter your old PIN (0 to cancel): ");
+                        try {
+                            pin = sc.nextInt();
+
+                            // PIN matches
+                            if(pin == oldPIN) {
+                                do {
+                                    // Get new PIN
+                                    System.out.print("Enter the new PIN (0 to cancel): ");
+
+                                    try {
+                                        newPIN = sc.nextInt();
+
+                                        // New PIN is valid; change PIN and break
+                                        if(newPIN <= 1000 && newPIN <= 9999) {
+                                            Write.edtPin(employeeID, newPIN);
+                                            validPIN = true;
+                                        }
+                                        // User chooses to quit; break out of loop
+                                        else if(newPIN == QUIT_NUM) {
+                                            validPIN = true;
+                                        }
+                                        // PIN was invalid
+                                        else {
+                                            System.out.println("Error: New PIN must be a four-digit integer.");
+                                        }
+
+                                    }
+                                    // User entered non-numerical value
+                                    catch (IOException e) {
+                                        System.out.println("Error: PIN must be an four-digit integer.");
+                                    }
+                                } while (!validPIN);
+                            }
+                            // User chooses to quit; break out of loop
+                            else if(pin == QUIT_NUM) {
+                                validPIN = true;
+                            }
+                            // PIN does not match
+                            else {
+                                System.out.println("Error: PIN does not match.");
+                            }
+                        }
+                        // User entered non-numerical value
+                        catch (InputMismatchException e) {
+                            System.out.println("Error: PIN must be an four-digit integer.");
+                        }
+
+                    } while (!validPIN);
 
                     break;
 
@@ -306,7 +523,7 @@ public class HotelBooking {
 
                 // Invalid choice
                 default:
-                    System.out.println("ERROR: Invalid choice.");
+                    System.out.println("ERROR: Choice must be an integer from 1 to 8.");
                     break;
             }
         }
@@ -319,9 +536,7 @@ public class HotelBooking {
      Description: Displays the main menu for regular employees.
      Dates Modified:
      * 16/05/2024
-       Raymond Zhang - Created method. Created menu list and implemented selection
-       functionality. Options for 1, 2, 3, 8, and invalid cases have been implemented
-       but not tested. UI may need improvement.
+     * Raymond Zhang - Created method.
     */
     public static void adminMenu() {
 
@@ -329,8 +544,8 @@ public class HotelBooking {
 
     /*
      Dates Modified:
-      * 16/05/2024
-        Raymond Zhang - Created method. Implemented main loop.
+     * 16/05/2024
+     * Raymond Zhang - Created method. Implemented main loop.
     */
     public static void main(String[] args) {
         // Declare variables
