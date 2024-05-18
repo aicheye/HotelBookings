@@ -11,15 +11,15 @@ import java.io.*;
 public class Query
 {
     // Constants for filenames
-    static final String DAYS_DB = "days.txt";
-    static final String CUSTOMERS_DB = "customers.txt";
-    static final String EMPLOYEES_DB = "employees.txt";
-    static final String ROOMS_DB = "rooms.txt";
+    private static final String DAYS_DB = "days.txt";
+    private static final String CUSTOMERS_DB = "customers.txt";
+    private static final String EMPLOYEES_DB = "employees.txt";
+    private static final String ROOMS_DB = "rooms.txt";
 
     // Constants for file delimiters
-    static final String DATE_DELIMITER = "~"; // used in days.txt
-    static final String ROOM_DELIMITER = "-"; // used in customers.txt
-    static final String CUSTOMER_DELIMITER = "`"; // used in customers.txt
+    private static final String DATE_DELIMITER = "~"; // used in days.txt
+    private static final String ROOM_DELIMITER = "-"; // used in customers.txt
+    private static final String CUSTOMER_DELIMITER = "`"; // used in customers.txt
 
     /*
      Method Name: dateQuery
