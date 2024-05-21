@@ -14,7 +14,6 @@ import java.io.*;
     * Update class not yet implemented
     * Write.edtPin not yet implemented
     * Infinite loop in input validation
-    * ID and PIN should be strings
 */
 
 public class HotelBooking {
@@ -23,18 +22,21 @@ public class HotelBooking {
     private static final int QUIT_NUM = 0;
 
     // Current employee in the system
-    private static int employeeID = -1;
+    private static String employeeID = "";
 
     /*
      Method Name: getEmployeeID
-     Return Type: int - The ID of the employee currently logged in to the system
+     Return Type: String - The ID of the employee currently logged in to the system
      Parameters: N/A
      Description: Accessor method for ID of the currently logged in employee
      Dates modified:
      * 17/05/2024
      * Raymond Zhang - Created and finished method.
+
+     * 18/05/2024
+     * Raymond Zhang - Changed data type to String.
     */
-    public static int getEmployeeID() {
+    public static String getEmployeeID() {
         return employeeID;
     }
 
@@ -260,12 +262,12 @@ public class HotelBooking {
        Closed the Scanner. Testing still not done.
 
      * 18/05/2024
-     * Raymond Zhang - Added IOException handling.
+     * Raymond Zhang - Added IOException handling. Changed ID and PIN data type to String.
     */
     public static void login() {
         // Declare variables
-        int pin = -1;
-        int[] queryPin = {-1, -1};
+        String pin = "";
+        String[] queryPin = {"", ""};
         boolean validID = false, validPIN = false;
 
         // Create new Scanner
@@ -277,12 +279,14 @@ public class HotelBooking {
 
         // Run until valid employee ID was found
         do {
-            // Try to get employee ID
+            // Get employee ID
             System.out.print("Enter employee ID: ");
 
-            try {
-                employeeID = sc.nextInt();
+            employeeID = sc.next();
 
+            // Check if ID is valid (six integers)
+            // ? Create constant for ID length
+            if(employeeID.length() == 6 && employeeID.matches("[0-9]+")) {
                 // Check if employee is in system
                 try {
                     queryPin = Query.employeePinQuery(employeeID);
@@ -291,14 +295,13 @@ public class HotelBooking {
                     System.out.println(e + " Problem reading file.");
                 }
 
-                if(queryPin[0] == -1) {
+                if(queryPin[0].equals("")) {
                     System.out.println("Error: ID was not found in system.");
                 } else {
                     validID = true;
                 }
             }
-            // User inputted non-numerical characters
-            catch (InputMismatchException e) {
+            else {
                 System.out.println("Error: ID must be a six-digit integer.");
             }
 
@@ -306,30 +309,27 @@ public class HotelBooking {
 
         // Run until valid PIN entered or user exits
         do {
-            // Try to get PIN
+            // Get PIN
             System.out.print("Enter PIN (0 to return to login screen): ");
+            pin = sc.next();
 
-            try {
-                pin = sc.nextInt();
-
-                // Inputted PIN matches with employee PIN
-                if(pin == queryPin[0]) {
-                    validPIN = true;
-                }
-                // User quit; return to login screen
-                else if(pin == QUIT_NUM) {
-                    queryPin[1] = -1; // Mark as invalid, skip menu display
-                    validPIN = true;
-                }
-                // PIN does not match
-                else {
-                    System.out.println("Error: Invalid PIN.");
-                }
-
+            // User quit; return to login screen
+            if(pin.equals(String.valueOf(QUIT_NUM))) {
+                queryPin[1] = ""; // Mark as invalid, skip menu display
+                validPIN = true;
             }
-            // User inputted non-numerical characters
-            catch (InputMismatchException e) {
+            // Inputted PIN matches with employee PIN
+            else if (pin.equals(queryPin[0])) {
+                validPIN = true;
+            }
+            // PIN was invalid
+            // ? Create constant for PIN length
+            else if(!(pin.length() == 4 && pin.matches("[0-9]+"))) {
                 System.out.println("Error: PIN must be a four-digit integer.");
+            }
+            // PIN does not match
+            else {
+                System.out.println("Error: PIN does not match.");
             }
 
         } while(!validPIN);
@@ -340,11 +340,11 @@ public class HotelBooking {
         // Display menu according to employee type
         switch(queryPin[1]) {
             // Employee menu
-            case 0:
+            case "0":
                 defaultMenu();
                 break;
             // Admin menu
-            case 1:
+            case "1":
                 adminMenu();
                 break;
         }
@@ -366,14 +366,14 @@ public class HotelBooking {
 
      * 18/05/2024
      * Raymond Zhang - Replaced method calls to Reservation.java, Update.java and Write.java with print statements for testing.
-                       Added IOException handling to case 7.
+                       Added IOException handling to case 7. Changed PIN data type to String.
     */
     public static void defaultMenu() {
         // Declare variables
-        int choice = -1, date = -1, room = -1, pin = -1, oldPIN, newPIN;
+        int choice = -1, date = -1, room = -1;
         int[] res; // [date, room]
         boolean running = true, validPIN = false;
-        String firstName, lastName;
+        String firstName, lastName, pin, oldPIN, newPIN;
 
         // Create new Scanner
         Scanner sc = new Scanner(System.in);
@@ -503,53 +503,40 @@ public class HotelBooking {
                         do {
                             // Get old PIN
                             System.out.print("Enter your old PIN (0 to cancel): ");
-                            try {
-                                pin = sc.nextInt();
+                            pin = sc.next();
 
-                                // PIN matches
-                                if(pin == oldPIN) {
-                                    do {
-                                        // Get new PIN
-                                        System.out.print("Enter the new PIN (0 to cancel): ");
+                            // PIN matches
+                            if(pin.equals(oldPIN)) {
+                                do {
+                                    // Get new PIN
+                                    System.out.print("Enter the new PIN (0 to cancel): ");
+                                    newPIN = sc.next();
 
-                                        try {
-                                            newPIN = sc.nextInt();
+                                    // New PIN is valid; change PIN and break
+                                    // ? Create constant for PIN length
+                                    if(newPIN.length() == 4 && newPIN.matches("[0-9]+")) {
+                                        // ! Write.edtPin(employeeID, newPIN);
+                                        System.out.printf("Changed %d's pin to %d.%n", employeeID, newPIN);
+                                        validPIN = true;
+                                    }
+                                    // User chooses to quit; break out of loop
+                                    else if(newPIN.equals(String.valueOf(QUIT_NUM))) {
+                                        validPIN = true;
+                                    }
+                                    // PIN was invalid
+                                    else {
+                                        System.out.println("Error: New PIN must be a four-digit integer.");
+                                    }
 
-                                            // New PIN is valid; change PIN and break
-                                            if(newPIN <= 1000 && newPIN <= 9999) {
-                                                // ! Write.edtPin(employeeID, newPIN);
-                                                if(newPIN < 0) throw new IOException("e");
-                                                System.out.printf("Changed %d's pin to %d.%n", employeeID, newPIN);
-                                                validPIN = true;
-                                            }
-                                            // User chooses to quit; break out of loop
-                                            else if(newPIN == QUIT_NUM) {
-                                                validPIN = true;
-                                            }
-                                            // PIN was invalid
-                                            else {
-                                                System.out.println("Error: New PIN must be a four-digit integer.");
-                                            }
-
-                                        }
-                                        // User entered non-numerical value
-                                        catch (IOException e) {
-                                            System.out.println("Error: PIN must be an four-digit integer.");
-                                        }
-                                    } while (!validPIN);
-                                }
-                                // User chooses to quit; break out of loop
-                                else if(pin == QUIT_NUM) {
-                                    validPIN = true;
-                                }
-                                // PIN does not match
-                                else {
-                                    System.out.println("Error: PIN does not match.");
-                                }
+                                } while (!validPIN);
                             }
-                            // User entered non-numerical value
-                            catch (InputMismatchException e) {
-                                System.out.println("Error: PIN must be an four-digit integer.");
+                            // User chooses to quit; break out of loop
+                            else if(pin.equals(String.valueOf(QUIT_NUM))) {
+                                validPIN = true;
+                            }
+                            // PIN does not match
+                            else {
+                                System.out.println("Error: PIN does not match.");
                             }
 
                         } while (!validPIN);
