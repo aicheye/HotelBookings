@@ -13,7 +13,6 @@ import java.io.*;
     * Reservations class not yet implemented
     * Update class not yet implemented
     * Write.edtPin not yet implemented
-    * Infinite loop in input validation
 */
 
 public class HotelBooking {
@@ -24,6 +23,9 @@ public class HotelBooking {
     // Current employee in the system
     private static String employeeID = "";
 
+    // Create Scanner
+    private static Scanner sc = new Scanner(System.in);
+
     /*
      Method Name: getEmployeeID
      Return Type: String - The ID of the employee currently logged in to the system
@@ -33,7 +35,7 @@ public class HotelBooking {
      * 17/05/2024
      * Raymond Zhang - Created and finished method.
 
-     * 18/05/2024
+     * 21/05/2024
      * Raymond Zhang - Changed data type to String.
     */
     public static String getEmployeeID() {
@@ -49,27 +51,30 @@ public class HotelBooking {
      * 17/05/2024
      * Raymond Zhang - Created and finished method. Has yet to be tested.
 
-     * 18/05/2024
+     * 21/05/2024
      * Raymond Zhang - Replaced method calls to Reservation.java with print statements for testing.
+                       Fixed infinite loop by reading line outside of try-catch block.
+                       Changed error messages to stand out more.
+                       Removed local declaration of Scanner.
     */
     public static int getRoomInput(int date) {
         // Declare variables
         int room = -1;
         boolean validRoom = false;
-
-        // Create new Scanner
-        Scanner sc = new Scanner(System.in);
+        String line;
 
         // Get a valid room number from user
         do {
             // Display available rooms on given date
             // ! Reservations.listAvailableRooms(date);
-            System.out.printf("Listing available rooms for date %d.%n", date);
+            System.out.printf("Listing available rooms for day %d.%n", date);
 
             // Receive input for room number
             System.out.print("Enter the room number (0 to cancel): ");
+            line = sc.nextLine();
             try {
-                room = sc.nextInt();
+                room = Integer.parseInt(line);
+
                 // User cancels reservation
                 if(room == QUIT_NUM) {
                     validRoom = true;
@@ -78,19 +83,16 @@ public class HotelBooking {
                 else {
                     validRoom = true; // !Reservations.checkAvailability(date, room);
                     if(!validRoom) {
-                        System.out.printf("Error: Room %d is not available on %d%n.", room, date);
+                        System.out.printf("**ERROR: Room %d is not available on day %d.%n%n**", room, date);
                     }
                 }
             }
             // User inputted non-numerical characters
-            catch (InputMismatchException e) {
-                System.out.println("Error: Room number must be an integer.");
+            catch (NumberFormatException e) {
+                System.out.println("**ERROR: Room number must be an integer.**\n");
             }
 
         } while(!validRoom);
-
-        // Close the Scanner
-        sc.close();
 
         // Return the room number
         return room;
@@ -103,35 +105,36 @@ public class HotelBooking {
      Description: Continuously receives input from user until a valid (non-negative) date is entered
      Dates modified:
      * 17/05/2024
-     *  Raymond Zhang - Created and finished method. Has yet to be tested.
+     * Raymond Zhang - Created and finished method. Has yet to be tested.
+
+     * 21/05/2024
+     * Raymond Zhang - Fixed infinite loop by reading line outside of try-catch block.
+                       Changed error message to stand out more.
+                       Removed local declaration of Scanner.
     */
     public static int getDateInput() {
         // Declare variable
         int date = -1;
-
-        // Create new Scanner
-        Scanner sc = new Scanner(System.in);
+        String line;
 
         // Get the date from user
         do {
             System.out.print("Enter the date: ");
+            line = sc.nextLine();
             try {
-                date = sc.nextInt();
+                date = Integer.parseInt(line);
             }
             // User inputted non-numerical characters
-            catch (InputMismatchException e) {
+            catch (NumberFormatException e) {
                 date = -1;
             }
 
             // Check if date is invalid
             if(date < 0) {
-                System.out.println("Error: Date must be an non-negative integer value.");
+                System.out.println("**ERROR: Date must be an non-negative integer value.\n**");
             }
 
         } while(date < 0);
-
-        // Close the Scanner
-        sc.close();
 
         // Return the date
         return date;
@@ -148,9 +151,12 @@ public class HotelBooking {
      * 17/05/2024
      * Raymond Zhang - Created and finished method. Has yet to be tested.
 
-     * 18/05/2024
+     * 21/05/2024
      * Raymond Zhang - Replaced method calls to Reservation.java with print statements for testing.
                        Renamed customRooms to customerRooms. Added IOException handling.
+                       Fixed infinite loop by reading line outside of try-catch block.
+                       Changed error messages to stand out more.
+                       Removed local declaration of Scanner.
     */
     public static int[] getReservation(String firstName, String lastName) {
         // Declare variables
@@ -158,9 +164,7 @@ public class HotelBooking {
         List<Integer> customerRooms;
         int date = -1, room = -1;
         boolean validDate = false, validRoom = false;
-
-        // Create new Scanner
-        Scanner sc = new Scanner(System.in);
+        String line;
 
         // Get customer reservations
         try {
@@ -171,7 +175,7 @@ public class HotelBooking {
 
         // Customer has no reservations in file
         if(customerReservations.isEmpty()) {
-            System.out.printf("Error: %s %s has no reservations in file.", firstName, lastName);
+            System.out.printf("**ERROR: %s %s has no reservations in file.**%n%n", firstName, lastName);
             room = QUIT_NUM; // Quit current operation
         }
         else {
@@ -181,21 +185,22 @@ public class HotelBooking {
                 System.out.printf("Listing reservations for %s %s.%n", firstName, lastName);
 
                 System.out.print("Enter the date: ");
+                line = sc.nextLine();
                 try {
-                    date = sc.nextInt();
+                    date = Integer.parseInt(line);
                 }
                 // User inputted non-numerical characters
-                catch (InputMismatchException e) {
+                catch (NumberFormatException e) {
                     date = -1;
                 }
 
                 // Check if date is invalid
                 if(date < 0) {
-                    System.out.println("Error: Date must be an non-negative integer value.");
+                    System.out.println("**ERROR: Date must be an non-negative integer value.**\n");
                 }
                 // Check if customer has reservations on that date
                 else if(!customerReservations.containsKey(date)) {
-                    System.out.printf("Error: Customer has no reservations on day %d%n", date);
+                    System.out.printf("**ERROR: Customer has no reservations on day %d.**%n%n", date);
                 } else {
                     customerRooms = customerReservations.get(date);
                     validDate = true;
@@ -211,8 +216,10 @@ public class HotelBooking {
 
                 // Receive input for room number
                 System.out.print("Enter the room number (0 to cancel): ");
+                line = sc.nextLine();
                 try {
-                    room = sc.nextInt();
+                    room = Integer.parseInt(line);
+
                     // User aborts cancellation
                     if(room == QUIT_NUM) {
                         validRoom = true;
@@ -221,21 +228,17 @@ public class HotelBooking {
                     else {
                         validRoom = true; // ! customerRooms.contains(room);
                         if(!validRoom) {
-                            System.out.printf("Error: %s %s has not reserved room %d%n.", firstName, lastName, room);
+                            System.out.printf("**ERROR: %s %s has not reserved room %d.**%n%n", firstName, lastName, room);
                         }
                     }
                 }
                 // User inputted non-numerical characters
-                catch (InputMismatchException e) {
-                    System.out.println("Error: Room number must be an integer.");
+                catch (NumberFormatException e) {
+                    System.out.println("**ERROR: Room number must be an integer.**\n");
                 }
 
             } while(!validRoom);
         }
-
-
-        // Close the Scanner
-        sc.close();
 
         // Return the reservation
         return new int[]{date, room};
@@ -261,8 +264,12 @@ public class HotelBooking {
      * Raymond Zhang - Reformatted input validation to be consistent with other methods.
        Closed the Scanner. Testing still not done.
 
-     * 18/05/2024
+     * 21/05/2024
      * Raymond Zhang - Added IOException handling. Changed ID and PIN data type to String.
+                       Fixed infinite loop by reading line outside of try-catch block.
+                       Changed error messages to stand out more.
+                       Removed local declaration of Scanner.
+                       Added newlines to messages to look less cluttered in console
     */
     public static void login() {
         // Declare variables
@@ -270,12 +277,9 @@ public class HotelBooking {
         String[] queryPin = {"", ""};
         boolean validID = false, validPIN = false;
 
-        // Create new Scanner
-        Scanner sc = new Scanner(System.in);
-
         // Welcome message
         // ? Could be stylized
-        System.out.println("Welcome to the Hotel Booking System!");
+        System.out.println("\nWelcome to the Hotel Booking System!");
 
         // Run until valid employee ID was found
         do {
@@ -296,13 +300,13 @@ public class HotelBooking {
                 }
 
                 if(queryPin[0].equals("")) {
-                    System.out.println("Error: ID was not found in system.");
+                    System.out.println("**ERROR: ID was not found in system.**\n");
                 } else {
                     validID = true;
                 }
             }
             else {
-                System.out.println("Error: ID must be a six-digit integer.");
+                System.out.println("**ERROR: ID must be a six-digit integer.**\n");
             }
 
         } while(!validID);
@@ -325,17 +329,14 @@ public class HotelBooking {
             // PIN was invalid
             // ? Create constant for PIN length
             else if(!pin.matches("^[0-9]{4}$")) {
-                System.out.println("Error: PIN must be a four-digit integer.");
+                System.out.println("**ERROR: PIN must be a four-digit integer.**\n");
             }
             // PIN does not match
             else {
-                System.out.println("Error: PIN does not match.");
+                System.out.println("**ERROR: PIN does not match.**\n");
             }
 
         } while(!validPIN);
-
-        // Close Scanner
-        sc.close();
 
         // Display menu according to employee type
         switch(queryPin[1]) {
@@ -348,6 +349,9 @@ public class HotelBooking {
                 adminMenu();
                 break;
         }
+
+        // Reset current employee ID
+        employeeID = "";
     }
 
     /*
@@ -364,23 +368,26 @@ public class HotelBooking {
      * 17/05/2024
      * Raymond Zhang - Finished all cases except 6. Testing has yet to be done.
 
-     * 18/05/2024
+     * 21/05/2024
      * Raymond Zhang - Replaced method calls to Reservation.java, Update.java and Write.java with print statements for testing.
                        Added IOException handling to case 7. Changed PIN data type to String.
+                       Fixed infinite loop by reading line outside of try-catch block.
+                       Changed error messages to stand out more.
+                       Removed local declaration of Scanner.
+                       Fixed issue with formatted printing in case 7 trying to print a String as an int.
+                       Added error message for invalid PINs in case 7
+                       Reset looping variable in case 7
     */
     public static void defaultMenu() {
         // Declare variables
         int choice = -1, date = -1, room = -1;
-        int[] res; // [date, room]
+        int[] res; // reservation: [date, room]
         boolean running = true, validPIN = false;
-        String firstName, lastName, pin, oldPIN, newPIN;
-
-        // Create new Scanner
-        Scanner sc = new Scanner(System.in);
+        String line, firstName, lastName, pin, oldPIN, newPIN;
 
         while(running) {
             // Print menu
-            System.out.println("What would you like to do?");
+            System.out.println("\nWhat would you like to do?");
             System.out.println();
             System.out.println("1. List available rooms on a date.");
             System.out.println("2. List reservations on a date.");
@@ -394,11 +401,12 @@ public class HotelBooking {
             System.out.print("Enter your selection: ");
 
             // Get menu choice from user
+            line = sc.nextLine();
             try {
-                choice = sc.nextInt();
+                choice = Integer.parseInt(line);
             }
             // User inputted non-numerical characters
-            catch (InputMismatchException e) {
+            catch (NumberFormatException e) {
                 choice = -1;
             }
 
@@ -411,7 +419,7 @@ public class HotelBooking {
 
                     // List rooms
                     // ! Reservations.listAvailableRooms(date);
-                    System.out.printf("Listing available rooms for date %d.%n", date);
+                    System.out.printf("Listing available rooms for day %d.%n", date);
                     break;
 
                 // List reservations on a given date
@@ -421,18 +429,16 @@ public class HotelBooking {
 
                     // List reservations
                     // ! Reservations.listReservations(date);
-                    System.out.printf("Listing reservations for date %d.%n", date);
+                    System.out.printf("Listing reservations for day %d.%n", date);
                     break;
 
                 // List reservations under a name
                 case 3:
-
                     // Get first name
-                    System.out.print("Enter the first name:");
+                    System.out.print("Enter the first name: ");
                     firstName = sc.nextLine();
 
                     // Get last name
-                    System.out.println();
                     System.out.print("Enter the last name: ");
                     lastName = sc.nextLine();
 
@@ -444,11 +450,10 @@ public class HotelBooking {
                 // Make a reservation
                 case 4:
                     // Get first name
-                    System.out.print("Enter the first name:");
+                    System.out.print("Enter the first name: ");
                     firstName = sc.nextLine();
 
                     // Get last name
-                    System.out.println();
                     System.out.print("Enter the last name: ");
                     lastName = sc.nextLine();
 
@@ -461,18 +466,17 @@ public class HotelBooking {
                     // Make reservation if user did not exit
                     if(room != QUIT_NUM){
                         // ! Update.reserveCreate(firstName, lastName, room, date);
-                        System.out.printf("Created reservation for %s %s for room %d on %d.%n", firstName, lastName, room, date);
+                        System.out.printf("Created reservation for %s %s for room %d on day %d.%n", firstName, lastName, room, date);
                     }
                     break;
 
                 // Cancel a reservation
                 case 5:
                     // Get first name
-                    System.out.print("Enter the first name:");
+                    System.out.print("Enter the first name: ");
                     firstName = sc.nextLine();
 
                     // Get last name
-                    System.out.println();
                     System.out.print("Enter the last name: ");
                     lastName = sc.nextLine();
 
@@ -482,7 +486,7 @@ public class HotelBooking {
                     // User did not choose to abort
                     if(res[1] != QUIT_NUM) {
                         // ! Update.reserveCancel(firstName, lastName, res[0], res[1]);
-                        System.out.printf("Cancelled reservation for %s %s for room %d on %d.%n", firstName, lastName, res[1], res[0]);
+                        System.out.printf("Cancelled reservation for %s %s for room %d on day %d.%n", firstName, lastName, res[1], res[0]);
                     }
 
                     break;
@@ -516,7 +520,7 @@ public class HotelBooking {
                                     // ? Create constant for PIN length
                                     if(newPIN.matches("^[0-9]{4}$")) {
                                         // ! Write.edtPin(employeeID, newPIN);
-                                        System.out.printf("Changed %d's pin to %d.%n", employeeID, newPIN);
+                                        System.out.printf("Changed %s's pin to %s.%n%n", employeeID, newPIN);
                                         validPIN = true;
                                     }
                                     // User chooses to quit; break out of loop
@@ -525,7 +529,7 @@ public class HotelBooking {
                                     }
                                     // PIN was invalid
                                     else {
-                                        System.out.println("Error: New PIN must be a four-digit integer.");
+                                        System.out.println("**ERROR: New PIN must be a four-digit integer.**\n");
                                     }
 
                                 } while (!validPIN);
@@ -534,9 +538,13 @@ public class HotelBooking {
                             else if(pin.equals(String.valueOf(QUIT_NUM))) {
                                 validPIN = true;
                             }
+                            // Invalid PIN was entered
+                            else if(!pin.matches("^[0-9]{4}$")) {
+                                System.out.println("**ERROR: New PIN must be a four-digit integer.**\n");
+                            }
                             // PIN does not match
                             else {
-                                System.out.println("Error: PIN does not match.");
+                                System.out.println("**ERROR: PIN does not match.**\n");
                             }
 
                         } while (!validPIN);
@@ -544,6 +552,10 @@ public class HotelBooking {
                     catch (IOException e) {
                         System.out.println(e + " Problem reading file.");
                     }
+
+                    // Reset validPIN for next loop
+                    validPIN = false;
+
                     break;
 
                 // Logout
@@ -554,7 +566,7 @@ public class HotelBooking {
 
                 // Invalid choice
                 default:
-                    System.out.println("ERROR: Choice must be an integer from 1 to 8.");
+                    System.out.println("**ERROR: Choice must be an integer from 1 to 8.**\n");
                     break;
             }
         }
