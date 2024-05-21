@@ -282,11 +282,11 @@ public class HotelBooking {
             // Get employee ID
             System.out.print("Enter employee ID: ");
 
-            employeeID = sc.next();
+            employeeID = sc.nextLine();
 
             // Check if ID is valid (six integers)
             // ? Create constant for ID length
-            if(employeeID.length() == 6 && employeeID.matches("[0-9]+")) {
+            if(employeeID.matches( "^[0-9]{6}$")) {
                 // Check if employee is in system
                 try {
                     queryPin = Query.employeePinQuery(employeeID);
@@ -311,7 +311,7 @@ public class HotelBooking {
         do {
             // Get PIN
             System.out.print("Enter PIN (0 to return to login screen): ");
-            pin = sc.next();
+            pin = sc.nextLine();
 
             // User quit; return to login screen
             if(pin.equals(String.valueOf(QUIT_NUM))) {
@@ -324,7 +324,7 @@ public class HotelBooking {
             }
             // PIN was invalid
             // ? Create constant for PIN length
-            else if(!(pin.length() == 4 && pin.matches("[0-9]+"))) {
+            else if(!pin.matches("^[0-9]{4}$")) {
                 System.out.println("Error: PIN must be a four-digit integer.");
             }
             // PIN does not match
@@ -503,18 +503,18 @@ public class HotelBooking {
                         do {
                             // Get old PIN
                             System.out.print("Enter your old PIN (0 to cancel): ");
-                            pin = sc.next();
+                            pin = sc.nextLine();
 
                             // PIN matches
                             if(pin.equals(oldPIN)) {
                                 do {
                                     // Get new PIN
                                     System.out.print("Enter the new PIN (0 to cancel): ");
-                                    newPIN = sc.next();
+                                    newPIN = sc.nextLine();
 
                                     // New PIN is valid; change PIN and break
                                     // ? Create constant for PIN length
-                                    if(newPIN.length() == 4 && newPIN.matches("[0-9]+")) {
+                                    if(newPIN.matches("^[0-9]{4}$")) {
                                         // ! Write.edtPin(employeeID, newPIN);
                                         System.out.printf("Changed %d's pin to %d.%n", employeeID, newPIN);
                                         validPIN = true;
