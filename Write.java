@@ -44,6 +44,7 @@ public class Write
             customers.add(line);
             line = readCustomers.readLine();
         }
+
         List<String> days = new ArrayList<>();
         line = readDays.readLine();
         while (line != null)
@@ -57,6 +58,17 @@ public class Write
         // if the customer exists, check if they have already booked this room
         boolean customerBookedRoom = false;
         if (customerExists) customerBookedRoom = Query.customerQuery(firstName, lastName).containsKey(room);
+
+        // if the customer is new, append to customers.txt
+        if (!customerExists)
+        {
+            customers.add(firstName);
+            customers.add(lastName);
+            customers.add(String.valueOf(room));
+            customers.add(String.valueOf(date));
+            customers.add(ROOM_DELIMITER);
+            customers.add(CUSTOMER_DELIMITER);
+        }
 
         // if the customer exists but the room doesn't, loop through the file and append a new room and date
         if (customerExists && !customerBookedRoom)
@@ -81,14 +93,91 @@ public class Write
         {
             for (int i=0; i<customers.size()-1; i++)
             {
-                if (customers.get(i).equals(firstName) && customers.get(i).equals(lastName))
+                if (customers.get(i).equals(firstName) && customers.get(i+1).equals(lastName))
                 {
+                    // loop over every room the customer has booked until it matches
+                    for (int j=0; j<customers.size()-1; j++)
+                    {
+                        if (customers.get(j).equals(ROOM_DELIMITER) && customers.get(j+1).equals(String.valueOf(room)) ||
+                                customers.get(j).equals(lastName) && customers.get(j+1).equals(String.valueOf(room)))
+                        {
+                            int index = getIndexDate(date, j, customers);
+
+                            // add the date to the room
+                            customers.add(index, String.valueOf(date));
+                        }
+                    }
                 }
             }
         }
 
-        // BufferedWriter writeCustomers = new BufferedWriter(new FileWriter(CUSTOMERS_DB, false));
-        // BufferedWriter writeDays = new BufferedWriter(new FileWriter(DAYS_DB, false));
+        int lastDay = 0; // the last day in days.txt
+        boolean inserted = false; // whether the function has completed the insertion
+
+        // update days ArrayList
+        for (int i=0; i<days.size()-1; i++)
+        {
+            // check if the date matches the date of the reservation
+            if (days.get(i).equals(DATE_DELIMITER) && days.get(i+1).equals(String.valueOf(date)) ||
+                    days.get(i).equals(String.valueOf(date)) && i == 0)
+            {
+                for (int j=i; j<days.size()-1; j++)
+                {
+                    int prev = j + (i == 0 ? 1 : 2);
+                    int next = j + (i == 0 ? 2 : 3);
+
+                    if (next < days.size() && !days.get(prev).equals(DATE_DELIMITER))
+                    {
+                        if (!inserted && days.get(next).equals(DATE_DELIMITER))
+                        {
+                            days.add(next, String.valueOf(room));
+                            inserted = true;
+                        }
+                        else if (!inserted && Integer.parseInt(days.get(prev)) < room)
+                        {
+                            days.add(next, String.valueOf(room));
+                            inserted = true;
+                        }
+                    }
+                }
+            }
+
+            if (days.get(i).equals(DATE_DELIMITER)) lastDay = Integer.parseInt(days.get(i+1));
+        }
+
+        // if the day is not in days.txt, keep appending successive dates and append the room to the date
+        if (!inserted) {
+            for (int j=lastDay+1; j<=date; j++) {
+                days.add(String.valueOf(j));
+                if (j == date) days.add(String.valueOf(room));
+                days.add(DATE_DELIMITER);
+            }
+        }
+
+
+        // init file writers
+        BufferedWriter writeCustomers = new BufferedWriter(new FileWriter(CUSTOMERS_DB, false));
+        BufferedWriter writeDays = new BufferedWriter(new FileWriter(DAYS_DB, false));
+
+        // write ArrayList to customers.txt
+        for (int i=0; i<customers.size(); i++)
+        {
+            writeCustomers.write(customers.get(i));
+            writeCustomers.write(i == customers.size() - 1 ? "" : "\n" );
+        }
+
+        // write ArrayList to days.txt
+        for (int i=0; i<days.size(); i++)
+        {
+            writeDays.write(days.get(i));
+            writeDays.write(i == days.size() - 1 ? "" : "\n" );
+        }
+
+        // close files
+        readCustomers.close();
+        readDays.close();
+        writeCustomers.close();
+        writeDays.close();
     }
 
     /*
@@ -122,7 +211,7 @@ public class Write
                     boolean atNext = false;
                     int k = next + 1;
                     while (!atNext) {
-                        if (customers.get(k).equals("-"))
+                        if (customers.get(k).equals(ROOM_DELIMITER))
                         {
                             atNext = true;
                             index = k + 1;
@@ -154,8 +243,63 @@ public class Write
         return index;
     }
 
-    private static int getIndexDay(int room, int i, List<String> customers) {
-        return 0;
+    /*
+     Method Name: getIndexDate
+     Return Type: int - The line # to insert a date
+     Parameters: int date - The date # to insert
+                 int i - The line # of the customer's first name
+                 List<String> customers - An ArrayList representing customers.txt
+     Description: Calculates the location to insert a date
+     */
+    private static int getIndexDate(int date, int i, List<String> customers) {
+        int index = i + 2;
+        int prev = i + 2;
+        int next = i + 2;
+        int j = i + 2;
+
+        // loop until we find the appropriate place for the room (in ascending order)
+        boolean searching = true;
+        while (searching)
+        {
+            // check if we are at the end of the customer
+            if (customers.get(j+1).equals(ROOM_DELIMITER))
+            {
+                searching = false;
+
+                // find the appropriate place to insert the room (edge cases)
+                if (Integer.parseInt(customers.get(prev)) > date) index = prev;
+                if (Integer.parseInt(customers.get(next)) < date)
+                {
+                    // find the location of the next customer and append the date there
+                    boolean atNext = false;
+                    int k = next + 1;
+                    while (!atNext) {
+                        if (customers.get(k).equals(ROOM_DELIMITER))
+                        {
+                            atNext = true;
+                            index = k;
+                        }
+                        k++;
+                    }
+                }
+            }
+            // otherwise continue
+            else
+            {
+                prev = next;
+                next = j + 1;
+                // check if the room is in between prev and next
+                if (Integer.parseInt(customers.get(prev)) < date &&
+                        Integer.parseInt(customers.get(next)) > date)
+                {
+                    // if it is, set the index to next and break the loop
+                    index = next;
+                    searching = false;
+                }
+            }
+            j++; // increment iterator
+        }
+        return index;
     }
 
     public static void delReserve(String firstName, String lastName, int room, int date)
