@@ -53,8 +53,8 @@ public class Reservations {
             int[] dateAvailable = Query.dateQuery(date);
             int size = dateAvailable.length;
 
-            for (int i = 0; i < size; i++) {
-                if (dateAvailable[i] == room) {
+            for (int j : dateAvailable) {
+                if (j == room) {
                     roomfound = true;
                     break;
                 }
@@ -76,19 +76,19 @@ public class Reservations {
     Return Type: void - prints out the day and room number if person has reservation
     Parameters: String firstName - first name of person
                 String lastName - last name of person
-    Description: Returns true of false if room is available on given day
+    Description: Prints out the room number and dates the room is booked for
 
     */
-    public static String listReservations(String firstName, String lastName) {
+    public static void listReservations(String firstName, String lastName) {
         Object days;
         try {
             Map<Integer, List<Integer>> rooms = Query.customerQuery(firstName, lastName);
-    for  (int e: rooms.keySet()) {
+    for  (int e: rooms.keySet()) {//gets each room #
         System.out.printf("%s %s has booked Room %d for:\n", firstName, lastName, e);
-        List value = rooms.get(e);
-        for (int i = 0; i < value.size(); i++) {
-            days = value.get(i);
-            System.out.println(dateConverter(days));
+        List<Integer> value = rooms.get(e);//gets the room numbers
+        for (Object o : value) {
+            days = o;
+            System.out.println(dateConverter(days));//prints out each date that the room is booked for
         }
 
     }
@@ -97,7 +97,7 @@ public class Reservations {
         {
             System.out.println(e);
         }
-        return "";
+
     }
     /*
     public static String listReservations(String firstName, String lastName, int date) {
