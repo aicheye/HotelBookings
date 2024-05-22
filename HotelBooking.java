@@ -23,7 +23,7 @@ public class HotelBooking {
     private static final int QUIT_NUM = 0;
 
     // Current employee in the system
-    private static String employeeID = "";
+    private static String employeeID = null;
 
     // Create Scanner
     private static Scanner sc = new Scanner(System.in);
@@ -278,12 +278,13 @@ public class HotelBooking {
        Fixed infinite loop in input validation by reading line outside of try-catch block
        Changed error messages to stand out more.
        Removed local declaration of Scanner.
-       Added newlines to messages to look less cluttered in console
+       Added newlines to messages to look less cluttered in console.
+       Change default String value to be null
     */
     public static void login() {
         // Declare variables
-        String pin = "";
-        String[] queryPin = {"", ""};
+        String pin = null;
+        String[] queryPin = {null, null};
         boolean validID = false, validPIN = false;
 
         // Welcome message
@@ -308,7 +309,7 @@ public class HotelBooking {
                     System.out.println(e + " Problem reading file.");
                 }
 
-                if(queryPin[0].equals("")) {
+                if(queryPin[0].equals(null)) {
                     System.out.println("**ERROR: ID was not found in system.**\n");
                 } else {
                     validID = true;
@@ -328,7 +329,7 @@ public class HotelBooking {
 
             // User quit; return to login screen
             if(pin.equals(String.valueOf(QUIT_NUM))) {
-                queryPin[1] = ""; // Mark as invalid, skip menu display
+                queryPin[1] = null; // Mark as invalid, skip menu display
                 validPIN = true;
             }
             // Inputted PIN matches with employee PIN
@@ -360,7 +361,7 @@ public class HotelBooking {
         }
 
         // Reset current employee ID
-        employeeID = "";
+        employeeID = null;
     }
 
     /*
