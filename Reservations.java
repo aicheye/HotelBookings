@@ -51,8 +51,6 @@ public class Reservations {
         boolean roomfound = false;
         try {
             int[] dateAvailable = Query.dateQuery(date);
-            int size = dateAvailable.length;
-
             for (int j : dateAvailable) {
                 if (j == room) {
                     roomfound = true;
@@ -65,11 +63,7 @@ public class Reservations {
         return roomfound;
     }
 
-    public static Object listToStringConversion(List<Integer> list) {
-        return list.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(", "));
-    }
+
 
     /*
     Method Name: listReservations
