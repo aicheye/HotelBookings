@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.time.LocalDate;
 
 
@@ -52,25 +51,23 @@ public class Reservations {
         try {
             int[] dateAvailable = Query.dateQuery(date);
             for (int j : dateAvailable) {
-                if (j == room) {
+                if (j == room) {//checks if the room number is equal to the room number that is available.
                     roomfound = true;
-                    break;
+                    break;//stops the for loop once it finds the room number is free/available on the date.
                 }
             }
         } catch (IOException e) {
             System.out.println(e);
         }
-        return roomfound;
+        return roomfound;//returns true or false depending if the conditions were met
     }
-
-
 
     /*
     Method Name: listReservations
     Return Type: void - prints out the day and room number if person has reservation
     Parameters: String firstName - first name of person
                 String lastName - last name of person
-    Description: Prints out the room number and dates the room is booked for
+    Description: Lists the room number and dates the room is booked for
 
     */
     public static void listReservations(String firstName, String lastName) {
@@ -82,10 +79,9 @@ public class Reservations {
         List<Integer> value = rooms.get(e);//gets the room numbers
         for (Object o : value) {
             days = o;
-            System.out.println(dateConverter(days));//prints out each date that the room is booked for
+            System.out.printf("%10s\n", dateConverter(days));//prints out each date that the room is booked for
         }
-
-    }
+        }
         }
         catch (IOException e)
         {
@@ -94,16 +90,36 @@ public class Reservations {
 
     }
     /*
-    public static String listReservations(String firstName, String lastName, int date) {
-        String checkTemp = null;
+       Method Name: listReservations
+       Return Type: void
+       Parameters: String firstName - first name of person
+                   String lastName - last name of person
+                   Object date - date number that user is searching for
+       Description:  Prints out which rooms are booked by the customer on given specific date
+
+       */
+    public static void listReservations(String firstName, String lastName, Object date) {
         try {
-            checkTemp = mapToStringConversion(Query.customerQuery(firstName, firstName));
-            return checkTemp;
-        } catch (IOException e) {
+            Object days;
+            Map<Integer, List<Integer>> rooms = Query.customerQuery(firstName, lastName);
+            System.out.printf("%s %s has booked the following rooms on %s: \n",firstName,lastName, dateConverter(date));
+            for  (int e: rooms.keySet()) {//gets each room #
+                List<Integer> value = rooms.get(e);//value is assigned the date the room numbers are booked
+                for (Object o : value) {
+                    days = o;//days are being assigned
+                    if (days==date){
+                        System.out.printf("%4s \n", e);//prints out the room numbers
+                    }
+                }
+
+
+
+            }
+        }
+        catch (IOException e)
+        {
             System.out.println(e);
         }
-
-        return checkTemp;
     }
 
 
@@ -125,10 +141,10 @@ public class Reservations {
         // Extract the day, month, and year from the target date
         int day = targetDate.getDayOfMonth();
         int month = targetDate.getMonthValue();
-        int year = targetDate.getYear();
+        int year = targetDate.getYear();//runs methods that get the month, day, year of the given date.
 
 
-        combined = year+"/"+month+"/"+day;
+        combined = day+"/"+month+"/"+year;//combines the date into a dd/mm/yyyy format
         return combined;
     }
 }
