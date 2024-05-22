@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+
 
 /*
  Programmer: Sean Liu
@@ -65,11 +65,10 @@ public class Reservations {
         return roomfound;
     }
 
-    public static String mapToStringConversion(Map<Integer, ?> map) {
-        String mapAsString = map.keySet().stream()
-                .map(key -> key + "=" + map.get(key))
-                .collect(Collectors.joining(", ", "{", "}"));
-        return mapAsString;//a map to string converter, there wasn't a method that could be used D:
+    public static Object listToStringConversion(List<Integer> list) {
+        return list.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(", "));
     }
 
     /*
@@ -80,26 +79,40 @@ public class Reservations {
     Description: Returns true of false if room is available on given day
 
     */
-    public static void listReservations(String firstName, String lastName) {
-        String date;
+    public static String listReservations(String firstName, String lastName) {
+        Object days;
         try {
-            try {
-                String mainInfo = mapToStringConversion(Query.customerQuery(firstName, lastName));
+            Map<Integer, List<Integer>> rooms = Query.customerQuery(firstName, lastName);
+    for  (int e: rooms.keySet()) {
+        System.out.printf("%s %s has booked Room %d for:\n", firstName, lastName, e);
+        List value = rooms.get(e);
+        for (int i = 0; i < value.size(); i++) {
+            days = value.get(i);
+            System.out.println(dateConverter(days));
+        }
 
-                if (mainInfo.equals("{}")) {
-                    System.out.println("This person has no rooms booked");
-                } else {
-                    date = dateConverter(Integer.parseInt(mainInfo.substring(6, mainInfo.length() - 2)));//use dateConverter here
-                    String room = mainInfo.substring(1, 4);
-                    System.out.printf("%s %s has booked room number %s on %s", firstName, lastName, room, date);
-                }//day needs to be changed to standard
-            } catch (NumberFormatException n) {
-                System.out.println(n);
-            }
+    }
+        }
+        catch (IOException e)
+        {
+            System.out.println(e);
+        }
+        return "";
+    }
+    /*
+    public static String listReservations(String firstName, String lastName, int date) {
+        String checkTemp = null;
+        try {
+            checkTemp = mapToStringConversion(Query.customerQuery(firstName, firstName));
+            return checkTemp;
         } catch (IOException e) {
             System.out.println(e);
         }
+
+        return checkTemp;
     }
+
+
 
     /*
     Method Name: dateConverter
@@ -108,12 +121,12 @@ public class Reservations {
     Description: Returns a date
 
     */
-    public static String dateConverter(int days) {
+    public static String dateConverter(Object days) {
         String combined;
         LocalDate startDate = LocalDate.of(2024, 1, 1);//puts in start date
 
         // Calculate the target date by adding the number of days to the start date
-        LocalDate targetDate = startDate.plusDays(days);
+        LocalDate targetDate = startDate.plusDays(((Integer)days));
 
         // Extract the day, month, and year from the target date
         int day = targetDate.getDayOfMonth();
@@ -125,10 +138,3 @@ public class Reservations {
         return combined;
     }
 }
-
-
-
-
-
-
-
