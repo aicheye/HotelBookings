@@ -13,6 +13,8 @@ import java.io.*;
     * Reservations class not yet implemented
     * Update class not yet implemented
     * Write.edtPin not yet implemented
+
+ TODO: Test menu, add admin menu options, read dates as dd/mm/yyyy and convert to int
 */
 
 public class HotelBooking {
@@ -53,9 +55,9 @@ public class HotelBooking {
 
      * 21/05/2024
      * Raymond Zhang - Replaced method calls to Reservation.java with print statements for testing.
-                       Fixed infinite loop by reading line outside of try-catch block.
-                       Changed error messages to stand out more.
-                       Removed local declaration of Scanner.
+       Fixed infinite loop in input validation by reading line outside of try-catch block
+       Changed error messages to stand out more.
+       Removed local declaration of Scanner.
     */
     public static int getRoomInput(int date) {
         // Declare variables
@@ -108,10 +110,12 @@ public class HotelBooking {
      * Raymond Zhang - Created and finished method. Has yet to be tested.
 
      * 21/05/2024
-     * Raymond Zhang - Fixed infinite loop by reading line outside of try-catch block.
-                       Changed error message to stand out more.
-                       Removed local declaration of Scanner.
+     * Raymond Zhang - Fixed infinite loop in input validation by reading line outside of try-catch block
+       Changed error message to stand out more.
+       Removed local declaration of Scanner.
     */
+
+    // TODO: Read dates as DD/MM/YYYY (can do .matches("^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[1,2])\/2024$"))
     public static int getDateInput() {
         // Declare variable
         int date = -1;
@@ -153,11 +157,12 @@ public class HotelBooking {
 
      * 21/05/2024
      * Raymond Zhang - Replaced method calls to Reservation.java with print statements for testing.
-                       Renamed customRooms to customerRooms. Added IOException handling.
-                       Fixed infinite loop by reading line outside of try-catch block.
-                       Changed error messages to stand out more.
-                       Removed local declaration of Scanner.
+       Renamed customRooms to customerRooms. Added IOException handling.
+       Fixed infinite loop in input validation by reading line outside of try-catch block
+       Changed error messages to stand out more.
+       Removed local declaration of Scanner.
     */
+    // FIXME: Date and room should be swapped
     public static int[] getReservation(String firstName, String lastName) {
         // Declare variables
         Map<Integer, List<Integer>> customerReservations = new HashMap<Integer, List<Integer>>();
@@ -266,10 +271,10 @@ public class HotelBooking {
 
      * 21/05/2024
      * Raymond Zhang - Added IOException handling. Changed ID and PIN data type to String.
-                       Fixed infinite loop by reading line outside of try-catch block.
-                       Changed error messages to stand out more.
-                       Removed local declaration of Scanner.
-                       Added newlines to messages to look less cluttered in console
+       Fixed infinite loop in input validation by reading line outside of try-catch block
+       Changed error messages to stand out more.
+       Removed local declaration of Scanner.
+       Added newlines to messages to look less cluttered in console
     */
     public static void login() {
         // Declare variables
@@ -370,20 +375,23 @@ public class HotelBooking {
 
      * 21/05/2024
      * Raymond Zhang - Replaced method calls to Reservation.java, Update.java and Write.java with print statements for testing.
-                       Added IOException handling to case 7. Changed PIN data type to String.
-                       Fixed infinite loop by reading line outside of try-catch block.
-                       Changed error messages to stand out more.
-                       Removed local declaration of Scanner.
-                       Fixed issue with formatted printing in case 7 trying to print a String as an int.
-                       Added error message for invalid PINs in case 7
-                       Reset looping variable in case 7
+       Added IOException handling to case 7. Changed PIN data type to String.
+       Fixed infinite loop in input validation by reading line outside of try-catch block
+       Changed error messages to stand out more.
+       Removed local declaration of Scanner.
+       Fixed issue with formatted printing in case 7 trying to print a String as an int.
+       Added error message for invalid PINs in case 7
+       Reset looping variable in case 7
+
+     * 22/05/2024
+     * Raymond Zhang - Finished all cases
     */
     public static void defaultMenu() {
         // Declare variables
-        int choice = -1, date = -1, room = -1;
+        int choiceMenu = -1, choiceChange = -1, date = -1, room = -1, newDate = -1, newRoom = -1;
         int[] res; // reservation: [date, room]
-        boolean running = true, validPIN = false;
-        String line, firstName, lastName, pin, oldPIN, newPIN;
+        boolean running = true, validPIN = false, changed = false;
+        String line, firstName, lastName, pin, oldPIN, newPIN, firstNew, lastNew;
 
         while(running) {
             // Print menu
@@ -403,15 +411,15 @@ public class HotelBooking {
             // Get menu choice from user
             line = sc.nextLine();
             try {
-                choice = Integer.parseInt(line);
+                choiceMenu = Integer.parseInt(line);
             }
             // User inputted non-numerical characters
             catch (NumberFormatException e) {
-                choice = -1;
+                choiceMenu = -1;
             }
 
             // Run actions depending on choice
-            switch(choice) {
+            switch(choiceMenu) {
                 // List available rooms on given date
                 case 1:
                     // Receive user input for the date
@@ -491,8 +499,138 @@ public class HotelBooking {
 
                     break;
 
-                // TODO: Change a reservation
+                // Change a reservation
                 case 6:
+                    // ? Should probably list all reservations
+
+                    // Get first name
+                    System.out.print("Enter the first name: ");
+                    firstName = sc.nextLine();
+
+                    // Get last name
+                    System.out.print("Enter the last name: ");
+                    lastName = sc.nextLine();
+
+                    // Get the reservation of choice
+                    res = getReservation(firstName, lastName);
+
+                    // User did not choose to abort
+                    if(res[1] != QUIT_NUM) {
+
+                        // Loop until valid choice is made
+                        do {
+                            // Print change options
+                            System.out.println("\nWhat would you like to change?");
+                            System.out.println();
+                            System.out.println("1. Name");
+                            System.out.println("2. Date");
+                            System.out.println("3. Room");
+                            System.out.println("4. Go back to menu");
+                            System.out.println();
+                            System.out.print("Enter your selection: ");
+
+                            // Get choice from user
+                            line = sc.nextLine();
+                            try {
+                                choiceChange = Integer.parseInt(line);
+                            }
+                            // User inputted non-numerical characters
+                            catch (NumberFormatException e) {
+                                choiceChange = -1;
+                            }
+
+                            // Run actions depending on choice
+                            switch (choiceChange) {
+                                // Change name
+                                case 1:
+                                    // Get new first name
+                                    System.out.print("Enter the new first name: ");
+                                    firstNew = sc.nextLine();
+
+                                    // Get new last name
+                                    System.out.print("Enter the new last name: ");
+                                    lastNew = sc.nextLine();
+
+                                    // Change name of reservation
+                                    // ! Reservations.reserveChange(firstName, lastName, room, date, firstNew, lastNew);
+                                    System.out.printf("Changed reservation name of room %d on day %d from %s %s to %s %s.%n", res[1], res[0], firstName, lastName, firstNew, lastNew);
+
+                                    break;
+
+                                // Change date
+                                case 2:
+
+                                    do {
+                                        // TODO: User should be able to abort
+                                        // Get new date
+                                        newDate = getDateInput();
+
+                                        // Check if room is available on new date
+                                        if(true){
+                                        // ! if(Reservations.checkAvailability(newDate, room)) {
+                                            // ! Reservations.reserveChange(firstName, lastName, false, date, newDate);
+                                            System.out.printf("Changed %s %s's reservation date of room %d from day %d from day %d.%n", firstName, lastName, res[1], res[0], newDate);
+                                            changed = true;
+                                        } else {
+                                            System.out.printf("**ERROR: Room %d is unavailable on day %d**%n%n", room, newDate);
+                                        }
+                                    } while(!changed);
+
+                                    // Reset loop condition
+                                    changed = false;
+
+                                    break;
+
+                                // Change room
+                                case 3:
+
+                                    do {
+                                        // Get new room
+                                        System.out.print("Enter the new room number (0 to cancel): ");
+                                        line = sc.nextLine();
+
+                                        try {
+                                            newRoom = Integer.parseInt(line);
+
+                                            // User aborted
+                                            if(newRoom == QUIT_NUM) {
+                                                changed = true;
+                                            }
+                                            // Check if new room is available
+                                            else if(true){
+                                            // ! else if(Reservations.checkAvailability(date, newRoom)) {
+                                                // ! Reservations.reserveChange(firstName, lastName, true, date, newDate);
+                                                System.out.printf("Changed %s %s's reservation room on day %d from room %d to room %d.%n", firstName, lastName, res[0], res[1], newRoom);
+                                                changed = true;
+                                            } else {
+                                                System.out.printf("**ERROR: Room %d is unavailable**%n%n", newRoom);
+                                            }
+                                        }
+                                        // User inputted non-numerical characters
+                                        catch (NumberFormatException e) {
+                                            System.out.println("**ERROR: Room number must be an integer.**\n");
+                                        }
+
+                                    } while(!changed);
+
+                                    // Reset loop condition
+                                    changed = false;
+
+                                    break;
+
+                                // Cancel change
+                                case 4:
+                                    System.out.println("Returning to main menu...");
+                                    break;
+
+                                // Invalid choice made
+                                default:
+                                    System.out.println("**ERROR: Choice must be an integer from 1 to 4.**");
+                                    choiceChange = -1;
+                                    break;
+                            }
+                        } while(choiceChange == -1);
+                    }
 
                     break;
 
