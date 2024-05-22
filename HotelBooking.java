@@ -68,8 +68,8 @@ public class HotelBooking {
         // Get a valid room number from user
         do {
             // Display available rooms on given date
-            // ! Reservations.listAvailableRooms(date);
-            System.out.printf("Listing available rooms for day %d.%n", date);
+            Reservations.listAvailableRooms(date);
+            // System.out.printf("Listing available rooms for day %d.%n", date);
 
             // Receive input for room number
             System.out.print("Enter the room number (0 to cancel): ");
@@ -83,7 +83,7 @@ public class HotelBooking {
                 }
                 // Check if room is invalid
                 else {
-                    validRoom = true; // !Reservations.checkAvailability(date, room);
+                    validRoom = Reservations.checkAvailability(date, room);
                     if(!validRoom) {
                         System.out.printf("**ERROR: Room %d is not available on day %d.%n%n**", room, date);
                     }
@@ -188,8 +188,8 @@ public class HotelBooking {
         else {
             // Get the room from user
             do {
-                // ! Reservations.listReservations(firstName, lastName);
-                System.out.printf("Listing reservations for %s %s.%n", firstName, lastName);
+                Reservations.listReservations(firstName, lastName);
+                // System.out.printf("Listing reservations for %s %s.%n", firstName, lastName);
 
                 System.out.print("Enter the room number (0 to quit): ");
                 line = sc.nextLine();
@@ -432,8 +432,8 @@ public class HotelBooking {
                     date = getDateInput();
 
                     // List rooms
-                    // ! Reservations.listAvailableRooms(date);
-                    System.out.printf("Listing available rooms for day %d.%n", date);
+                    Reservations.listAvailableRooms(date);
+                    // System.out.printf("Listing available rooms for day %d.%n", date);
                     break;
 
                 // List reservations on a given date
@@ -457,7 +457,7 @@ public class HotelBooking {
                     lastName = sc.nextLine();
 
                     // List reservations
-                    // ! Reservations.listReservations(firstName, lastName);
+                    Reservations.listReservations(firstName, lastName);
                     System.out.printf("Listing reservations for %s %s.%n", firstName, lastName);
                     break;
 
@@ -558,7 +558,7 @@ public class HotelBooking {
                                     lastNew = sc.nextLine();
 
                                     // Change name of reservation
-                                    // ! Reservations.reserveChange(firstName, lastName, room, date, firstNew, lastNew);
+                                    // ! Update.reserveChange(firstName, lastName, room, date, firstNew, lastNew);
                                     System.out.printf("Changed reservation name of room %d on day %d from %s %s to %s %s.%n", res[0], res[1], firstName, lastName, firstNew, lastNew);
 
                                     break;
@@ -572,9 +572,8 @@ public class HotelBooking {
                                         newDate = getDateInput();
 
                                         // Check if room is available on new date
-                                        if(true){
-                                        // ! if(Reservations.checkAvailability(newDate, room)) {
-                                            // ! Reservations.reserveChange(firstName, lastName, false, date, newDate);
+                                        if(Reservations.checkAvailability(newDate, room)) {
+                                            // ! Update.reserveChange(firstName, lastName, false, date, newDate);
                                             System.out.printf("Changed %s %s's reservation date of room %d from day %d from day %d.%n", firstName, lastName, res[0], res[1], newDate);
                                             changed = true;
                                         } else {
@@ -603,9 +602,8 @@ public class HotelBooking {
                                                 changed = true;
                                             }
                                             // Check if new room is available
-                                            else if(true){
-                                            // ! else if(Reservations.checkAvailability(date, newRoom)) {
-                                                // ! Reservations.reserveChange(firstName, lastName, true, date, newDate);
+                                            else if(Reservations.checkAvailability(date, newRoom)) {
+                                                // ! Update.reserveChange(firstName, lastName, true, date, newDate);
                                                 System.out.printf("Changed %s %s's reservation room on day %d from room %d to room %d.%n", firstName, lastName, res[1], res[0], newRoom);
                                                 changed = true;
                                             } else {
