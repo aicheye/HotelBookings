@@ -249,29 +249,35 @@ public class Query
 
     /*
      Method Name: employeePinQuery
-     Return Type: int[0] - The pin of the employee, -1 if the employee doesn't exist
-                  int[1] - Whether the employee is admin or not (0 or 1)
+     Return Type: String[0] - The pin of the employee, null if the employee doesn't exist
+                  String[1] - Whether the employee is admin or not (0 or 1)
      Parameters: int id - The employee id to search for
      Description: Returns the pin and admin status of an employee
      */
-    public static int[] employeePinQuery (int id) throws IOException
+    public static String[] employeePinQuery (String id) throws IOException
     {
         // init variables and file reader
-        int pin = -1; // pin of the employee
-        int admin = -1; // whether the employee is admin
+        String pin = null; // pin of the employee
+        String admin = null; // whether the employee is admin
+        String line;
         BufferedReader br = new BufferedReader(new FileReader(EMPLOYEES_DB));
 
         boolean foundId = false;
         while (!foundId)
         {
+            line = br.readLine();
+
+            // check if EOF
+            if (line == null) foundId = true;
+
             // check if the employee id matches
-            if (Integer.parseInt(br.readLine()) == id) {
+            else if (line.equals(id)) {
                 br.readLine();
                 br.readLine();
 
                 // update pin admin and foundId
-                pin = Integer.parseInt(br.readLine());
-                admin = Integer.parseInt(br.readLine());
+                pin = br.readLine();
+                admin = br.readLine();
                 foundId = true;
             }
 
@@ -284,6 +290,6 @@ public class Query
         // close file reader
         br.close();
 
-        return new int[]{pin, admin}; // returns an array with two indices
+        return new String[]{pin, admin}; // returns an array with two indices
     }
 }
