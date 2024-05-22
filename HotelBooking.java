@@ -161,6 +161,9 @@ public class HotelBooking {
        Fixed infinite loop in input validation by reading line outside of try-catch block
        Changed error messages to stand out more.
        Removed local declaration of Scanner.
+
+     * 22/05/2024
+     * Raymond Zhang - Swapped room and date to match with Query method call
     */
     public static int[] getReservation(String firstName, String lastName) {
         // Declare variables
