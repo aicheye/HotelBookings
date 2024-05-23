@@ -38,8 +38,9 @@ public class Write
         boolean customerExists = false; // whether the customer is in the database
         boolean customerBookedRoom = false; // whether the customer has previously booked this room
         List<String> Name = new ArrayList<String>(); // ArrayList representing the customer's full name
-        Name.add(firstName); // add first name
-        Name.add(lastName); // add last name
+        Name.add(firstName);
+        Name.add(lastName);
+        String op; // the log message
 
         // check if the customer exists and update customerExists
         if (customers.containsKey(Name))
@@ -96,6 +97,13 @@ public class Write
         // write to file using allCustomers and allDays
         allCustomers(customers);
         allDays(days);
+
+        // log changes
+        op = "RES add";
+        op += " " + firstName + " " + lastName;
+        op += " " + room;
+        op += " " + date;
+        logOp(op);
     }
 
     /*
@@ -114,6 +122,7 @@ public class Write
         List<String> name = new ArrayList<>(); // ArrayList representing the customer's full name
         name.add(firstName);
         name.add(lastName);
+        String op; // the log message
 
         // remove reservation from customers
         customers.get(name).get(room).remove(date);
@@ -128,6 +137,13 @@ public class Write
         // write to file using allCustomers and allDays
         allCustomers(customers);
         allDays(days);
+
+        // log changes
+        op = "RES del";
+        op += " " + firstName + " " + lastName;
+        op += " " + room;
+        op += " " + date;
+        logOp(op);
     }
 
     /*
@@ -142,8 +158,19 @@ public class Write
      */
     public static void edtReserve(String oldFirst, String oldLast, int room, int date, String newFirst, String newLast) throws IOException
     {
+        // declare variables
+        String op; // the log message
+
         delReserve(oldFirst, oldLast, room, date); // delete the old reservation
         addReserve(newFirst, newLast, room, date); // add a new reservation
+
+        // log changes
+        op = "RES edtn";
+        op += " " + oldFirst + " " + oldLast;
+        op += " " + room;
+        op += " " + date;
+        op += " " + newFirst + " " + newFirst;
+        logOp(op);
     }
 
     /*
@@ -158,16 +185,35 @@ public class Write
      */
     public static void edtReserve(String firstName, String lastName, boolean changeRoom, int dateOrRoom, int old, int now) throws IOException
     {
+        // declare variables
+        String op; // the log message
+
         // if the user wants to change the room
         if (changeRoom) {
             delReserve(firstName, lastName, old, dateOrRoom); // delete the old reservation
             addReserve(firstName, lastName, now, dateOrRoom); // add a new reservation with the new room
+
+            // log changes
+            op = "RES edtr";
+            op += " " + firstName + " " + lastName;
+            op += " " + old;
+            op += " " + dateOrRoom;
+            op += " " + now;
+            logOp(op);
         }
 
         // if the user wants to change the date
         else {
             delReserve(firstName, lastName, dateOrRoom, old); // delete the old reservation
             delReserve(firstName, lastName, dateOrRoom, now); // add a new reservation with the new date
+
+            // log changes
+            op = "RES edtd";
+            op += " " + firstName + " " + lastName;
+            op += " " + dateOrRoom;
+            op += " " + old;
+            op += " " + now;
+            logOp(op);
         }
     }
 
@@ -180,12 +226,18 @@ public class Write
     {
         // declare variables
         List<Integer> rooms = Query.allRooms();
+        String op; // the log message
 
         // append to ArrayList
         rooms.add(room);
 
         // write using allRooms
         allRooms(rooms);
+
+        // log changes
+        op = "ROOM add";
+        op += " " + room;
+        logOp(op);
     }
 
     /*
@@ -197,12 +249,18 @@ public class Write
     {
         // declare variables
         List<Integer> rooms = Query.allRooms();
+        String op; // the log message
 
         // remove from ArrayList
         rooms.remove((Integer) room);
 
         // write using allRooms
         allRooms(rooms);
+
+        // log changes
+        op = "ROOM del";
+        op += " " + room;
+        logOp(op);
     }
 
     /*
@@ -219,6 +277,7 @@ public class Write
         // declare variables
         List<HashMap<String, String>> employees = Query.allEmployees();
         HashMap<String, String> newEmployee = new HashMap<String, String>();
+        String op; // the log message
 
         // init new employee and add to ArrayList
         newEmployee.put("id", id);
@@ -230,6 +289,11 @@ public class Write
 
         // write to file using allEmployees
         allEmployees(employees);
+
+        // log changes
+        op = "EE add";
+        op += " " + id;
+        logOp(op);
     }
 
     /*
@@ -242,6 +306,7 @@ public class Write
         // declare variables
         List<HashMap<String, String>> employees = Query.allEmployees();
         int index = -1; // the index of the employee to be removed
+        String op; // the log message
 
         // loop over the employees and locate the correct id to remove
         for (int i=0; i<employees.size(); i++)
@@ -255,6 +320,11 @@ public class Write
 
         // write to file using allEmployees
         allEmployees(employees);
+
+        // log changes
+        op = "EE del";
+        op += " " + id;
+        logOp(op);
     }
 
     /*
@@ -267,6 +337,7 @@ public class Write
     {
         // declare variables
         List<HashMap<String, String>> employees = Query.allEmployees();
+        String op; // the log message
 
         // loop over the employees and locate the correct id to update
         for (HashMap<String, String> e : employees) {
@@ -276,6 +347,12 @@ public class Write
 
         // write to file using allEmployees
         allEmployees(employees);
+
+        // log changes
+        op = "EE edit";
+        op += " " + id;
+        op += " " + newPin;
+        logOp(op);
     }
 
     /*
