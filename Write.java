@@ -1,5 +1,3 @@
-import javax.naming.Name;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.io.*;
 
@@ -132,39 +130,152 @@ public class Write
         allDays(days);
     }
 
-    public static void edtReserve(String oldFirst, String oldLast, int code, int room, int date, String newFirst, String newLast)
+    /*
+     Method Name: edtReserve
+     Parameters: String oldFirst - The first name of the reservation
+                 String oldLast - The last name of the reservation
+                 int room - The room number
+                 int date - The date
+                 String newFirst - The new first name
+                 String newLast - The new last name
+     Description: Updates a reservation in customers.txt and days.txt
+     */
+    public static void edtReserve(String oldFirst, String oldLast, int room, int date, String newFirst, String newLast) throws IOException
     {
-
+        delReserve(oldFirst, oldLast, room, date); // delete the old reservation
+        addReserve(newFirst, newLast, room, date); // add a new reservation
     }
 
-    public static void edtReserve(String firstName, String lastName, int code, int roomOrDate, int old, int now)
+    /*
+     Method Name: delReserve
+     Parameters: String firstName - The first name of the customer
+                 String lastName - The last name of the customer
+                 boolean changeRoom - Whether the user wants to change the room
+                 int dateOrRoom - The date or room, whichever is unchanged
+                 int old - The old value
+                 int now - The new value
+     Description: Updates a reservation in customers.txt and days.txt
+     */
+    public static void edtReserve(String firstName, String lastName, boolean changeRoom, int dateOrRoom, int old, int now) throws IOException
     {
+        // if the user wants to change the room
+        if (changeRoom) {
+            delReserve(firstName, lastName, old, dateOrRoom); // delete the old reservation
+            addReserve(firstName, lastName, now, dateOrRoom); // add a new reservation with the new room
+        }
 
+        // if the user wants to change the date
+        else {
+            delReserve(firstName, lastName, dateOrRoom, old); // delete the old reservation
+            delReserve(firstName, lastName, dateOrRoom, now); // add a new reservation with the new date
+        }
     }
 
-    public static void addRooms(int room)
+    /*
+     Method Name: addRoom
+     Parameters: int room - The room to be added
+     Description: Adds a room to rooms.txt
+     */
+    public static void addRoom(int room) throws IOException
     {
+        // declare variables
+        List<Integer> rooms = Query.allRooms();
 
+        // append to ArrayList
+        rooms.add(room);
+
+        // write using allRooms
+        allRooms(rooms);
     }
 
-    public static void delRoom(int room)
+    /*
+     Method Name: delRoom
+     Parameters: int room - The room to be removed
+     Description: Deletes a room from rooms.txt
+     */
+    public static void delRoom(int room) throws IOException
     {
+        // declare variables
+        List<Integer> rooms = Query.allRooms();
 
+        // remove from ArrayList
+        rooms.remove((Integer) room);
+
+        // write using allRooms
+        allRooms(rooms);
     }
 
-    public static void addEmployee(int id, String firstName, String lastName, int room, int date)
+    /*
+     Method Name: addEmployee
+     Parameters: String id - The id of the employee
+                 String firstName - The employee's first name
+                 String lastName - The employee's last name
+                 String pin - The employee's login pin
+                 String isAdmin - Whether this employee is an admin or not
+     Description: Adds a new employee to employees.txt
+     */
+    public static void addEmployee(String id, String firstName, String lastName, String pin, String isAdmin) throws IOException
     {
+        // declare variables
+        List<HashMap<String, String>> employees = Query.allEmployees();
+        HashMap<String, String> newEmployee = new HashMap<String, String>();
 
+        // init new employee and add to ArrayList
+        newEmployee.put("id", id);
+        newEmployee.put("firstName", firstName);
+        newEmployee.put("lastName", lastName);
+        newEmployee.put("pin", pin);
+        newEmployee.put("isAdmin", isAdmin);
+        employees.add(newEmployee);
+
+        // write to file using allEmployees
+        allEmployees(employees);
     }
 
-    public static void delEmployee(int id)
+    /*
+     Method Name: delEmployee
+     Parameters: String id - The employee to remove
+     Description: Deletes an employee entry from employees.txt
+     */
+    public static void delEmployee(String id) throws IOException
     {
+        // declare variables
+        List<HashMap<String, String>> employees = Query.allEmployees();
+        int index = -1; // the index of the employee to be removed
 
+        // loop over the employees and locate the correct id to remove
+        for (int i=0; i<employees.size(); i++)
+        {
+            // if the id matches, save the index
+            if (employees.get(i).get("id").equals(id)) index = i;
+        }
+
+        // remove this employee from the database if they exist
+        if (index != -1) employees.remove(index);
+
+        // write to file using allEmployees
+        allEmployees(employees);
     }
 
-    public static void edtPin(String id, String newPin)
+    /*
+     Method Name: edtPin
+     Parameters: String id - The employee to edit
+                 String newPin - The employee's pin
+     Description: Change's an employees pin in employees.txt
+     */
+    public static void edtPin(String id, String newPin) throws IOException
     {
+        // declare variables
+        List<HashMap<String, String>> employees = Query.allEmployees();
 
+        // loop over the employees and locate the correct id to update
+        for (HashMap<String, String> e : employees) {
+            // if the id matches, change their pin
+            if (e.get("id").equals(id)) e.put("pin", newPin);
+        }
+
+        // write to file using allEmployees
+        allEmployees(employees);
     }
 
     /*
