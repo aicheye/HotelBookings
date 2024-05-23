@@ -299,12 +299,13 @@ public class Query
                                                                           names and rooms booked
      Description: Returns all customers and the rooms/days they have booked
     */
-    public static Map<String, Map<Integer, List<Integer>>> allCustomers() throws IOException
+    public static Map<List<String>, Map<Integer, List<Integer>>> allCustomers() throws IOException
     {
         // declare variables and init file reader
         BufferedReader br = new BufferedReader(new FileReader(CUSTOMERS_DB));
-        Map<String, Map<Integer, List<Integer>>> customers = new HashMap<>();
+        Map<List<String>, Map<Integer, List<Integer>>> customers = new HashMap<>();
         String fName, lName, line;
+        List<String> name;
         List<String> db = new ArrayList<>(); // the file converted into an ArrayList
 
         // append each line to db
@@ -319,7 +320,10 @@ public class Query
         // loop over customers.txt and find each customer
         fName = db.get(0);
         lName = db.get(1);
-        customers.put(fName + " " + lName, customerQuery(fName, lName));
+        name = new ArrayList<>();
+        name.add(fName);
+        name.add(lName);
+        customers.put(name, customerQuery(fName, lName));
         for (int i=2; i<db.size()-2; i++)
         {
             // check if there is a new customer
@@ -328,7 +332,10 @@ public class Query
                 // add this customer to the HashMap
                 fName = db.get(i+1);
                 lName = db.get(i+2);
-                customers.put(fName + " " + lName, customerQuery(fName, lName));
+                name = new ArrayList<>();
+                name.add(fName);
+                name.add(lName);
+                customers.put(name, customerQuery(fName, lName));
             }
         }
 
