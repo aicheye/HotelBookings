@@ -339,6 +339,9 @@ public class Query
             }
         }
 
+        // close file reader
+        br.close();
+
         return customers;
     }
 
@@ -382,6 +385,9 @@ public class Query
             }
         }
 
+        // close file reader
+        br.close();
+
         return days;
     }
 
@@ -404,6 +410,9 @@ public class Query
             rooms.add(Integer.parseInt(line));
             line = br.readLine();
         }
+
+        // close BufferedReader
+        br.close();
 
         return rooms;
     }
@@ -440,6 +449,9 @@ public class Query
             pin = br.readLine();
             isAdmin = br.readLine();
         }
+
+        // close file reader
+        br.close();
 
         return employees;
     }
