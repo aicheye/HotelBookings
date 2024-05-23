@@ -1,3 +1,4 @@
+import javax.naming.Name;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.io.*;
@@ -35,7 +36,7 @@ public class Write
     {
         // declare variables
         Map<List<String>, Map<Integer, List<Integer>>> customers = Query.allCustomers(); // get all customers
-        List<List<Integer>> days = Query.allDays();
+        List<List<Integer>> days = Query.allDays(); // get all days
         boolean customerExists = false; // whether the customer is in the database
         boolean customerBookedRoom = false; // whether the customer has previously booked this room
         List<String> Name = new ArrayList<String>(); // ArrayList representing the customer's full name
@@ -109,7 +110,26 @@ public class Write
      */
     public static void delReserve(String firstName, String lastName, int room, int date) throws IOException
     {
+        // declare variables
+        Map<List<String>, Map<Integer, List<Integer>>> customers = Query.allCustomers(); // get all customers
+        List<List<Integer>> days = Query.allDays(); // get all days
+        List<String> name = new ArrayList<>(); // ArrayList representing the customer's full name
+        name.add(firstName);
+        name.add(lastName);
 
+        // remove reservation from customers
+        customers.get(name).get(room).remove(date);
+        // check if the room booking is now empty and remove the room
+        if (customers.get(name).get(room).size() == 0) customers.get(name).remove(room);
+        // check if the customer has no remaining reservations and remove the room
+        if (customers.get(name).size() == 0) customers.remove(name);
+
+        // remove reservation from days
+        days.get(date).remove((Integer) room);
+
+        // write to file using allCustomers and allDays
+        allCustomers(customers);
+        allDays(days);
     }
 
     public static void edtReserve(String oldFirst, String oldLast, int code, int room, int date, String newFirst, String newLast)
