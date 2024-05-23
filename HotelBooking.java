@@ -1,5 +1,9 @@
 import java.util.*; // Import libraries
 import java.io.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 
 // TODO: Testing
 
@@ -27,6 +31,38 @@ public class HotelBooking {
 
     // Create Scanner
     private static Scanner sc = new Scanner(System.in);
+
+    /*
+     Method Name: dateConverter
+     Return Type: int - The number of days pass since the start date (Jan 1, 2024).
+                        Will return -1 if date is Dec 31, 2023 or if invalid date format was given.
+     Parameters: String - A date in dd/MM/yyyy
+     Description: Converts a formatted date into a number represented the number of days past since Jan 01, 2024.
+     Dates modified:
+     * 23/05/2024
+     * Raymond Zhang - Created and finished method.
+    */
+    public static int dateConverter (String dateStr) {
+        // Declare variables
+        int daysBetween = 0;
+        LocalDate targetDate = null;
+        LocalDate startDate = LocalDate.of(2024, 1, 1);
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        // Try to convert String to date
+        try {
+            targetDate = LocalDate.parse(dateStr, dateFormat);
+
+            // Calculate days since start
+            daysBetween = (int)ChronoUnit.DAYS.between(startDate, targetDate);
+        }
+        // Invalid date format entered
+        catch (DateTimeParseException e) {
+            daysBetween = -1;
+        }
+
+        return daysBetween;
+    }
 
     /*
      Method Name: getEmployeeID
@@ -115,7 +151,7 @@ public class HotelBooking {
        Removed local declaration of Scanner.
     */
 
-    // TODO: Read dates as DD/MM/YYYY (can do .matches("^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[1,2])\/2024$"))
+    // TODO: Read dates as DD/MM/YYYY
     public static int getDateInput() {
         // Declare variable
         int date = -1;
