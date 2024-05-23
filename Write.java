@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.*;
 import java.io.*;
 
@@ -32,7 +33,70 @@ public class Write
      */
     public static void addReserve(String firstName, String lastName, int room, int date) throws IOException
     {
+        // declare variables
+        Map<List<String>, Map<Integer, List<Integer>>> customers = Query.allCustomers(); // get all customers
+        List<List<Integer>> days = Query.allDays();
+        boolean customerExists = false; // whether the customer is in the database
+        boolean customerBookedRoom = false; // whether the customer has previously booked this room
+        List<String> Name = new ArrayList<String>(); // ArrayList representing the customer's full name
+        Name.add(firstName); // add first name
+        Name.add(lastName); // add last name
 
+        // check if the customer exists and update customerExists
+        if (customers.containsKey(Name))
+        {
+            customerExists = true;
+            // check if the customer has booked the room and update customerBookedRoom
+            if (customers.get(Name).containsKey(room)) customerBookedRoom = true;
+        }
+
+        // case 1: the customer does not exist in the database
+        if (!customerExists)
+        {
+            // add a new key-value pair
+            customers.put(Name, new HashMap<Integer, List<Integer>>());
+            // add the room to the new key-value pair
+            customers.get(Name).put(room, new ArrayList<Integer>());
+            // add the date to the room
+            customers.get(Name).get(room).add(date);
+        }
+
+        // case 2: the customer exists in the database but has not booked this room previously
+        if (customerExists && !customerBookedRoom)
+        {
+            // add the room to the customer's bookings
+            customers.get(Name).put(room, new ArrayList<Integer>());
+            // add the date to the room
+            customers.get(Name).get(room).add(date);
+        }
+
+        // case 3: the customer exists in the database and has booked this room previously
+        if (customerExists && customerBookedRoom)
+        {
+            // add the date to the room
+            customers.get(Name).get(room).add(date);
+        }
+
+        // update days
+        // case 1: the date has been booked previously
+        if (date <= days.size()-1)
+        {
+            // add the room to the date
+            days.get(date).add(room);
+        }
+
+        // case 2: the date has not been booked previously
+        else
+        {
+            // keep adding until the size of days is large enough
+            while (days.size()-1 < date) days.add(new ArrayList<>());
+            // add the room to the date
+            days.get(date).add(room);
+        }
+
+        // write to file using allCustomers and allDays
+        allCustomers(customers);
+        allDays(days);
     }
 
     /*
@@ -196,7 +260,7 @@ public class Write
     public static void allEmployees(List<HashMap<String, String>> employees) throws IOException
     {
         // init file writer and variables
-        BufferedWriter bw = new BufferedWriter(new FileWriter(ROOMS_DB));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(EMPLOYEES_DB));
 
         // loop over every date
         for (int i=0; i<employees.size(); i++)
