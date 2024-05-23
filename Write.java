@@ -10,7 +10,7 @@ import java.io.*;
 
 public class Write
 {
-    // Create file readers
+    // Constants for filenames
     static final String DAYS_DB = "days.txt";
     static final String CUSTOMERS_DB = "customers.txt";
     static final String EMPLOYEES_DB = "employees.txt";
@@ -32,308 +32,501 @@ public class Write
      */
     public static void addReserve(String firstName, String lastName, int room, int date) throws IOException
     {
-        // init file readers and store the files represented as ArrayLists
-        BufferedReader readCustomers = new BufferedReader(new FileReader(CUSTOMERS_DB));
-        BufferedReader readDays = new BufferedReader(new FileReader(DAYS_DB));
+        // declare variables
+        Map<List<String>, Map<Integer, List<Integer>>> customers = Query.allCustomers(); // get all customers
+        List<List<Integer>> days = Query.allDays(); // get all days
+        boolean customerExists = false; // whether the customer is in the database
+        boolean customerBookedRoom = false; // whether the customer has previously booked this room
+        List<String> Name = new ArrayList<String>(); // ArrayList representing the customer's full name
+        Name.add(firstName);
+        Name.add(lastName);
+        String op; // the log message
 
-        // store each line of both files in an item in an ArrayList
-        List<String> customers = new ArrayList<>();
-        String line = readCustomers.readLine();
-        while (line != null)
+        // check if the customer exists and update customerExists
+        if (customers.containsKey(Name))
         {
-            customers.add(line);
-            line = readCustomers.readLine();
+            customerExists = true;
+            // check if the customer has booked the room and update customerBookedRoom
+            if (customers.get(Name).containsKey(room)) customerBookedRoom = true;
         }
 
-        List<String> days = new ArrayList<>();
-        line = readDays.readLine();
-        while (line != null)
-        {
-            days.add(line);
-            line = readDays.readLine();
-        }
-
-        // check if the customer already exists in customers.txt
-        boolean customerExists = Query.customerQuery(firstName, lastName).size() > 0;
-        // if the customer exists, check if they have already booked this room
-        boolean customerBookedRoom = false;
-        if (customerExists) customerBookedRoom = Query.customerQuery(firstName, lastName).containsKey(room);
-
-        // if the customer is new, append to customers.txt
+        // case 1: the customer does not exist in the database
         if (!customerExists)
         {
-            customers.add(firstName);
-            customers.add(lastName);
-            customers.add(String.valueOf(room));
-            customers.add(String.valueOf(date));
-            customers.add(ROOM_DELIMITER);
-            customers.add(CUSTOMER_DELIMITER);
+            // add a new key-value pair
+            customers.put(Name, new HashMap<Integer, List<Integer>>());
+            // add the room to the new key-value pair
+            customers.get(Name).put(room, new ArrayList<Integer>());
+            // add the date to the room
+            customers.get(Name).get(room).add(date);
         }
 
-        // if the customer exists but the room doesn't, loop through the file and append a new room and date
+        // case 2: the customer exists in the database but has not booked this room previously
         if (customerExists && !customerBookedRoom)
         {
-            for (int i=0; i<customers.size()-1; i++)
-            {
-                // check if the current index and the next index are the customer's name
-                if (customers.get(i).equals(firstName) && customers.get(i+1).equals(lastName))
-                {
-                    int index = getIndexRoom(room, i, customers);
-
-                    // add the new room and date to the customer
-                    customers.add(index, String.valueOf(room));
-                    customers.add(index+1, String.valueOf(date));
-                    customers.add(index+2, ROOM_DELIMITER);
-                }
-            }
+            // add the room to the customer's bookings
+            customers.get(Name).put(room, new ArrayList<Integer>());
+            // add the date to the room
+            customers.get(Name).get(room).add(date);
         }
 
-        // if the customer exists and the room exists, loop through the file and append a new date
-        else if (customerBookedRoom)
+        // case 3: the customer exists in the database and has booked this room previously
+        if (customerExists && customerBookedRoom)
         {
-            for (int i=0; i<customers.size()-1; i++)
-            {
-                if (customers.get(i).equals(firstName) && customers.get(i+1).equals(lastName))
-                {
-                    // loop over every room the customer has booked until it matches
-                    for (int j=0; j<customers.size()-1; j++)
-                    {
-                        if (customers.get(j).equals(ROOM_DELIMITER) && customers.get(j+1).equals(String.valueOf(room)) ||
-                                customers.get(j).equals(lastName) && customers.get(j+1).equals(String.valueOf(room)))
-                        {
-                            int index = getIndexDate(date, j, customers);
-
-                            // add the date to the room
-                            customers.add(index, String.valueOf(date));
-                        }
-                    }
-                }
-            }
+            // add the date to the room
+            customers.get(Name).get(room).add(date);
         }
 
-        int lastDay = 0; // the last day in days.txt
-        boolean inserted = false; // whether the function has completed the insertion
-
-        // update days ArrayList
-        for (int i=0; i<days.size()-1; i++)
+        // update days
+        // case 1: the date has been booked previously
+        if (date <= days.size()-1)
         {
-            // check if the date matches the date of the reservation
-            if (days.get(i).equals(DATE_DELIMITER) && days.get(i+1).equals(String.valueOf(date)) ||
-                    days.get(i).equals(String.valueOf(date)) && i == 0)
-            {
-                for (int j=i; j<days.size()-1; j++)
-                {
-                    int prev = j + (i == 0 ? 1 : 2);
-                    int next = j + (i == 0 ? 2 : 3);
-
-                    if (next < days.size() && !days.get(prev).equals(DATE_DELIMITER))
-                    {
-                        if (!inserted && days.get(next).equals(DATE_DELIMITER))
-                        {
-                            days.add(next, String.valueOf(room));
-                            inserted = true;
-                        }
-                        else if (!inserted && Integer.parseInt(days.get(prev)) < room)
-                        {
-                            days.add(next, String.valueOf(room));
-                            inserted = true;
-                        }
-                    }
-                }
-            }
-
-            if (days.get(i).equals(DATE_DELIMITER)) lastDay = Integer.parseInt(days.get(i+1));
+            // add the room to the date
+            days.get(date).add(room);
         }
 
-        // if the day is not in days.txt, keep appending successive dates and append the room to the date
-        if (!inserted) {
-            for (int j=lastDay+1; j<=date; j++) {
-                days.add(String.valueOf(j));
-                if (j == date) days.add(String.valueOf(room));
-                days.add(DATE_DELIMITER);
-            }
-        }
-
-
-        // init file writers
-        BufferedWriter writeCustomers = new BufferedWriter(new FileWriter(CUSTOMERS_DB, false));
-        BufferedWriter writeDays = new BufferedWriter(new FileWriter(DAYS_DB, false));
-
-        // write ArrayList to customers.txt
-        for (int i=0; i<customers.size(); i++)
+        // case 2: the date has not been booked previously
+        else
         {
-            writeCustomers.write(customers.get(i));
-            writeCustomers.write(i == customers.size() - 1 ? "" : "\n" );
+            // keep adding until the size of days is large enough
+            while (days.size()-1 < date) days.add(new ArrayList<>());
+            // add the room to the date
+            days.get(date).add(room);
         }
 
-        // write ArrayList to days.txt
+        // write to file using allCustomers and allDays
+        allCustomers(customers);
+        allDays(days);
+
+        // log changes
+        op = "RES add";
+        op += " " + firstName + " " + lastName;
+        op += " " + room;
+        op += " " + date;
+        logOp(op);
+    }
+
+    /*
+     Method Name: delReserve
+     Parameters: String firstName - The first name of the customer
+                 String lastName - The last name of the customer
+                 int room - The room number
+                 int date - The date
+     Description: Deletes a reservation from customers.txt and days.txt
+     */
+    public static void delReserve(String firstName, String lastName, int room, int date) throws IOException
+    {
+        // declare variables
+        Map<List<String>, Map<Integer, List<Integer>>> customers = Query.allCustomers(); // get all customers
+        List<List<Integer>> days = Query.allDays(); // get all days
+        List<String> name = new ArrayList<>(); // ArrayList representing the customer's full name
+        name.add(firstName);
+        name.add(lastName);
+        String op; // the log message
+
+        // remove reservation from customers
+        customers.get(name).get(room).remove(date);
+        // check if the room booking is now empty and remove the room
+        if (customers.get(name).get(room).size() == 0) customers.get(name).remove(room);
+        // check if the customer has no remaining reservations and remove the room
+        if (customers.get(name).size() == 0) customers.remove(name);
+
+        // remove reservation from days
+        days.get(date).remove((Integer) room);
+
+        // write to file using allCustomers and allDays
+        allCustomers(customers);
+        allDays(days);
+
+        // log changes
+        op = "RES del";
+        op += " " + firstName + " " + lastName;
+        op += " " + room;
+        op += " " + date;
+        logOp(op);
+    }
+
+    /*
+     Method Name: edtReserve
+     Parameters: String oldFirst - The first name of the reservation
+                 String oldLast - The last name of the reservation
+                 int room - The room number
+                 int date - The date
+                 String newFirst - The new first name
+                 String newLast - The new last name
+     Description: Updates a reservation in customers.txt and days.txt
+     */
+    public static void edtReserve(String oldFirst, String oldLast, int room, int date, String newFirst, String newLast) throws IOException
+    {
+        // declare variables
+        String op; // the log message
+
+        delReserve(oldFirst, oldLast, room, date); // delete the old reservation
+        addReserve(newFirst, newLast, room, date); // add a new reservation
+
+        // log changes
+        op = "RES edtn";
+        op += " " + oldFirst + " " + oldLast;
+        op += " " + room;
+        op += " " + date;
+        op += " " + newFirst + " " + newFirst;
+        logOp(op);
+    }
+
+    /*
+     Method Name: delReserve
+     Parameters: String firstName - The first name of the customer
+                 String lastName - The last name of the customer
+                 boolean changeRoom - Whether the user wants to change the room
+                 int dateOrRoom - The date or room, whichever is unchanged
+                 int old - The old value
+                 int now - The new value
+     Description: Updates a reservation in customers.txt and days.txt
+     */
+    public static void edtReserve(String firstName, String lastName, boolean changeRoom, int dateOrRoom, int old, int now) throws IOException
+    {
+        // declare variables
+        String op; // the log message
+
+        // if the user wants to change the room
+        if (changeRoom) {
+            delReserve(firstName, lastName, old, dateOrRoom); // delete the old reservation
+            addReserve(firstName, lastName, now, dateOrRoom); // add a new reservation with the new room
+
+            // log changes
+            op = "RES edtr";
+            op += " " + firstName + " " + lastName;
+            op += " " + old;
+            op += " " + dateOrRoom;
+            op += " " + now;
+            logOp(op);
+        }
+
+        // if the user wants to change the date
+        else {
+            delReserve(firstName, lastName, dateOrRoom, old); // delete the old reservation
+            delReserve(firstName, lastName, dateOrRoom, now); // add a new reservation with the new date
+
+            // log changes
+            op = "RES edtd";
+            op += " " + firstName + " " + lastName;
+            op += " " + dateOrRoom;
+            op += " " + old;
+            op += " " + now;
+            logOp(op);
+        }
+    }
+
+    /*
+     Method Name: addRoom
+     Parameters: int room - The room to be added
+     Description: Adds a room to rooms.txt
+     */
+    public static void addRoom(int room) throws IOException
+    {
+        // declare variables
+        List<Integer> rooms = Query.allRooms();
+        String op; // the log message
+
+        // append to ArrayList
+        rooms.add(room);
+
+        // write using allRooms
+        allRooms(rooms);
+
+        // log changes
+        op = "ROOM add";
+        op += " " + room;
+        logOp(op);
+    }
+
+    /*
+     Method Name: delRoom
+     Parameters: int room - The room to be removed
+     Description: Deletes a room from rooms.txt
+     */
+    public static void delRoom(int room) throws IOException
+    {
+        // declare variables
+        List<Integer> rooms = Query.allRooms();
+        String op; // the log message
+
+        // remove from ArrayList
+        rooms.remove((Integer) room);
+
+        // write using allRooms
+        allRooms(rooms);
+
+        // log changes
+        op = "ROOM del";
+        op += " " + room;
+        logOp(op);
+    }
+
+    /*
+     Method Name: addEmployee
+     Parameters: String id - The id of the employee
+                 String firstName - The employee's first name
+                 String lastName - The employee's last name
+                 String pin - The employee's login pin
+                 String isAdmin - Whether this employee is an admin or not
+     Description: Adds a new employee to employees.txt
+     */
+    public static void addEmployee(String id, String firstName, String lastName, String pin, String isAdmin) throws IOException
+    {
+        // declare variables
+        List<HashMap<String, String>> employees = Query.allEmployees();
+        HashMap<String, String> newEmployee = new HashMap<String, String>();
+        String op; // the log message
+
+        // init new employee and add to ArrayList
+        newEmployee.put("id", id);
+        newEmployee.put("firstName", firstName);
+        newEmployee.put("lastName", lastName);
+        newEmployee.put("pin", pin);
+        newEmployee.put("isAdmin", isAdmin);
+        employees.add(newEmployee);
+
+        // write to file using allEmployees
+        allEmployees(employees);
+
+        // log changes
+        op = "EE add";
+        op += " " + id;
+        logOp(op);
+    }
+
+    /*
+     Method Name: delEmployee
+     Parameters: String id - The employee to remove
+     Description: Deletes an employee entry from employees.txt
+     */
+    public static void delEmployee(String id) throws IOException
+    {
+        // declare variables
+        List<HashMap<String, String>> employees = Query.allEmployees();
+        int index = -1; // the index of the employee to be removed
+        String op; // the log message
+
+        // loop over the employees and locate the correct id to remove
+        for (int i=0; i<employees.size(); i++)
+        {
+            // if the id matches, save the index
+            if (employees.get(i).get("id").equals(id)) index = i;
+        }
+
+        // remove this employee from the database if they exist
+        if (index != -1) employees.remove(index);
+
+        // write to file using allEmployees
+        allEmployees(employees);
+
+        // log changes
+        op = "EE del";
+        op += " " + id;
+        logOp(op);
+    }
+
+    /*
+     Method Name: edtPin
+     Parameters: String id - The employee to edit
+                 String newPin - The employee's pin
+     Description: Change's an employees pin in employees.txt
+     */
+    public static void edtPin(String id, String newPin) throws IOException
+    {
+        // declare variables
+        List<HashMap<String, String>> employees = Query.allEmployees();
+        String op; // the log message
+
+        // loop over the employees and locate the correct id to update
+        for (HashMap<String, String> e : employees) {
+            // if the id matches, change their pin
+            if (e.get("id").equals(id)) e.put("pin", newPin);
+        }
+
+        // write to file using allEmployees
+        allEmployees(employees);
+
+        // log changes
+        op = "EE edit";
+        op += " " + id;
+        op += " " + newPin;
+        logOp(op);
+    }
+
+    /*
+     Method Name: logUser
+     Parameters: String id - the id of the user currently logged in
+                 String isAdmin - whether the user is admin (1 for admin, 0 for normal user)
+     Description: logs a new user in log.txt
+     */
+    public static void logUser(String id, String isAdmin) throws IOException
+    {
+        // init file writer
+        BufferedWriter bw = new BufferedWriter(new FileWriter(LOG_DB, true));
+
+        // write to file
+        bw.write("\n");
+        bw.write(id);
+        bw.write(" ");
+        bw.write(isAdmin);
+
+        // close file writer
+        bw.close();
+    }
+
+    /*
+     Method Name: logOp
+     Parameters: String op - the operation to be logged
+     Description: logs an operation to log.txt
+     */
+    public static void logOp(String op) throws IOException
+    {
+        // init file writer
+        BufferedWriter bw = new BufferedWriter(new FileWriter(LOG_DB, true));
+
+        // write to file
+        bw.write("\n");
+        bw.write(op);
+
+        // close file writer
+        bw.close();
+    }
+
+    /*
+     Method Name: allCustomers
+     Parameters: Map<List<String>, Map<Integer, List<Integer>>> customers: a java representation of customers.txt
+     Description: converts java parseable data into days.txt data structure
+     */
+    public static void allCustomers(Map<List<String>, Map<Integer, List<Integer>>> customers) throws IOException
+    {
+        // init file writer and variables
+        BufferedWriter bw = new BufferedWriter(new FileWriter(CUSTOMERS_DB));
+        boolean first = true; // whether this is the first pass of the outer loop
+
+        // loop over every customer
+        for (List<String> name : customers.keySet())
+        {
+            // write their name to the file
+            if (!first) bw.write("\n"); // write a newline if this is not the first name in the file
+            else first = false;
+            bw.write(name.get(0));
+            bw.write("\n");
+            bw.write(name.get(1));
+            bw.write("\n");
+
+            // loop over every room they have booked
+            for (int room : customers.get(name).keySet())
+            {
+                // write the room to the file
+                bw.write(String.valueOf(room));
+                bw.write("\n");
+
+                // loop over every day they have booked that room for
+                for (int date : customers.get(name).get(room))
+                {
+                    // write the date to the file
+                    bw.write(String.valueOf(date));
+                    bw.write("\n");
+                }
+
+                // write the room delimiter
+                bw.write(ROOM_DELIMITER);
+                bw.write("\n");
+            }
+
+            // write the customer delimiter
+            bw.write(CUSTOMER_DELIMITER);
+        }
+
+        // close file writer
+        bw.close();
+    }
+
+    /*
+     Method Name: allDays
+     Parameters: List<List<Integer>> days: a java representation of days.txt: each index represents a date with reservations
+     Description: converts java parseable data into days.txt data structure
+     */
+    public static void allDays(List<List<Integer>> days) throws IOException
+    {
+        // init file writer and variables
+        BufferedWriter bw = new BufferedWriter(new FileWriter(DAYS_DB));
+
+        // loop over every date
         for (int i=0; i<days.size(); i++)
         {
-            writeDays.write(days.get(i));
-            writeDays.write(i == days.size() - 1 ? "" : "\n" );
+            // write the current date to the file
+            if (i != 0) bw.write("\n"); // write a newline if this is not day 0
+            bw.write(String.valueOf(i));
+            bw.write("\n");
+
+            // loop over every room booked on that date
+            for (int room : days.get(i))
+            {
+                // write the room to the file
+                bw.write(String.valueOf(room));
+                bw.write("\n");
+            }
+
+            // write the date delimiter
+            bw.write(DATE_DELIMITER);
         }
 
-        // close files
-        readCustomers.close();
-        readDays.close();
-        writeCustomers.close();
-        writeDays.close();
+        // close file writer
+        bw.close();
     }
 
     /*
-     Method Name: getIndexRoom
-     Return Type: int - The line # to insert a room
-     Parameters: int room - The room # to insert
-                 int i - The line # of the customer's first name
-                 List<String> customers - An ArrayList representing customers.txt
-     Description: Calculates the location to insert a room
+     Method Name: allRooms
+     Parameters: List<Integer> rooms - an ArrayList containing every room
+     Description: converts java parseable data into rooms.txt data structure
      */
-    private static int getIndexRoom(int room, int i, List<String> customers) {
-        int index = i + 2; // place to store the customer's reservation
-        int prev = i + 2; // the index of the previous room
-        int next = i + 2; // the index of the next room
-        int j = i + 2; // current index
+    public static void allRooms(List<Integer> rooms) throws IOException
+    {
+        // init file writer and variables
+        BufferedWriter bw = new BufferedWriter(new FileWriter(ROOMS_DB));
 
-        // loop until we find the appropriate place for the room (in ascending order)
-        boolean searching = true;
-        while (searching)
+        // loop over every date
+        for (int i=0; i<rooms.size(); i++)
         {
-            // check if we are at the end of the customer
-            if (customers.get(j+1).equals(CUSTOMER_DELIMITER))
-            {
-                searching = false;
-
-                // find the appropriate place to insert the room (edge cases)
-                if (Integer.parseInt(customers.get(prev)) > room) index = prev;
-                if (Integer.parseInt(customers.get(next)) < room)
-                {
-                    // find the location of the next customer and append the room there
-                    boolean atNext = false;
-                    int k = next + 1;
-                    while (!atNext) {
-                        if (customers.get(k).equals(ROOM_DELIMITER))
-                        {
-                            atNext = true;
-                            index = k + 1;
-                        }
-                        k++;
-                    }
-                }
-            }
-            // otherwise continue
-            else
-            {
-                // check if we are at a new room
-                if (customers.get(j).equals(ROOM_DELIMITER))
-                {
-                    prev = next;
-                    next = j + 1;
-                    // check if the room is in between prev and next
-                    if (Integer.parseInt(customers.get(prev)) < room &&
-                            Integer.parseInt(customers.get(next)) > room)
-                    {
-                        // if it is, set the index to next and break the loop
-                        index = next;
-                        searching = false;
-                    }
-                }
-            }
-            j++; // increment iterator
+            // write the current room to the file
+            if (i != 0) bw.write("\n"); // write a newline if this is not day 0
+            bw.write(String.valueOf(rooms.get(i)));
         }
-        return index;
+
+        // close file writer
+        bw.close();
     }
 
     /*
-     Method Name: getIndexDate
-     Return Type: int - The line # to insert a date
-     Parameters: int date - The date # to insert
-                 int i - The line # of the customer's first name
-                 List<String> customers - An ArrayList representing customers.txt
-     Description: Calculates the location to insert a date
+     Method Name: allEmployees
+     Parameters: List<HashMap<String, String>> employees - an ArrayList containing data about every employee
+     Description: converts java parseable data into employees.txt data structure
      */
-    private static int getIndexDate(int date, int i, List<String> customers) {
-        int index = i + 2;
-        int prev = i + 2;
-        int next = i + 2;
-        int j = i + 2;
+    public static void allEmployees(List<HashMap<String, String>> employees) throws IOException
+    {
+        // init file writer and variables
+        BufferedWriter bw = new BufferedWriter(new FileWriter(EMPLOYEES_DB));
 
-        // loop until we find the appropriate place for the room (in ascending order)
-        boolean searching = true;
-        while (searching)
+        // loop over every date
+        for (int i=0; i<employees.size(); i++)
         {
-            // check if we are at the end of the customer
-            if (customers.get(j+1).equals(ROOM_DELIMITER))
-            {
-                searching = false;
-
-                // find the appropriate place to insert the room (edge cases)
-                if (Integer.parseInt(customers.get(prev)) > date) index = prev;
-                if (Integer.parseInt(customers.get(next)) < date)
-                {
-                    // find the location of the next customer and append the date there
-                    boolean atNext = false;
-                    int k = next + 1;
-                    while (!atNext) {
-                        if (customers.get(k).equals(ROOM_DELIMITER))
-                        {
-                            atNext = true;
-                            index = k;
-                        }
-                        k++;
-                    }
-                }
-            }
-            // otherwise continue
-            else
-            {
-                prev = next;
-                next = j + 1;
-                // check if the room is in between prev and next
-                if (Integer.parseInt(customers.get(prev)) < date &&
-                        Integer.parseInt(customers.get(next)) > date)
-                {
-                    // if it is, set the index to next and break the loop
-                    index = next;
-                    searching = false;
-                }
-            }
-            j++; // increment iterator
+            // write the current employee to the file
+            if (i != 0) bw.write("\n"); // write a newline if this is not day 0
+            bw.write(String.valueOf(employees.get(i).get("id")));
+            bw.write("\n");
+            bw.write(String.valueOf(employees.get(i).get("firstName")));
+            bw.write("\n");
+            bw.write(String.valueOf(employees.get(i).get("lastName")));
+            bw.write("\n");
+            bw.write(String.valueOf(employees.get(i).get("pin")));
+            bw.write("\n");
+            bw.write(String.valueOf(employees.get(i).get("isAdmin")));
         }
-        return index;
-    }
 
-    public static void delReserve(String firstName, String lastName, int room, int date)
-    {
-
-    }
-
-    public static void edtReserve(String oldFirst, String oldLast, int code, int room, int date, String newFirst, String newLast)
-    {
-
-    }
-
-    public static void edtReserve(String firstName, String lastName, int code, int roomOrDate, int old, int now)
-    {
-
-    }
-
-    public static void addRooms(int room)
-    {
-
-    }
-
-    public static void delRoom(int room)
-    {
-
-    }
-
-    public static void addEmployee(int id, String firstName, String lastName, int room, int date)
-    {
-
-    }
-
-    public static void delEmployee(int id)
-    {
-
+        // close file writer
+        bw.close();
     }
 }
