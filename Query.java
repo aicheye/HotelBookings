@@ -36,9 +36,9 @@ public class Query
         // init file reader and variables
         BufferedReader readDays = new BufferedReader(new FileReader(DAYS_DB));
         BufferedReader readRoom = new BufferedReader(new FileReader(ROOMS_DB));
-        List<Integer> rooms = new ArrayList<>(); // ArrayList of the rooms available on a date
-        Set<Integer> allRooms = new HashSet<>(); // HashSet of all rooms in the system
-        Set<Integer> reserved = new HashSet<>(); // HashSet of all reserved rooms on a date
+        List<Integer> rooms = new ArrayList<Integer>(); // ArrayList of the rooms available on a date
+        Set<Integer> allRooms = new HashSet<Integer>(); // HashSet of all rooms in the system
+        Set<Integer> reserved = new HashSet<Integer>(); // HashSet of all reserved rooms on a date
         String line = readRoom.readLine(); // read the first line of rooms.txt
         int day;
         int[] arr;
@@ -120,7 +120,7 @@ public class Query
     {
         // init file reader and variables
         BufferedReader br = new BufferedReader(new FileReader(DAYS_DB));
-        List<Integer> days = new ArrayList<>(); // ArrayList of the days a room is available
+        List<Integer> days = new ArrayList<Integer>(); // ArrayList of the days a room is available
         int day;
         int[] arr;
         boolean end = false, searching, contains;
@@ -180,7 +180,7 @@ public class Query
     {
         // init file reader and variables
         BufferedReader br = new BufferedReader(new FileReader(CUSTOMERS_DB));
-        Map<Integer, List<Integer>> reservations = new HashMap<>(); // HashMap to be returned
+        Map<Integer, List<Integer>> reservations = new HashMap<Integer, List<Integer>>(); // HashMap to be returned
         String line, f, l;
         int room;
         boolean end = false, searching, inRoom;
@@ -211,7 +211,7 @@ public class Query
                             room = Integer.parseInt(line); // create a new variable for the current room
 
                             // create a new key-value pair in reservations
-                            reservations.put(room, new ArrayList<>());
+                            reservations.put(room, new ArrayList<Integer>());
 
                             // loop until we are at end of room
                             inRoom = true;
@@ -299,13 +299,14 @@ public class Query
                                                                           names and rooms booked
      Description: Returns all customers and the rooms/days they have booked
     */
-    public static Map<String, Map<Integer, List<Integer>>> allCustomers() throws IOException
+    public static Map<List<String>, Map<Integer, List<Integer>>> allCustomers() throws IOException
     {
         // declare variables and init file reader
         BufferedReader br = new BufferedReader(new FileReader(CUSTOMERS_DB));
-        Map<String, Map<Integer, List<Integer>>> customers = new HashMap<>();
+        Map<List<String>, Map<Integer, List<Integer>>> customers = new HashMap<List<String>, Map<Integer, List<Integer>>>();
         String fName, lName, line;
-        List<String> db = new ArrayList<>(); // the file converted into an ArrayList
+        List<String> name;
+        List<String> db = new ArrayList<String>(); // the file converted into an ArrayList
 
         // append each line to db
         line = br.readLine();
@@ -319,7 +320,10 @@ public class Query
         // loop over customers.txt and find each customer
         fName = db.get(0);
         lName = db.get(1);
-        customers.put(fName + " " + lName, customerQuery(fName, lName));
+        name = new ArrayList<String>();
+        name.add(fName);
+        name.add(lName);
+        customers.put(name, customerQuery(fName, lName));
         for (int i=2; i<db.size()-2; i++)
         {
             // check if there is a new customer
@@ -328,9 +332,15 @@ public class Query
                 // add this customer to the HashMap
                 fName = db.get(i+1);
                 lName = db.get(i+2);
-                customers.put(fName + " " + lName, customerQuery(fName, lName));
+                name = new ArrayList<String>();
+                name.add(fName);
+                name.add(lName);
+                customers.put(name, customerQuery(fName, lName));
             }
         }
+
+        // close file reader
+        br.close();
 
         return customers;
     }
@@ -344,10 +354,10 @@ public class Query
     {
         // declare variables and init file reader
         BufferedReader br = new BufferedReader(new FileReader(DAYS_DB));
-        List<List<Integer>> days = new ArrayList<>();
+        List<List<Integer>> days = new ArrayList<List<Integer>>();
         String line;
-        List<Integer> rooms = new ArrayList<>();
-        List<String> db = new ArrayList<>(); // the file converted into an ArrayList
+        List<Integer> rooms = new ArrayList<Integer>();
+        List<String> db = new ArrayList<String>(); // the file converted into an ArrayList
 
         // append each line to db
         line = br.readLine();
@@ -363,7 +373,7 @@ public class Query
             // if we are at a new date, add the rooms to days and clear rooms
             if (db.get(i).equals(DATE_DELIMITER))
             {
-                days.add(new ArrayList<>());
+                days.add(new ArrayList<Integer>());
                 days.get(days.size()-1).addAll(rooms);
                 rooms.clear();
                 i++;
@@ -374,6 +384,9 @@ public class Query
                 rooms.add(Integer.parseInt(db.get(i)));
             }
         }
+
+        // close file reader
+        br.close();
 
         return days;
     }
@@ -387,7 +400,7 @@ public class Query
     {
         // declare variables and init file reader
         BufferedReader br = new BufferedReader(new FileReader(ROOMS_DB));
-        List<Integer> rooms = new ArrayList<>();
+        List<Integer> rooms = new ArrayList<Integer>();
         String line;
 
         // loop through rooms.txt and append to rooms
@@ -397,6 +410,9 @@ public class Query
             rooms.add(Integer.parseInt(line));
             line = br.readLine();
         }
+
+        // close BufferedReader
+        br.close();
 
         return rooms;
     }
@@ -410,7 +426,7 @@ public class Query
     {
         // declare variables and init file reader
         BufferedReader br = new BufferedReader(new FileReader(EMPLOYEES_DB));
-        List<HashMap<String, String>> employees = new ArrayList<>();
+        List<HashMap<String, String>> employees = new ArrayList<HashMap<String, String>>();
         String id, fName, lName, pin, isAdmin;
 
         // loop through employees.txt and append to employees
@@ -421,7 +437,7 @@ public class Query
         isAdmin = br.readLine();
         while (id != null)
         {
-            employees.add(new HashMap<>());
+            employees.add(new HashMap<String, String>());
             employees.get(employees.size()-1).put("id", id);
             employees.get(employees.size()-1).put("firstName", fName);
             employees.get(employees.size()-1).put("lastName", lName);
@@ -433,6 +449,9 @@ public class Query
             pin = br.readLine();
             isAdmin = br.readLine();
         }
+
+        // close file reader
+        br.close();
 
         return employees;
     }
