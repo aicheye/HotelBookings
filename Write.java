@@ -162,8 +162,48 @@ public class Write
 
     }
 
-    public static void edtPin(String id, String newPin) {
+    public static void edtPin(String id, String newPin)
+    {
 
+    }
+
+    /*
+     Method Name: logUser
+     Parameters: String id - the id of the user currently logged in
+                 String isAdmin - whether the user is admin (1 for admin, 0 for normal user)
+     Description: logs a new user in log.txt
+     */
+    public static void logUser(String id, String isAdmin) throws IOException
+    {
+        // init file writer
+        BufferedWriter bw = new BufferedWriter(new FileWriter(LOG_DB, true));
+
+        // write to file
+        bw.write("\n");
+        bw.write(id);
+        bw.write(" ");
+        bw.write(isAdmin);
+
+        // close file writer
+        bw.close();
+    }
+
+    /*
+     Method Name: logOp
+     Parameters: String op - the operation to be logged
+     Description: logs an operation to log.txt
+     */
+    public static void logOp(String op) throws IOException
+    {
+        // init file writer
+        BufferedWriter bw = new BufferedWriter(new FileWriter(LOG_DB, true));
+
+        // write to file
+        bw.write("\n");
+        bw.write(op);
+
+        // close file writer
+        bw.close();
     }
 
     /*
