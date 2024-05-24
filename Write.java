@@ -165,7 +165,7 @@ public class Write
         addReserve(newFirst, newLast, room, date); // add a new reservation
 
         // log changes
-        op = "RES edtn";
+        op = "RES edt.n";
         op += " " + oldFirst + " " + oldLast;
         op += " " + room;
         op += " " + date;
@@ -194,7 +194,7 @@ public class Write
             addReserve(firstName, lastName, now, dateOrRoom); // add a new reservation with the new room
 
             // log changes
-            op = "RES edtr";
+            op = "RES edt.r";
             op += " " + firstName + " " + lastName;
             op += " " + old;
             op += " " + dateOrRoom;
@@ -208,7 +208,7 @@ public class Write
             delReserve(firstName, lastName, dateOrRoom, now); // add a new reservation with the new date
 
             // log changes
-            op = "RES edtd";
+            op = "RES edt.d";
             op += " " + firstName + " " + lastName;
             op += " " + dateOrRoom;
             op += " " + old;
