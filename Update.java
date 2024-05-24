@@ -1,64 +1,183 @@
 import java.io.*;
 import java.util.*;
 
+/*
+ Programmer: Sean Yang
+ Program Name: Update
+ Date: 23/05/2024
+ Description: Interface between HotelBooking class and Write class
+ */
+
 public class Update {
     /*
-  Method Name: reserveCancel
-  Return Type: void - (placeholder)
-  Parameters: String firstName - first name of person
-              String lastName - last name of person
-              int room - room number
-              int date - given date
-  Description: (Placeholder) prints out if customer has room booked on given date
-  DOES NOT PRINT OUT ERROR MESSAGE
-
-  */
-    public static void reserveCancel(String firstName, String lastName, int room, int date) {
-        try {
-            Scanner sc = new Scanner(System.in);
-            String input;
-            boolean roomfound = false;
-            Map<Integer, List<Integer>> rooms = Query.customerQuery(firstName, lastName);
-            if (rooms.containsKey(room)) {
-                for (int e : rooms.keySet()) {//gets each room #
-                    if (e == room) {
-                        roomfound = true;//changes if is found
-                        List<Integer> value = rooms.get(e);//gets the days that the room is booked for.
-                        if (value.contains(date)) {
-                            System.out.printf("Customer does have room %d on day %d\n", room, date);//placeholder for actual cancellation
-                            System.out.println("Do you want to continue with cancellation? 1 for confirm, -1 for cancel");
-                            boolean cancel = true;
-                            do {
-                                   input = sc.nextLine();
-                                if (input.equals("-1")) {
-                                    System.out.println("canceled");
-                                    cancel = false;
-                                } else if (input.equals("1")) {
-                                    System.out.println("confirmed");
-                                    cancel = false;
-                                    //put in canceler
-                                }
-                                else{
-                                    System.out.println("Input mismatch, enter again");
-                                }//checks if the inputs are the ones required
-                            } while (cancel);//keeps running while user confirms their choice
-                            break;
-                        }
-                    }else{
-                        roomfound= false;
-                    }
-                }
-                if (!roomfound){
-                        System.out.println("roomnotfound");//prints out error message
-                }
-
+     Method Name: reserveCreate
+     Parameters: String firstName - first name of person
+                 String lastName - last name of person
+                 int room - room number
+                 int date - given date
+     Description: Creates a reservation for a given room and date
+     Dates modified:
+     * 23/05/2024
+     * Sean Yang - created and completed function
+     */
+    public static void reserveCreate(String firstName, String lastName, int room, int date) {
+        try
+        {
+            // check if the room is available
+            if (Query.roomAvailable(room, date))
+            {
+                // add to reservations
+                Write.addReserve(firstName, lastName, room, date);
+                System.out.println("Reservation created successfully."); // output success
             }
-            else{
-                System.out.printf("Customer does not have Room %d reserved",room);
+            else
+            {
+                System.out.println("Error: The room you are trying to book is not available on that date."); // output error
             }
-        }catch (IOException e){
+        }
+        // output if there is an issue reading the file
+        catch (IOException e)
+        {
             System.out.println(e);
         }
     }
 
+    /*
+     Method Name: reserveCancel
+     Parameters: String firstName - first name of person
+                 String lastName - last name of person
+                 int room - room number
+                 int date - given date
+     Description: Cancels a reservation and outputs if the reservation does not exist
+     Dates modified:
+     * 23/05/2024
+     * Sean Yang - reworked function to be more concise
+     */
+    public static void reserveCancel(String firstName, String lastName, int room, int date) {
+        // init scanner
+        Scanner sc = new Scanner(System.in);
+        char next;
+
+        try
+        {
+            // check if the reservation exists
+            if (Query.reservationExists(firstName, lastName, room, date))
+            {
+                // ask user for confirmation
+                System.out.print("Are you sure you want to proceed with cancellation (Y/n)? ");
+                next = sc.next().charAt(0);
+
+                // run if user confirms
+                if (next == 'Y')
+                {
+                    // remove from reservations
+                    Write.delReserve(firstName, lastName, room, date);
+                    System.out.println("Reservation cancelled successfully."); // output success
+                }
+
+                // output if user aborts
+                else
+                {
+                    System.out.println("Operation aborted.");
+                }
+            }
+            else
+            {
+                System.out.println("Error: The reservation you are trying to cancel does not exist."); // output error
+            }
+        }
+        // output if there is an issue reading the file
+        catch (IOException e)
+        {
+            System.out.println(e);
+        }
+
+        // close scanner
+        sc.close();
+    }
+
+    /*
+     Method Name: reserveChange (Changing the name)
+     Parameters: String firstName - first name of person
+                 String lastName - last name of person
+                 int room - room number
+                 int date - given date
+     Description: Creates a reservation for a given room and date
+     Dates modified:
+     * 23/05/2024
+     * Sean Yang - created and completed function
+     */
+    public static void reserveChange(String oldFirst, String oldLast, int room, int date, String newFirst, String newLast) {
+        try
+        {
+            // check if the reservation exists
+            if (Query.reservationExists(oldFirst, oldLast, room, date))
+            {
+                // change reservation
+                Write.edtReserve(oldFirst, oldLast, room, date, newFirst, newLast);
+                System.out.println("Reservation changed successfully."); // output success
+            }
+            else
+            {
+                System.out.println("Error: The reservation you are trying to change does not exist."); // output error
+            }
+        }
+        // output if there is an issue reading the file
+        catch (IOException e)
+        {
+            System.out.println(e);
+        }
+    }
+
+    /*
+     Method Name: reserveChange (changing the date or room)
+     Parameters: String firstName - first name of person
+                 String lastName - last name of person
+                 int room - room number
+                 int date - given date
+     Description: Creates a reservation for a given room and date
+     Dates modified:
+     * 23/05/2024
+     * Sean Yang - created and completed function
+     */
+    public static void reserveChange(String firstName, String lastName, boolean changeRoom, int dateOrRoom, int old, int now) {
+        try
+        {
+            // runs if the user wants to change the room number
+            if (changeRoom)
+            {
+                // check if the reservation exists
+                if (Query.reservationExists(firstName, lastName, old, dateOrRoom))
+                {
+                    // update reservation
+                    Write.edtReserve(firstName, lastName, true, dateOrRoom, old, now);
+                    System.out.println("Reservation changed successfully."); // output success
+                }
+                else
+                {
+                    System.out.println("Error: The reservation you are trying to change does not exist."); // output error
+                }
+            }
+            // runs if the user wants to change the date
+            if (!changeRoom)
+            {
+                // check if the reservation exists
+                if (Query.reservationExists(firstName, lastName, dateOrRoom, old))
+                {
+                    // update reservation
+                    Write.edtReserve(firstName, lastName, false, dateOrRoom, old, now);
+                    System.out.println("Reservation changed successfully."); // output success
+                }
+                else
+                {
+                    System.out.println("Error: The reservation you are trying to change does not exist."); // output error
+                }
+            }
+        }
+        // output if there is an issue reading the file
+        catch (IOException e)
+        {
+            System.out.println(e);
+        }
+    }
 }
