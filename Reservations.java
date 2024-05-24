@@ -17,7 +17,6 @@ public class Reservations {
     Parameters: int Date - a day that user inputs from main
     Description: Just prints out all the available rooms on day
      */
-
     public static void listAvailableRooms(int date) {
         try {
             int[] rooms = Query.dateQuery(date);
@@ -44,9 +43,9 @@ public class Reservations {
     Parameters: int Date - a day that user inputs from main
                 int room - room number being checked for availability
     Description: Returns true of false if room is available on given day
-    Dates modified:
+    Dates Modified:
     * 24/05/2024
-    * Sean Yang - changed the method to use Query.roomAvailable and changed the parameter order
+    * Sean Yang - Changed the method to use Query.roomAvailable and changed the parameter order
     */
     public static boolean checkAvailability (int room, int date)
     {
