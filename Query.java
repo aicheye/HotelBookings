@@ -531,12 +531,15 @@ public class Query
         isAdmin = br.readLine();
         while (id != null)
         {
+            // put to HashMap
             employees.add(new HashMap<String, String>());
             employees.get(employees.size()-1).put("id", id);
             employees.get(employees.size()-1).put("firstName", fName);
             employees.get(employees.size()-1).put("lastName", lName);
             employees.get(employees.size()-1).put("pin", pin);
             employees.get(employees.size()-1).put("isAdmin", isAdmin);
+
+            // read from file
             id = br.readLine();
             fName = br.readLine();
             lName = br.readLine();
