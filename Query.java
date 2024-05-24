@@ -331,8 +331,8 @@ public class Query
         String admin = null; // whether the employee is admin
         String line;
         BufferedReader br = new BufferedReader(new FileReader(EMPLOYEES_DB));
-
         boolean foundId = false;
+
         while (!foundId)
         {
             line = br.readLine();
