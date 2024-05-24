@@ -35,8 +35,8 @@ public class Reservations {
         } catch (IOException e) {
             System.out.println(e);
         }
-
     }
+
 
     /*
     Method Name: checkAvailability
@@ -44,22 +44,22 @@ public class Reservations {
     Parameters: int Date - a day that user inputs from main
                 int room - room number being checked for availability
     Description: Returns true of false if room is available on given day
-
+    Dates modified:
+    * 24/05/2024
+    * Sean Yang - changed the method to use Query.roomAvailable and changed the parameter order
     */
-    public static boolean checkAvailability(int date, int room) {
-        boolean roomfound = false;
-        try {
-            int[] dateAvailable = Query.dateQuery(date);
-            for (int j : dateAvailable) {
-                if (j == room) {//checks if the room number is equal to the room number that is available.
-                    roomfound = true;
-                    break;//stops the for loop once it finds the room number is free/available on the date.
-                }
-            }
-        } catch (IOException e) {
+    public static boolean checkAvailability (int room, int date)
+    {
+        boolean roomFound = false;
+        try
+        {
+            roomFound = Query.roomAvailable(room, date);
+        }
+        catch (IOException e)
+        {
             System.out.println(e);
         }
-        return roomfound;//returns true or false depending if the conditions were met
+        return roomFound; //returns true or false depending if the conditions were met
     }
 
     /*
