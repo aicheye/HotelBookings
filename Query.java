@@ -22,6 +22,52 @@ public class Query
     private static final String CUSTOMER_DELIMITER = "`"; // used in customers.txt
 
     /*
+     Method Name: reservationExists
+     Return Type: boolean - Whether the reservation exists
+     Parameters: firstName - the first name of the customer
+                 lastName - the last name of the customer
+                 room - the room number
+                 date - the date for the reservation
+     Description: checks whether a specific reservation exists
+     */
+    public static boolean reservationExists (String firstName, String lastName, int room, int date) throws IOException
+    {
+        // declare variables
+        Map<List<String>, Map<Integer, List<Integer>>> customers = allCustomers();
+        boolean exists = false;
+        ArrayList<String> name = new ArrayList<String>();
+        name.add(firstName);
+        name.add(lastName);
+
+        // check if the reservation exists
+        if (customers.containsKey(name) &&
+                customers.get(name).containsKey(room) &&
+                customers.get(name).get(room).contains(date))
+            exists = true;
+
+        return exists;
+    }
+
+    /*
+     Method Name: roomAvailable
+     Return Type: boolean - Whether the room is available
+     Parameters: room - the room number
+                 date - the date to check
+     Description: checks whether a specific room is available for reservation on a given date
+     */
+    public static boolean roomAvailable (int room, int date) throws IOException
+    {
+        // declare variables
+        List<List<Integer>> days = allDays();
+        List<Integer> rooms = allRooms();
+
+        // check if the reservation exists
+        return days.size() - 1 <= date &&
+                rooms.contains(room) &&
+                !days.get(date).contains(room);
+    }
+
+    /*
      Method Name: dateQuery
      Return Type: int[] - An array of the rooms available on a certain date
      Parameters: int date - The date to search

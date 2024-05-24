@@ -125,7 +125,7 @@ public class Write
         String op; // the log message
 
         // remove reservation from customers
-        customers.get(name).get(room).remove(date);
+        customers.get(name).get(room).remove((Integer) date);
         // check if the room booking is now empty and remove the room
         if (customers.get(name).get(room).size() == 0) customers.get(name).remove(room);
         // check if the customer has no remaining reservations and remove the room
@@ -147,7 +147,7 @@ public class Write
     }
 
     /*
-     Method Name: edtReserve
+     Method Name: edtReserve (changing the name)
      Parameters: String oldFirst - The first name of the reservation
                  String oldLast - The last name of the reservation
                  int room - The room number
@@ -158,23 +158,12 @@ public class Write
      */
     public static void edtReserve(String oldFirst, String oldLast, int room, int date, String newFirst, String newLast) throws IOException
     {
-        // declare variables
-        String op; // the log message
-
         delReserve(oldFirst, oldLast, room, date); // delete the old reservation
         addReserve(newFirst, newLast, room, date); // add a new reservation
-
-        // log changes
-        op = "RES edtn";
-        op += " " + oldFirst + " " + oldLast;
-        op += " " + room;
-        op += " " + date;
-        op += " " + newFirst + " " + newFirst;
-        logOp(op);
     }
 
     /*
-     Method Name: delReserve
+     Method Name: edtReserve (changing the room or date)
      Parameters: String firstName - The first name of the customer
                  String lastName - The last name of the customer
                  boolean changeRoom - Whether the user wants to change the room
@@ -185,35 +174,16 @@ public class Write
      */
     public static void edtReserve(String firstName, String lastName, boolean changeRoom, int dateOrRoom, int old, int now) throws IOException
     {
-        // declare variables
-        String op; // the log message
-
         // if the user wants to change the room
         if (changeRoom) {
             delReserve(firstName, lastName, old, dateOrRoom); // delete the old reservation
             addReserve(firstName, lastName, now, dateOrRoom); // add a new reservation with the new room
-
-            // log changes
-            op = "RES edtr";
-            op += " " + firstName + " " + lastName;
-            op += " " + old;
-            op += " " + dateOrRoom;
-            op += " " + now;
-            logOp(op);
         }
 
         // if the user wants to change the date
         else {
             delReserve(firstName, lastName, dateOrRoom, old); // delete the old reservation
-            delReserve(firstName, lastName, dateOrRoom, now); // add a new reservation with the new date
-
-            // log changes
-            op = "RES edtd";
-            op += " " + firstName + " " + lastName;
-            op += " " + dateOrRoom;
-            op += " " + old;
-            op += " " + now;
-            logOp(op);
+            addReserve(firstName, lastName, dateOrRoom, now); // add a new reservation with the new date
         }
     }
 
@@ -337,20 +307,26 @@ public class Write
     {
         // declare variables
         List<HashMap<String, String>> employees = Query.allEmployees();
+        String oldPin = "";
         String op; // the log message
 
         // loop over the employees and locate the correct id to update
         for (HashMap<String, String> e : employees) {
-            // if the id matches, change their pin
-            if (e.get("id").equals(id)) e.put("pin", newPin);
+            // if the id matches, change their pin and save the old pin
+            if (e.get("id").equals(id))
+            {
+                e.put("pin", newPin);
+                oldPin = e.get("oldPin");
+            }
         }
 
         // write to file using allEmployees
         allEmployees(employees);
 
         // log changes
-        op = "EE edit";
+        op = "PIN";
         op += " " + id;
+        op += " " + oldPin;
         op += " " + newPin;
         logOp(op);
     }
