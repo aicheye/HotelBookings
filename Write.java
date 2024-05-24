@@ -29,6 +29,13 @@ public class Write
                  int room - The room number they are reserving
                  int date - The date they are reserving
      Description: Adds a reservation to customers.txt and updates days.txt
+     Dates Modified:
+     * 21/05/2024
+       Sean Yang - Created and completed method (untested)
+
+     * 23/05/2024
+       Sean Yang - Found some issues with the method and rewrote it using Query.allCustomers and Query.allDays, now
+                   works as expected.
      */
     public static void addReserve(String firstName, String lastName, int room, int date) throws IOException
     {
@@ -113,6 +120,9 @@ public class Write
                  int room - The room number
                  int date - The date
      Description: Deletes a reservation from customers.txt and days.txt
+     Dates Modified
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void delReserve(String firstName, String lastName, int room, int date) throws IOException
     {
@@ -155,6 +165,9 @@ public class Write
                  String newFirst - The new first name
                  String newLast - The new last name
      Description: Updates a reservation in customers.txt and days.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (untested)
      */
     public static void edtReserve(String oldFirst, String oldLast, int room, int date, String newFirst, String newLast) throws IOException
     {
@@ -171,6 +184,9 @@ public class Write
                  int old - The old value
                  int now - The new value
      Description: Updates a reservation in customers.txt and days.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (untested)
      */
     public static void edtReserve(String firstName, String lastName, boolean changeRoom, int dateOrRoom, int old, int now) throws IOException
     {
@@ -191,6 +207,9 @@ public class Write
      Method Name: addRoom
      Parameters: int room - The room to be added
      Description: Adds a room to rooms.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void addRoom(int room) throws IOException
     {
@@ -214,6 +233,9 @@ public class Write
      Method Name: delRoom
      Parameters: int room - The room to be removed
      Description: Deletes a room from rooms.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (untested)
      */
     public static void delRoom(int room) throws IOException
     {
@@ -241,6 +263,9 @@ public class Write
                  String pin - The employee's login pin
                  String isAdmin - Whether this employee is an admin or not
      Description: Adds a new employee to employees.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (untested)
      */
     public static void addEmployee(String id, String firstName, String lastName, String pin, String isAdmin) throws IOException
     {
@@ -270,6 +295,9 @@ public class Write
      Method Name: delEmployee
      Parameters: String id - The employee to remove
      Description: Deletes an employee entry from employees.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (untested)
      */
     public static void delEmployee(String id) throws IOException
     {
@@ -302,6 +330,9 @@ public class Write
      Parameters: String id - The employee to edit
                  String newPin - The employee's pin
      Description: Change's an employees pin in employees.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (untested)
      */
     public static void edtPin(String id, String newPin) throws IOException
     {
@@ -336,6 +367,9 @@ public class Write
      Parameters: String id - the id of the user currently logged in
                  String isAdmin - whether the user is admin (1 for admin, 0 for normal user)
      Description: logs a new user in log.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void logUser(String id, String isAdmin) throws IOException
     {
@@ -356,6 +390,9 @@ public class Write
      Method Name: logOp
      Parameters: String op - the operation to be logged
      Description: logs an operation to log.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void logOp(String op) throws IOException
     {
@@ -374,6 +411,9 @@ public class Write
      Method Name: allCustomers
      Parameters: Map<List<String>, Map<Integer, List<Integer>>> customers: a java representation of customers.txt
      Description: converts java parseable data into days.txt data structure
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void allCustomers(Map<List<String>, Map<Integer, List<Integer>>> customers) throws IOException
     {
@@ -424,6 +464,9 @@ public class Write
      Method Name: allDays
      Parameters: List<List<Integer>> days: a java representation of days.txt: each index represents a date with reservations
      Description: converts java parseable data into days.txt data structure
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void allDays(List<List<Integer>> days) throws IOException
     {
@@ -458,6 +501,9 @@ public class Write
      Method Name: allRooms
      Parameters: List<Integer> rooms - an ArrayList containing every room
      Description: converts java parseable data into rooms.txt data structure
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void allRooms(List<Integer> rooms) throws IOException
     {
@@ -480,6 +526,9 @@ public class Write
      Method Name: allEmployees
      Parameters: List<HashMap<String, String>> employees - an ArrayList containing data about every employee
      Description: converts java parseable data into employees.txt data structure
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void allEmployees(List<HashMap<String, String>> employees) throws IOException
     {
