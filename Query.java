@@ -29,6 +29,9 @@ public class Query
                  room - the room number
                  date - the date for the reservation
      Description: checks whether a specific reservation exists
+     Dates Modified:
+     * 24/05/2024
+     * Sean Yang - Created and completed (tested)
      */
     public static boolean reservationExists (String firstName, String lastName, int room, int date) throws IOException
     {
@@ -54,6 +57,9 @@ public class Query
      Parameters: room - the room number
                  date - the date to check
      Description: checks whether a specific room is available for reservation on a given date
+     Dates Modified:
+     * 24/05/2024
+     * Sean Yang - Created and completed (tested)
      */
     public static boolean roomAvailable (int room, int date) throws IOException
     {
@@ -73,7 +79,11 @@ public class Query
      Parameters: int date - The date to search
      Description: Returns an array of available rooms on a given date
      Dates Modified:
+     * 16/05/2024
+       Sean Yang - Created and completed method (tested)
+
      * 17/05/2024
+       Sean Yang - Fixed method to close file reader
        Raymond Zhang - Moved variable declarations to beginning of method.
                        Closed readRoom file reader.
      */
@@ -159,7 +169,11 @@ public class Query
      Parameters: int room - The rooms to search
      Description: Returns an array of days a given room is available
      Dates Modified:
+     * 16/05/2024
+       Sean Yang - Created and completed method (tested)
+
      * 17/05/2024
+       Sean Yang - Fixed method to close file reader
        Raymond Zhang - Moved variable declarations to beginning of method.
     */
     public static int[] roomQuery (int room) throws IOException
@@ -219,7 +233,11 @@ public class Query
                  String lastName - The last name of the customer
      Description: Returns the rooms a customer has booked and the days they have booked it for
      Dates Modified:
+     * 16/05/2024
+       Sean Yang - Created and completed method (tested)
+
      * 17/05/2024
+       Sean Yang - Fixed method to close file reader
        Raymond Zhang - Moved variable declarations to beginning of method
     */
     public static Map<Integer, List<Integer>> customerQuery(String firstName, String lastName) throws IOException
@@ -299,6 +317,12 @@ public class Query
                   String[1] - Whether the employee is admin or not (0 or 1)
      Parameters: int id - The employee id to search for
      Description: Returns the pin and admin status of an employee
+     Dates Modified:
+     * 16/05/2024
+       Sean Yang - Created and completed method (tested)
+
+     * 17/05/2024
+       Sean Yang - Fixed method to close file reader
      */
     public static String[] employeePinQuery (String id) throws IOException
     {
@@ -344,6 +368,12 @@ public class Query
      Return Type: HashMap<String, HashMap<Integer, ArrayList<Integer>>> - A nested hashmap representing the customers'
                                                                           names and rooms booked
      Description: Returns all customers and the rooms/days they have booked
+     Dates Modified:
+     * 22/05/2024
+       Sean Yang - Created and completed methods (tested)
+
+     * 23/05/2024
+       Sean Yang - Fix method to close file reader
     */
     public static Map<List<String>, Map<Integer, List<Integer>>> allCustomers() throws IOException
     {
@@ -395,6 +425,12 @@ public class Query
      Method Name: allDays
      Return Type: List<List<Integer>>
      Description: returns all days and the rooms reserved on that day. the index of the first ArrayList represents the date
+     Dates Modified:
+     * 22/05/2024
+       Sean Yang - Created and completed methods (tested)
+
+     * 23/05/2024
+       Sean Yang - Fix method to close file reader
      */
     public static List<List<Integer>> allDays() throws IOException
     {
@@ -441,6 +477,12 @@ public class Query
      Method Name: allRooms
      Return Type: List<List<Integer>>
      Description: returns all rooms in the hotel
+     Dates Modified:
+     * 22/05/2024
+       Sean Yang - Created and completed methods (tested)
+
+     * 23/05/2024
+       Sean Yang - Fix method to close file reader
      */
     public static List<Integer> allRooms() throws IOException
     {
@@ -467,6 +509,12 @@ public class Query
      Method Name: allEmployees
      Return Type: List<HashMap<String, String>>
      Description: returns all employees in an ArrayList
+     Dates Modified:
+     * 22/05/2024
+       Sean Yang - Created and completed methods (tested)
+
+     * 23/05/2024
+       Sean Yang - Fix method to close file reader
      */
     public static List<HashMap<String, String>> allEmployees() throws IOException
     {

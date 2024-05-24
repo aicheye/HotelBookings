@@ -18,7 +18,7 @@ public class Update {
      Description: Creates a reservation for a given room and date
      Dates modified:
      * 23/05/2024
-     * Sean Yang - created and completed function
+     * Sean Yang - Created and completed method (tested)
      */
     public static void reserveCreate(String firstName, String lastName, int room, int date) {
         try
@@ -84,7 +84,7 @@ public class Update {
      Description: Creates a reservation for a given room and date
      Dates modified:
      * 23/05/2024
-     * Sean Yang - created and completed function
+     * Sean Yang - Created and completed method (tested)
      */
     public static void reserveChange(String oldFirst, String oldLast, int room, int date, String newFirst, String newLast) {
         try
@@ -117,7 +117,7 @@ public class Update {
      Description: Creates a reservation for a given room and date
      Dates modified:
      * 23/05/2024
-     * Sean Yang - created and completed function
+     * Sean Yang - Created and completed method (tested)
      */
     public static void reserveChange(String firstName, String lastName, boolean changeRoom, int dateOrRoom, int old, int now) {
         try
