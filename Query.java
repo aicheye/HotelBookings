@@ -55,7 +55,7 @@ public class Query
                  date - the date to check
      Description: checks whether a specific room is available for reservation on a given date
      */
-    public static boolean roomAvailable (String firstName, String lastName, int room, int date) throws IOException
+    public static boolean roomAvailable (int room, int date) throws IOException
     {
         // declare variables
         List<List<Integer>> days = allDays();
