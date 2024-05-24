@@ -18,7 +18,7 @@ import java.time.temporal.ChronoUnit;
     * Update class not yet implemented
     * Write.edtPin not yet implemented
 
- TODO: Test menu, add admin menu options, read dates as dd/mm/yyyy and convert to int
+ TODO: Test menu, add admin menu options
 */
 
 public class HotelBooking {
@@ -33,16 +33,16 @@ public class HotelBooking {
     private static Scanner sc = new Scanner(System.in);
 
     /*
-     Method Name: dateConverter
+     Method Name: dateStrToInt
      Return Type: int - The number of days pass since the start date (Jan 1, 2024).
                         Will return -1 if date is Dec 31, 2023 or if invalid date format was given.
      Parameters: String - A date in dd/MM/yyyy
-     Description: Converts a formatted date into a number represented the number of days past since Jan 01, 2024.
+     Description: Converts a formatted date into a number representing the number of days past since Jan 01, 2024.
      Dates modified:
      * 23/05/2024
      * Raymond Zhang - Created and finished method.
     */
-    public static int dateConverter (String dateStr) {
+    public static int dateStrToInt(String dateStr) {
         // Declare variables
         int daysBetween = 0;
         LocalDate targetDate = null;
@@ -149,29 +149,25 @@ public class HotelBooking {
      * Raymond Zhang - Fixed infinite loop in input validation by reading line outside of try-catch block
        Changed error message to stand out more.
        Removed local declaration of Scanner.
+
+     * 23/05/2024
+     * Raymond Zhang - Changed date to string input.
     */
 
-    // TODO: Read dates as DD/MM/YYYY
     public static int getDateInput() {
         // Declare variable
         int date = -1;
-        String line;
+        String dateStr;
 
         // Get the date from user
         do {
             System.out.print("Enter the date: ");
-            line = sc.nextLine();
-            try {
-                date = Integer.parseInt(line);
-            }
-            // User inputted non-numerical characters
-            catch (NumberFormatException e) {
-                date = -1;
-            }
+            dateStr = sc.nextLine();
+            date = dateStrToInt(dateStr);
 
             // Check if date is invalid
             if(date < 0) {
-                System.out.println("**ERROR: Date must be an non-negative integer value.\n**");
+                System.out.println("**ERROR: Date must be 01/01/2024 or later (DD/MM/YYYY).**\n");
             }
 
         } while(date < 0);
@@ -200,6 +196,9 @@ public class HotelBooking {
 
      * 22/05/2024
      * Raymond Zhang - Swapped room and date to match with Query method call
+
+     * 23/05/2024
+     * Raymond Zhang- Changed date to string during input and output.
     */
     public static int[] getReservation(String firstName, String lastName) {
         // Declare variables
@@ -244,7 +243,7 @@ public class HotelBooking {
                 }
                 // Check if room is invalid
                 else if(room < 0) {
-                    System.out.println("**ERROR: Date must be an non-negative integer value.**\n");
+                    System.out.println("**ERROR: Room must be an non-negative integer value.**\n");
                 }
                 // Check if customer has reservations on that date
                 else if(customerReservations.containsKey(room)) {
@@ -262,26 +261,25 @@ public class HotelBooking {
                 System.out.printf("Listing %s %s's reserved dates for room %d.%n", firstName, lastName, room);
                 // ? May want to add styling
                 for(Integer day : customerDates) {
-                    System.out.println(day);
+                    System.out.println(Reservations.dateConverter(day));
                 }
 
                 // Receive input for room number
-                System.out.print("Enter the date: ");
+                System.out.print("Enter a reserved date: ");
                 line = sc.nextLine();
-                try {
-                    date = Integer.parseInt(line);
+                date = dateStrToInt(line);
 
-                    // Check if date is valid
+                // Check if date was valid
+                if (date < 0) {
+                    System.out.println("**ERROR: Date must be 1/01/2024 or later (DD/MM/YYYY).**\n");
+                }
+                else {
+                    // Check if date was reserved
                     validDate = customerDates.contains(date);
                     if(!validDate) {
-                        System.out.printf("**ERROR: %s %s has not reserved room %d on day %d.**%n%n", firstName, lastName, room, date);
+                        System.out.printf("**ERROR: %s %s has not reserved room %d on day %s.**%n%n", firstName, lastName, room, Reservations.dateConverter(date));
                     }
                 }
-                // User inputted non-numerical characters
-                catch (NumberFormatException e) {
-                    System.out.println("**ERROR: Date must be an integer.**\n");
-                }
-
             }
         }
 
@@ -427,6 +425,9 @@ public class HotelBooking {
      * 22/05/2024
      * Raymond Zhang - Finished all cases. Swapped date and room in case 5 and 6.
        Added enter to continue feature to allow for changes to be read.
+
+     * 23/05/2024
+     * Raymond Zhang - Changed date output to be string
     */
     public static void defaultMenu() {
         // Declare variables
@@ -469,7 +470,7 @@ public class HotelBooking {
 
                     // List rooms
                     Reservations.listAvailableRooms(date);
-                    // System.out.printf("Listing available rooms for day %d.%n", date);
+                    // System.out.printf("Listing available rooms for day %s.%n", Reservations.dateConverter(date));
                     break;
 
                 // List reservations on a given date
@@ -479,7 +480,7 @@ public class HotelBooking {
 
                     // List reservations
                     // ! Reservations.listReservations(date);
-                    System.out.printf("Listing reservations for day %d.%n", date);
+                    System.out.printf("Listing reservations for day %s.%n", Reservations.dateConverter(date));
                     break;
 
                 // List reservations under a name
@@ -516,7 +517,7 @@ public class HotelBooking {
                     // Make reservation if user did not exit
                     if(room != QUIT_NUM){
                         // ! Update.reserveCreate(firstName, lastName, room, date);
-                        System.out.printf("Created reservation for %s %s for room %d on day %d.%n", firstName, lastName, room, date);
+                        System.out.printf("Created reservation for %s %s for room %d on day %s.%n", firstName, lastName, room, Reservations.dateConverter(date));
                     }
                     break;
 
@@ -536,7 +537,7 @@ public class HotelBooking {
                     // User did not choose to abort
                     if(res[0] != QUIT_NUM) {
                         // ! Update.reserveCancel(firstName, lastName, res[1], res[0]);
-                        System.out.printf("Cancelled reservation for %s %s for room %d on day %d.%n", firstName, lastName, res[0], res[1]);
+                        System.out.printf("Cancelled reservation for %s %s for room %d on day %s.%n", firstName, lastName, res[0], Reservations.dateConverter(res[1]));
                     }
 
                     break;
@@ -595,7 +596,7 @@ public class HotelBooking {
 
                                     // Change name of reservation
                                     // ! Update.reserveChange(firstName, lastName, room, date, firstNew, lastNew);
-                                    System.out.printf("Changed reservation name of room %d on day %d from %s %s to %s %s.%n", res[0], res[1], firstName, lastName, firstNew, lastNew);
+                                    System.out.printf("Changed reservation name of room %d on day %s from %s %s to %s %s.%n", res[0], Reservations.dateConverter(res[1]), firstName, lastName, firstNew, lastNew);
 
                                     break;
 
@@ -610,10 +611,10 @@ public class HotelBooking {
                                         // Check if room is available on new date
                                         if(Reservations.checkAvailability(newDate, room)) {
                                             // ! Update.reserveChange(firstName, lastName, false, date, newDate);
-                                            System.out.printf("Changed %s %s's reservation date of room %d from day %d from day %d.%n", firstName, lastName, res[0], res[1], newDate);
+                                            System.out.printf("Changed %s %s's reservation date of room %d from day %s from day %s.%n", firstName, lastName, res[0], Reservations.dateConverter(res[1]), Reservations.dateConverter(newDate));
                                             changed = true;
                                         } else {
-                                            System.out.printf("**ERROR: Room %d is unavailable on day %d**%n%n", room, newDate);
+                                            System.out.printf("**ERROR: Room %d is unavailable on day %s.**%n%n", room, Reservations.dateConverter(newDate));
                                         }
                                     } while(!changed);
 
@@ -640,10 +641,10 @@ public class HotelBooking {
                                             // Check if new room is available
                                             else if(Reservations.checkAvailability(date, newRoom)) {
                                                 // ! Update.reserveChange(firstName, lastName, true, date, newDate);
-                                                System.out.printf("Changed %s %s's reservation room on day %d from room %d to room %d.%n", firstName, lastName, res[1], res[0], newRoom);
+                                                System.out.printf("Changed %s %s's reservation room on day %s from room %d to room %d.%n", firstName, lastName, Reservations.dateConverter(res[1]), res[0], newRoom);
                                                 changed = true;
                                             } else {
-                                                System.out.printf("**ERROR: Room %d is unavailable**%n%n", newRoom);
+                                                System.out.printf("**ERROR: Room %d is unavailable.**%n%n", newRoom);
                                             }
                                         }
                                         // User inputted non-numerical characters
