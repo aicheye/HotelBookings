@@ -104,30 +104,37 @@ public class HotelBooking {
         // Get a valid room number from user
         do {
             // Display available rooms on given date
-            Reservations.listAvailableRooms(date);
-            // System.out.printf("Listing available rooms for day %d.%n", date);
+            if(Reservations.listAvailableRooms(date)) {
+                // System.out.printf("Listing available rooms for day %d.%n", date);
 
-            // Receive input for room number
-            System.out.print("Enter the room number (0 to cancel): ");
-            line = sc.nextLine();
-            try {
-                room = Integer.parseInt(line);
+                // Receive input for room number
+                System.out.print("Enter the room number (0 to cancel): ");
+                line = sc.nextLine();
+                try {
+                    room = Integer.parseInt(line);
 
-                // User cancels reservation
-                if(room == QUIT_NUM) {
-                    validRoom = true;
-                }
-                // Check if room is invalid
-                else {
-                    validRoom = Reservations.checkAvailability(date, room);
-                    if(!validRoom) {
-                        System.out.printf("**ERROR: Room %d is not available on day %d.%n%n**", room, date);
+                    // User cancels reservation
+                    if(room == QUIT_NUM) {
+                        validRoom = true;
+                    }
+                    // Check if room is invalid
+                    else {
+                        validRoom = Reservations.checkAvailability(date, room);
+                        if(!validRoom) {
+                            System.out.printf("**ERROR: Room %d is not available on day %d.%n%n**", room, date);
+                        }
                     }
                 }
+                // User inputted non-numerical characters
+                catch (NumberFormatException e) {
+                    System.out.println("**ERROR: Room number must be an integer.**\n");
+                }
+
             }
-            // User inputted non-numerical characters
-            catch (NumberFormatException e) {
-                System.out.println("**ERROR: Room number must be an integer.**\n");
+            // No rooms available, break out of loop
+            else {
+                room = QUIT_NUM;
+                validRoom = true;
             }
 
         } while(!validRoom);
@@ -271,7 +278,7 @@ public class HotelBooking {
 
                 // Check if date was valid
                 if (date < 0) {
-                    System.out.println("**ERROR: Date must be 1/01/2024 or later (DD/MM/YYYY).**\n");
+                    System.out.println("**ERROR: Date must be 01/01/2024 or later (DD/MM/YYYY).**\n");
                 }
                 else {
                     // Check if date was reserved

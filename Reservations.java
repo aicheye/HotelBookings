@@ -13,29 +13,39 @@ public class Reservations {
 
     /*
     Method Name: listAvailableRooms
-    Return Type: Void, just prints out the available rooms
-    Parameters: int Date - a day that user inputs from main
-    Description: Just prints out all the available rooms on day
-     */
+    Return Type: boolean - true if rooms are available and false otherwise
+    Parameters: int date - a day that user inputs from main
+    Description: Just prints out all the available rooms on day. Will indicate if no rooms are available.
+    Dates modified:
+    * 24/05/2024
+    * Raymond Zhang - Changed return type to boolean to indicate empty rooms. Improved coding style.
+    */
 
-    public static void listAvailableRooms(int date) {
+    public static boolean listAvailableRooms(int date) {
+        // Declare variables
+        int size = 0;
+        int[] rooms;
+
         try {
-            int[] rooms = Query.dateQuery(date);
-            int size = rooms.length;//checks how many available rooms there are
+            // Get available rooms
+            rooms = Query.dateQuery(date);
+            size = rooms.length;//checks how many available rooms there are
+
+            // Check if any rooms are available
             if (size == 0) {
-                System.out.println("There are no rooms available");
-            } else {
-                System.out.println("Rooms Available:");
-                int i = 0;
-                while (i < size) {
+                System.out.printf("There are no rooms available on %s.%n%n", dateConverter(date));
+            }
+            else {
+                System.out.printf("Rooms available on %s:%n", dateConverter(date));
+                for(int i = 0; i<size; i++) {
                     System.out.println("Room " + rooms[i]);//prints out all available rooms
-                    i++;
                 }
             }
         } catch (IOException e) {
-            System.out.println(e);
+            System.out.println(e + " Problem reading file.");
         }
 
+        return size != 0;
     }
 
     /*
@@ -68,23 +78,23 @@ public class Reservations {
     Parameters: String firstName - first name of person
                 String lastName - last name of person
     Description: Lists the room number and dates the room is booked for
-
+    Dates modified:
+     * 23/05/2024
+     * Raymond Zhang - Formatted method.
     */
     public static void listReservations(String firstName, String lastName) {
         Object days;
         try {
             Map<Integer, List<Integer>> rooms = Query.customerQuery(firstName, lastName);
-    for  (int e: rooms.keySet()) {//gets each room #
-        System.out.printf("%s %s has booked Room %d for:\n", firstName, lastName, e);
-        List<Integer> value = rooms.get(e);//gets the room numbers
-        for (Object o : value) {
-            days = o;
-            System.out.printf("%10s\n", dateConverter(days));//prints out each date that the room is booked for
-        }
-        }
-        }
-        catch (IOException e)
-        {
+            for (int e : rooms.keySet()) {// gets each room #
+                System.out.printf("%s %s has booked Room %d for:\n", firstName, lastName, e);
+                List<Integer> value = rooms.get(e);// gets the room numbers
+                for (Object o : value) {
+                    days = o;
+                    System.out.printf("%10s\n", dateConverter(days));// prints out each date that the room is booked for
+                }
+            }
+        } catch (IOException e) {
             System.out.println(e);
         }
 
