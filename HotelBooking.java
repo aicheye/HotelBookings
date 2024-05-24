@@ -94,6 +94,9 @@ public class HotelBooking {
        Fixed infinite loop in input validation by reading line outside of try-catch block
        Changed error messages to stand out more.
        Removed local declaration of Scanner.
+
+     * 24/05/2024
+     * Raymond Zhang - Changed method call to checkAvailability to align with new parameters
     */
     public static int getRoomInput(int date) {
         // Declare variables
@@ -119,7 +122,7 @@ public class HotelBooking {
                     }
                     // Check if room is invalid
                     else {
-                        validRoom = Reservations.checkAvailability(date, room);
+                        validRoom = Reservations.checkAvailability(room, date);
                         if(!validRoom) {
                             System.out.printf("**ERROR: Room %d is not available on day %d.%n%n**", room, date);
                         }
@@ -321,6 +324,10 @@ public class HotelBooking {
        Removed local declaration of Scanner.
        Added newlines to messages to look less cluttered in console.
        Change default String value to be null
+
+     * 24/05/2024
+     * Raymond Zhang - Fixed bug where entering an ID that is valid but isn't in file crashes program.
+                       Comparison to null should have used ==, not .equals()
     */
     public static void login() {
         // Declare variables
@@ -350,7 +357,7 @@ public class HotelBooking {
                     System.out.println(e + " Problem reading file.");
                 }
 
-                if(queryPin[0].equals(null)) {
+                if(queryPin[0] == null) {
                     System.out.println("**ERROR: ID was not found in system.**\n");
                 } else {
                     validID = true;
@@ -435,6 +442,9 @@ public class HotelBooking {
 
      * 23/05/2024
      * Raymond Zhang - Changed date output to be string
+
+     * 24/05/2024
+     * Raymond Zhang - Changed method call to checkAvailability to align with new parameters
     */
     public static void defaultMenu() {
         // Declare variables
@@ -616,7 +626,7 @@ public class HotelBooking {
                                         newDate = getDateInput();
 
                                         // Check if room is available on new date
-                                        if(Reservations.checkAvailability(newDate, room)) {
+                                        if(Reservations.checkAvailability(room, date)) {
                                             // ! Update.reserveChange(firstName, lastName, false, date, newDate);
                                             System.out.printf("Changed %s %s's reservation date of room %d from day %s from day %s.%n", firstName, lastName, res[0], Reservations.dateConverter(res[1]), Reservations.dateConverter(newDate));
                                             changed = true;
@@ -646,7 +656,7 @@ public class HotelBooking {
                                                 changed = true;
                                             }
                                             // Check if new room is available
-                                            else if(Reservations.checkAvailability(date, newRoom)) {
+                                            else if(Reservations.checkAvailability(newRoom, date)) {
                                                 // ! Update.reserveChange(firstName, lastName, true, date, newDate);
                                                 System.out.printf("Changed %s %s's reservation room on day %s from room %d to room %d.%n", firstName, lastName, Reservations.dateConverter(res[1]), res[0], newRoom);
                                                 changed = true;
