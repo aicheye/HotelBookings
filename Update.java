@@ -19,6 +19,9 @@ public class Update {
      Dates modified:
      * 23/05/2024
      * Sean Yang - Created and completed method (tested)
+
+     * 24/05/2024
+     * Sean Yang - Update error messages for consistency with HotelBookings
      */
     public static void reserveCreate(String firstName, String lastName, int room, int date) {
         try
@@ -32,7 +35,7 @@ public class Update {
             }
             else
             {
-                System.out.println("Error: The room you are trying to book is not available on that date."); // output error
+                System.out.println("*ERROR: The room you are trying to book is not available on that date."); // output error
             }
         }
         // output if there is an issue reading the file
@@ -52,6 +55,9 @@ public class Update {
      Dates modified:
      * 23/05/2024
      * Sean Yang - reworked function to be more concise
+
+     * 24/05/2024
+     * Sean Yang - Update error messages for consistency with HotelBookings
      */
     public static void reserveCancel(String firstName, String lastName, int room, int date) {
         try
@@ -65,7 +71,7 @@ public class Update {
             }
             else
             {
-                System.out.println("Error: The reservation you are trying to cancel does not exist."); // output error
+                System.out.println("*ERROR: The reservation you are trying to cancel does not exist."); // output error
             }
         }
         // output if there is an issue reading the file
@@ -85,6 +91,9 @@ public class Update {
      Dates modified:
      * 23/05/2024
      * Sean Yang - Created and completed method (tested)
+
+     * 24/05/2024
+     * Sean Yang - Update error messages for consistency with HotelBookings
      */
     public static void reserveChange(String oldFirst, String oldLast, int room, int date, String newFirst, String newLast) {
         try
@@ -98,7 +107,7 @@ public class Update {
             }
             else
             {
-                System.out.println("Error: The reservation you are trying to change does not exist."); // output error
+                System.out.println("**ERROR: The reservation you are trying to change does not exist."); // output error
             }
         }
         // output if there is an issue reading the file
@@ -118,6 +127,9 @@ public class Update {
      Dates modified:
      * 23/05/2024
      * Sean Yang - Created and completed method (tested)
+
+     * 24/05/2024
+     * Sean Yang - Update error messages for consistency with HotelBookings
      */
     public static void reserveChange(String firstName, String lastName, boolean changeRoom, int dateOrRoom, int old, int now) {
         try
@@ -134,7 +146,7 @@ public class Update {
                 }
                 else
                 {
-                    System.out.println("Error: The reservation you are trying to change does not exist."); // output error
+                    System.out.println("**ERROR: The reservation you are trying to change does not exist."); // output error
                 }
             }
             // runs if the user wants to change the date
@@ -149,7 +161,7 @@ public class Update {
                 }
                 else
                 {
-                    System.out.println("Error: The reservation you are trying to change does not exist."); // output error
+                    System.out.println("**ERROR: The reservation you are trying to change does not exist."); // output error
                 }
             }
         }
