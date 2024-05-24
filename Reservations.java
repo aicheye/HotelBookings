@@ -19,16 +19,18 @@ public class Reservations {
     Dates modified:
     * 24/05/2024
     * Raymond Zhang - Changed return type to boolean to indicate empty rooms. Improved coding style.
+    * Sean Yang - Fixed issue where no rooms would be returned on a date beyond the maximum date booked. Changed
+                  rooms to be an ArrayList
     */
 
     public static boolean listAvailableRooms(int date) {
         // Declare variables
         int size = 0;
-        int[] rooms;
+        List<Integer> rooms;
         try {
             // Get available rooms
             rooms = Query.dateQuery(date);
-            size = rooms.length;//checks how many available rooms there are
+            size = rooms.size();//checks how many available rooms there are
 
             // Check if any rooms are available
             if (size == 0) {
@@ -37,7 +39,7 @@ public class Reservations {
             else {
                 System.out.printf("Rooms available on %s:%n", dateConverter(date));
                 for(int i = 0; i<size; i++) {
-                    System.out.println("Room " + rooms[i]);//prints out all available rooms
+                    System.out.println("Room " + rooms.get(i));//prints out all available rooms
                 }
             }
         } catch (IOException e) {
