@@ -54,32 +54,14 @@ public class Update {
      * Sean Yang - reworked function to be more concise
      */
     public static void reserveCancel(String firstName, String lastName, int room, int date) {
-        // init scanner
-        Scanner sc = new Scanner(System.in);
-        char next;
-
         try
         {
             // check if the reservation exists
             if (Query.reservationExists(firstName, lastName, room, date))
             {
-                // ask user for confirmation
-                System.out.print("Are you sure you want to proceed with cancellation (Y/n)? ");
-                next = sc.next().charAt(0);
-
-                // run if user confirms
-                if (next == 'Y')
-                {
-                    // remove from reservations
-                    Write.delReserve(firstName, lastName, room, date);
-                    System.out.println("Reservation cancelled successfully."); // output success
-                }
-
-                // output if user aborts
-                else
-                {
-                    System.out.println("Operation aborted.");
-                }
+                // remove from reservations
+                Write.delReserve(firstName, lastName, room, date);
+                System.out.println("Reservation cancelled successfully."); // output success
             }
             else
             {
@@ -91,9 +73,6 @@ public class Update {
         {
             System.out.println(e);
         }
-
-        // close scanner
-        sc.close();
     }
 
     /*
