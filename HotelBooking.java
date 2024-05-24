@@ -496,8 +496,8 @@ public class HotelBooking {
                     date = getDateInput();
 
                     // List reservations
-                    // ! Reservations.listReservations(date);
-                    System.out.printf("Listing reservations for day %s.%n", Reservations.dateConverter(date));
+                    Reservations.listReservations(date);
+                    // System.out.printf("Listing reservations for day %s.%n", Reservations.dateConverter(date));
                     break;
 
                 // List reservations under a name
