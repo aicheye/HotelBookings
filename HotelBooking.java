@@ -24,7 +24,7 @@ import java.time.temporal.ChronoUnit;
 public class HotelBooking {
 
     // Constant for quit number
-    private static final int QUIT_NUM = 0;
+    private static final int QUIT_NUM = -1;
 
     // Current employee in the system
     private static String employeeID = null;
@@ -96,7 +96,8 @@ public class HotelBooking {
        Removed local declaration of Scanner.
 
      * 24/05/2024
-     * Raymond Zhang - Changed method call to checkAvailability to align with new parameters
+     * Raymond Zhang - Changed method call to checkAvailability to align with new parameters.
+       Change quit number to -1
     */
     public static int getRoomInput(int date) {
         // Declare variables
@@ -111,7 +112,7 @@ public class HotelBooking {
                 // System.out.printf("Listing available rooms for day %d.%n", date);
 
                 // Receive input for room number
-                System.out.print("Enter the room number (0 to cancel): ");
+                System.out.print("Enter the room number (-1 to cancel): ");
                 line = sc.nextLine();
                 try {
                     room = Integer.parseInt(line);
@@ -162,25 +163,40 @@ public class HotelBooking {
 
      * 23/05/2024
      * Raymond Zhang - Changed date to string input.
+
+     * 24/05/2024
+     * Raymond Zhang - Added option to quit.
     */
 
     public static int getDateInput() {
         // Declare variable
         int date = -1;
         String dateStr;
+        boolean validDate = false;
 
         // Get the date from user
         do {
-            System.out.print("Enter the date: ");
+            System.out.print("Enter the date (-1 to cancel): ");
             dateStr = sc.nextLine();
-            date = dateStrToInt(dateStr);
 
-            // Check if date is invalid
-            if(date < 0) {
-                System.out.println("**ERROR: Date must be 01/01/2024 or later (DD/MM/YYYY).**\n");
+            // User chose to quit
+            if (dateStr.equals(String.valueOf(QUIT_NUM))) {
+                date = QUIT_NUM;
+                validDate = true;
+            }
+            // Try to convert date String to numerical value
+            else {
+                date = dateStrToInt(dateStr);
+                // Check if date is invalid
+                if(date < 0) {
+                    System.out.println("**ERROR: Date must be 01/01/2024 or later (DD/MM/YYYY).**\n");
+                }
+                else {
+                    validDate = true;
+                }
             }
 
-        } while(date < 0);
+        } while(!validDate);
 
         // Return the date
         return date;
@@ -208,7 +224,11 @@ public class HotelBooking {
      * Raymond Zhang - Swapped room and date to match with Query method call
 
      * 23/05/2024
-     * Raymond Zhang- Changed date to string during input and output.
+     * Raymond Zhang - Changed date to string during input and output.
+
+     * 24/05/2024
+     * Raymond Zhang - Added option to quit, made print formatting a bit neater.
+       Changed quit value to -1
     */
     public static int[] getReservation(String firstName, String lastName) {
         // Declare variables
@@ -236,18 +256,19 @@ public class HotelBooking {
                 Reservations.listReservations(firstName, lastName);
                 // System.out.printf("Listing reservations for %s %s.%n", firstName, lastName);
 
-                System.out.print("Enter the room number (0 to quit): ");
+                System.out.print("Enter the room number (-1 to quit): ");
                 line = sc.nextLine();
                 try {
                     room = Integer.parseInt(line);
                 }
                 // User inputted non-numerical characters
                 catch (NumberFormatException e) {
-                    room = -1;
+                    room = QUIT_NUM-1;
                 }
 
-                // User aborts cancellation
+                // User aborts operation
                 if(room == QUIT_NUM) {
+                    System.out.println("Operation aborted.");
                     validRoom = true;
                     validDate = true; // Skip next loop
                 }
@@ -268,26 +289,36 @@ public class HotelBooking {
             // Get a valid date number from user
             while(!validDate) {
                 // Display reserved dates for given room
-                System.out.printf("Listing %s %s's reserved dates for room %d.%n", firstName, lastName, room);
+                System.out.printf("Listing %s %s's reserved dates for room %d:%n", firstName, lastName, room);
                 // ? May want to add styling
                 for(Integer day : customerDates) {
-                    System.out.println(Reservations.dateConverter(day));
+                    System.out.println("  " +  Reservations.dateConverter(day));
                 }
 
                 // Receive input for room number
-                System.out.print("Enter a reserved date: ");
+                System.out.print("Enter a reserved date (-1 to quit): ");
                 line = sc.nextLine();
-                date = dateStrToInt(line);
 
-                // Check if date was valid
-                if (date < 0) {
-                    System.out.println("**ERROR: Date must be 01/01/2024 or later (DD/MM/YYYY).**\n");
+                // User chose to abort
+                if(line.equals(String.valueOf(QUIT_NUM))) {
+                    room = QUIT_NUM;
+                    date = QUIT_NUM;
+                    validDate = true;
                 }
                 else {
-                    // Check if date was reserved
-                    validDate = customerDates.contains(date);
-                    if(!validDate) {
-                        System.out.printf("**ERROR: %s %s has not reserved room %d on day %s.**%n%n", firstName, lastName, room, Reservations.dateConverter(date));
+                    // Convert date to int
+                    date = dateStrToInt(line);
+
+                    // Check if date was valid
+                    if (date < 0) {
+                        System.out.println("**ERROR: Date must be 01/01/2024 or later (DD/MM/YYYY).**\n");
+                    }
+                    else {
+                        // Check if date was reserved
+                        validDate = customerDates.contains(date);
+                        if(!validDate) {
+                            System.out.printf("**ERROR: %s %s has not reserved room %d on day %s.**%n%n", firstName, lastName, room, Reservations.dateConverter(date));
+                        }
                     }
                 }
             }
@@ -304,7 +335,7 @@ public class HotelBooking {
      Description: Prompts the user to enter their employee ID, then checks if
                   the entered ID is valid and in the system. If so, then the user
                   must enter their corresponding PIN until they get it correct.
-                  Alternatively, the user may enter 0 to return to the login screen.
+                  Alternatively, the user may enter -1 to return to the login screen.
                   Once the user is successfully logged in, the according  menu will
                   be displayed depending on if the user is an admin or not.
      Dates Modified:
@@ -327,7 +358,9 @@ public class HotelBooking {
 
      * 24/05/2024
      * Raymond Zhang - Fixed bug where entering an ID that is valid but isn't in file crashes program.
-                       Comparison to null should have used ==, not .equals()
+       Comparison to null should have used ==, not .equals()
+       Changed quit value to -1.
+       Fixed NullPointerException from assigning null value to queryPin[1] by assigning "" instead
     */
     public static void login() {
         // Declare variables
@@ -372,12 +405,12 @@ public class HotelBooking {
         // Run until valid PIN entered or user exits
         do {
             // Get PIN
-            System.out.print("Enter PIN (0 to return to login screen): ");
+            System.out.print("Enter PIN (-1 to return to login screen): ");
             pin = sc.nextLine();
 
             // User quit; return to login screen
             if(pin.equals(String.valueOf(QUIT_NUM))) {
-                queryPin[1] = null; // Mark as invalid, skip menu display
+                queryPin[1] = ""; // Mark as invalid, skip menu display
                 validPIN = true;
             }
             // Inputted PIN matches with employee PIN
@@ -446,11 +479,14 @@ public class HotelBooking {
      * 24/05/2024
      * Raymond Zhang - Changed method call to checkAvailability to align with new parameters.
        Replaced print statements with finished method calls.
+       Added option to quit when entering date
+       Fixed issue with room and date being mixed up when canceling a reservation
+       Added quit messages
     */
     public static void defaultMenu() {
         // Declare variables
         int choiceMenu = -1, choiceChange = -1, date = -1, room = -1, newDate = -1, newRoom = -1;
-        int[] res; // reservation: [date, room]
+        int[] res; // reservation: [room, date]
         boolean running = true, validPIN = false, changed = false;
         String line, firstName, lastName, pin, oldPIN, newPIN, firstNew, lastNew;
 
@@ -476,7 +512,7 @@ public class HotelBooking {
             }
             // User inputted non-numerical characters
             catch (NumberFormatException e) {
-                choiceMenu = -1;
+                choiceMenu = QUIT_NUM;
             }
 
             // Run actions depending on choice
@@ -486,9 +522,16 @@ public class HotelBooking {
                     // Receive user input for the date
                     date = getDateInput();
 
-                    // List rooms
-                    Reservations.listAvailableRooms(date);
-                    // System.out.printf("Listing available rooms for day %s.%n", Reservations.dateConverter(date));
+                    // List rooms if user did not quit
+                    if(date != QUIT_NUM) {
+                        Reservations.listAvailableRooms(date);
+                        // System.out.printf("Listing available rooms for day %s.%n", Reservations.dateConverter(date));
+                    }
+                    // Let user know that they quit
+                    else {
+                        System.out.println("Operation aborted.");
+                    }
+
                     break;
 
                 // List reservations on a given date
@@ -496,9 +539,16 @@ public class HotelBooking {
                     // Get the date to find available rooms
                     date = getDateInput();
 
-                    // List reservations
-                    Reservations.listReservations(date);
-                    // System.out.printf("Listing reservations for day %s.%n", Reservations.dateConverter(date));
+                    // List reservations if user did not quit
+                    if(date != QUIT_NUM) {
+                        Reservations.listReservations(date);
+                        // System.out.printf("Listing reservations for day %s.%n", Reservations.dateConverter(date));
+                    }
+                    // Let user know that they quit
+                    else {
+                        System.out.println("Operation aborted.");
+                    }
+
                     break;
 
                 // List reservations under a name
@@ -529,13 +579,20 @@ public class HotelBooking {
                     // Get reservation date
                     date = getDateInput();
 
-                    // Get reservation room
-                    room = getRoomInput(date);
+                    // Get reservation room if user did not quit
+                    if(date != QUIT_NUM) {
+                        room = getRoomInput(date);
 
-                    // Make reservation if user did not exit
-                    if(room != QUIT_NUM){
-                        Update.reserveCreate(firstName, lastName, room, date);
-                        System.out.printf("Created reservation for %s %s for room %d on day %s.%n", firstName, lastName, room, Reservations.dateConverter(date));
+                        // Make reservation if user did not quit
+                        if(room != QUIT_NUM){
+                            Update.reserveCreate(firstName, lastName, room, date);
+                            System.out.printf("Created reservation for %s %s for room %d on day %s.%n", firstName, lastName, room, Reservations.dateConverter(date));
+                        }
+                    }
+
+                    // Let user know if they chose to quit
+                    if(date == QUIT_NUM || room == QUIT_NUM) {
+                        System.out.println("Reservation aborted.");
                     }
                     break;
 
@@ -551,10 +608,12 @@ public class HotelBooking {
 
                     // Get the reservation of choice
                     res = getReservation(firstName, lastName);
+                    room = res[0];
+                    date = res[1];
 
                     // User did not choose to abort
-                    if(res[0] != QUIT_NUM) {
-                        Update.reserveCancel(firstName, lastName, res[1], res[0]);
+                    if(room != QUIT_NUM) {
+                        Update.reserveCancel(firstName, lastName, room, date);
                         // System.out.printf("Cancelled reservation for %s %s for room %d on day %s.%n", firstName, lastName, res[0], Reservations.dateConverter(res[1]));
                     }
 
@@ -597,7 +656,7 @@ public class HotelBooking {
                             }
                             // User inputted non-numerical characters
                             catch (NumberFormatException e) {
-                                choiceChange = -1;
+                                choiceChange = QUIT_NUM;
                             }
 
                             // Run actions depending on choice
@@ -622,12 +681,16 @@ public class HotelBooking {
                                 case 2:
 
                                     do {
-                                        // TODO: User should be able to abort
                                         // Get new date
                                         newDate = getDateInput();
 
+                                        // Let user know that they quit
+                                        if(newDate == QUIT_NUM) {
+                                            System.out.println("Date change aborted.");
+                                            changed = true;
+                                        }
                                         // Check if room is available on new date
-                                        if(Reservations.checkAvailability(room, newDate)) {
+                                        else if(Reservations.checkAvailability(room, newDate)) {
                                             Update.reserveChange(firstName, lastName, false, room, date, newDate);
                                             // System.out.printf("Changed %s %s's reservation date of room %d from day %s from day %s.%n", firstName, lastName, res[0], Reservations.dateConverter(res[1]), Reservations.dateConverter(newDate));
                                             changed = true;
@@ -646,14 +709,15 @@ public class HotelBooking {
 
                                     do {
                                         // Get new room
-                                        System.out.print("Enter the new room number (0 to cancel): ");
+                                        System.out.print("Enter the new room number (-1 to cancel): ");
                                         line = sc.nextLine();
 
                                         try {
                                             newRoom = Integer.parseInt(line);
 
-                                            // User aborted
+                                            // Let user know they aborted
                                             if(newRoom == QUIT_NUM) {
+                                                System.out.println("Room change aborted.");
                                                 changed = true;
                                             }
                                             // Check if new room is available
@@ -685,10 +749,10 @@ public class HotelBooking {
                                 // Invalid choice made
                                 default:
                                     System.out.println("**ERROR: Choice must be an integer from 1 to 4.**");
-                                    choiceChange = -1;
+                                    choiceChange = QUIT_NUM;
                                     break;
                             }
-                        } while(choiceChange == -1);
+                        } while(choiceChange == QUIT_NUM);
                     }
 
                     break;
@@ -703,14 +767,14 @@ public class HotelBooking {
 
                         do {
                             // Get old PIN
-                            System.out.print("Enter your old PIN (0 to cancel): ");
+                            System.out.print("Enter your old PIN (-1 to cancel): ");
                             pin = sc.nextLine();
 
                             // PIN matches
                             if(pin.equals(oldPIN)) {
                                 do {
                                     // Get new PIN
-                                    System.out.print("Enter the new PIN (0 to cancel): ");
+                                    System.out.print("Enter the new PIN (-1 to cancel): ");
                                     newPIN = sc.nextLine();
 
                                     // New PIN is valid; change PIN and break
