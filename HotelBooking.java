@@ -444,7 +444,8 @@ public class HotelBooking {
      * Raymond Zhang - Changed date output to be string
 
      * 24/05/2024
-     * Raymond Zhang - Changed method call to checkAvailability to align with new parameters
+     * Raymond Zhang - Changed method call to checkAvailability to align with new parameters.
+       Replaced print statements with finished method calls.
     */
     public static void defaultMenu() {
         // Declare variables
@@ -533,7 +534,7 @@ public class HotelBooking {
 
                     // Make reservation if user did not exit
                     if(room != QUIT_NUM){
-                        // ! Update.reserveCreate(firstName, lastName, room, date);
+                        Update.reserveCreate(firstName, lastName, room, date);
                         System.out.printf("Created reservation for %s %s for room %d on day %s.%n", firstName, lastName, room, Reservations.dateConverter(date));
                     }
                     break;
@@ -553,8 +554,8 @@ public class HotelBooking {
 
                     // User did not choose to abort
                     if(res[0] != QUIT_NUM) {
-                        // ! Update.reserveCancel(firstName, lastName, res[1], res[0]);
-                        System.out.printf("Cancelled reservation for %s %s for room %d on day %s.%n", firstName, lastName, res[0], Reservations.dateConverter(res[1]));
+                        Update.reserveCancel(firstName, lastName, res[1], res[0]);
+                        // System.out.printf("Cancelled reservation for %s %s for room %d on day %s.%n", firstName, lastName, res[0], Reservations.dateConverter(res[1]));
                     }
 
                     break;
@@ -612,8 +613,8 @@ public class HotelBooking {
                                     lastNew = sc.nextLine();
 
                                     // Change name of reservation
-                                    // ! Update.reserveChange(firstName, lastName, room, date, firstNew, lastNew);
-                                    System.out.printf("Changed reservation name of room %d on day %s from %s %s to %s %s.%n", res[0], Reservations.dateConverter(res[1]), firstName, lastName, firstNew, lastNew);
+                                    Update.reserveChange(firstName, lastName, room, date, firstNew, lastNew);
+                                    // System.out.printf("Changed reservation name of room %d on day %s from %s %s to %s %s.%n", res[0], Reservations.dateConverter(res[1]), firstName, lastName, firstNew, lastNew);
 
                                     break;
 
@@ -626,9 +627,9 @@ public class HotelBooking {
                                         newDate = getDateInput();
 
                                         // Check if room is available on new date
-                                        if(Reservations.checkAvailability(room, date)) {
-                                            // ! Update.reserveChange(firstName, lastName, false, date, newDate);
-                                            System.out.printf("Changed %s %s's reservation date of room %d from day %s from day %s.%n", firstName, lastName, res[0], Reservations.dateConverter(res[1]), Reservations.dateConverter(newDate));
+                                        if(Reservations.checkAvailability(room, newDate)) {
+                                            Update.reserveChange(firstName, lastName, false, room, date, newDate);
+                                            // System.out.printf("Changed %s %s's reservation date of room %d from day %s from day %s.%n", firstName, lastName, res[0], Reservations.dateConverter(res[1]), Reservations.dateConverter(newDate));
                                             changed = true;
                                         } else {
                                             System.out.printf("**ERROR: Room %d is unavailable on day %s.**%n%n", room, Reservations.dateConverter(newDate));
@@ -657,8 +658,8 @@ public class HotelBooking {
                                             }
                                             // Check if new room is available
                                             else if(Reservations.checkAvailability(newRoom, date)) {
-                                                // ! Update.reserveChange(firstName, lastName, true, date, newDate);
-                                                System.out.printf("Changed %s %s's reservation room on day %s from room %d to room %d.%n", firstName, lastName, Reservations.dateConverter(res[1]), res[0], newRoom);
+                                                Update.reserveChange(firstName, lastName, true, date, room, newRoom);
+                                                // System.out.printf("Changed %s %s's reservation room on day %s from room %d to room %d.%n", firstName, lastName, Reservations.dateConverter(res[1]), res[0], newRoom);
                                                 changed = true;
                                             } else {
                                                 System.out.printf("**ERROR: Room %d is unavailable.**%n%n", newRoom);
@@ -715,8 +716,8 @@ public class HotelBooking {
                                     // New PIN is valid; change PIN and break
                                     // ? Create constant for PIN length
                                     if(newPIN.matches("^[0-9]{4}$")) {
-                                        // ! Write.edtPin(employeeID, newPIN);
-                                        System.out.printf("Changed %s's pin to %s.%n%n", employeeID, newPIN);
+                                        Write.edtPin(employeeID, newPIN);
+                                        // System.out.printf("Changed %s's pin to %s.%n%n", employeeID, newPIN);
                                         validPIN = true;
                                     }
                                     // User chooses to quit; break out of loop
