@@ -71,7 +71,7 @@ public class Update {
             }
             else
             {
-                System.out.println("*ERROR: The reservation you are trying to cancel does not exist."); // output error
+                System.out.println("**ERROR: The reservation you are trying to cancel does not exist."); // output error
             }
         }
         // output if there is an issue reading the file
