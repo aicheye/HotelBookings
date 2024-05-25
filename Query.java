@@ -86,81 +86,34 @@ public class Query
        Sean Yang - Fixed method to close file reader
        Raymond Zhang - Moved variable declarations to beginning of method.
                        Closed readRoom file reader.
+
+     * 24/05/2024
+       Sean Yang - Fixed issue where no rooms would be returned on a date beyond the maximum date booked. Now returns
+                   an ArrayList instead of an array.
      */
-    public static int[] dateQuery (int date) throws IOException
+    public static List<Integer> dateQuery (int date) throws IOException
     {
         // init file reader and variables
-        BufferedReader readDays = new BufferedReader(new FileReader(DAYS_DB));
-        BufferedReader readRoom = new BufferedReader(new FileReader(ROOMS_DB));
-        List<Integer> rooms = new ArrayList<Integer>(); // ArrayList of the rooms available on a date
-        Set<Integer> allRooms = new HashSet<Integer>(); // HashSet of all rooms in the system
-        Set<Integer> reserved = new HashSet<Integer>(); // HashSet of all reserved rooms on a date
-        String line = readRoom.readLine(); // read the first line of rooms.txt
-        int day;
-        int[] arr;
-        boolean end = false, searching;
+        List<Integer> rooms = allRooms(); // all the rooms in the hotel
+        List<List<Integer>> days = allDays(); // all the days rooms have been booked for
+        List<Integer> available = new ArrayList<Integer>(); // available rooms on that date
 
-        // loop until EOF (rooms.txt)
-        while (line != null)
+        // check if the date has been booked
+        if (date <= days.size() - 1)
         {
-            // append the next line to allRooms
-            allRooms.add(Integer.parseInt(line));
-            line = readRoom.readLine();
-        }
-
-        // loop through every day
-        while (!end)
-        {
-            line = readDays.readLine();
-            // check if EOF
-            if (line == null) end = true;
-            // if not EOF continue
-            else
+            // loop over all rooms in the hotel
+            for (int room : rooms)
             {
-                day = Integer.parseInt(line);
-
-                // check if date matches and loop through every room available on that day
-                if (day == date) {
-                    searching = true;
-                    while (searching)
-                    {
-                        line = readDays.readLine();
-                        // check if there are no other rooms available on that day
-                        if (line.equals(DATE_DELIMITER)) searching = false;
-                        // append to array
-                        else reserved.add(Integer.parseInt(line));
-                    }
-
-                    // if a room in allRooms is not in reserved, append it to the arrayList
-                    for (int e : allRooms)
-                    {
-                        if (!reserved.contains(e)) rooms.add(e);
-                    }
-                }
-
-                // otherwise, keep reading until we reach a new date
-                else {
-                    searching = true;
-                    while (searching)
-                    {
-                        line = readDays.readLine();
-                        if (line.equals(DATE_DELIMITER)) searching = false;
-                    }
-                }
+                if (!days.get(date).contains(room)) available.add(room); // if the room is not booked, add it
             }
         }
-
-        arr = new int[rooms.size()]; // the array which will be returned
-        for (int i=0; i<rooms.size(); i++) // converts ArrayList into array
+        // if the date has not been booked, return all days
+        else
         {
-            arr[i] = rooms.get(i);
+            available = rooms;
         }
 
-        // close file readers
-        readDays.close();
-        readRoom.close();
-
-        return arr;
+        return available;
     }
 
     /*

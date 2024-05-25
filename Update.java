@@ -83,11 +83,13 @@ public class Update {
 
     /*
      Method Name: reserveChange (Changing the name)
-     Parameters: String firstName - first name of person
-                 String lastName - last name of person
+     Parameters: String oldFirst - first name of person
+                 String oldLast - last name of person
                  int room - room number
                  int date - given date
-     Description: Creates a reservation for a given room and date
+                 String newFirst - the first name to change to
+                 String newLast - the last name to change to
+     Description: Changes the name a reservation is under
      Dates modified:
      * 23/05/2024
      * Sean Yang - Created and completed method (tested)
@@ -121,9 +123,11 @@ public class Update {
      Method Name: reserveChange (changing the date or room)
      Parameters: String firstName - first name of person
                  String lastName - last name of person
-                 int room - room number
-                 int date - given date
-     Description: Creates a reservation for a given room and date
+                 boolean changeRoom - whether the user wants to change the room (false: change the date)
+                 int dateOrRoom - either the date or the room, whichever doesn't change
+                 int old - the old value of the date/room
+                 int now - the new value of the date/room
+     Description: Changes a reservation (either changing the date or the room #)
      Dates modified:
      * 23/05/2024
      * Sean Yang - Created and completed method (tested)

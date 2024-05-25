@@ -94,6 +94,9 @@ public class HotelBooking {
        Fixed infinite loop in input validation by reading line outside of try-catch block
        Changed error messages to stand out more.
        Removed local declaration of Scanner.
+
+     * 24/05/2024
+     * Raymond Zhang - Changed method call to checkAvailability to align with new parameters
     */
     public static int getRoomInput(int date) {
         // Declare variables
@@ -104,30 +107,37 @@ public class HotelBooking {
         // Get a valid room number from user
         do {
             // Display available rooms on given date
-            Reservations.listAvailableRooms(date);
-            // System.out.printf("Listing available rooms for day %d.%n", date);
+            if(Reservations.listAvailableRooms(date)) {
+                // System.out.printf("Listing available rooms for day %d.%n", date);
 
-            // Receive input for room number
-            System.out.print("Enter the room number (0 to cancel): ");
-            line = sc.nextLine();
-            try {
-                room = Integer.parseInt(line);
+                // Receive input for room number
+                System.out.print("Enter the room number (0 to cancel): ");
+                line = sc.nextLine();
+                try {
+                    room = Integer.parseInt(line);
 
-                // User cancels reservation
-                if(room == QUIT_NUM) {
-                    validRoom = true;
-                }
-                // Check if room is invalid
-                else {
-                    validRoom = Reservations.checkAvailability(date, room);
-                    if(!validRoom) {
-                        System.out.printf("**ERROR: Room %d is not available on day %d.%n%n**", room, date);
+                    // User cancels reservation
+                    if(room == QUIT_NUM) {
+                        validRoom = true;
+                    }
+                    // Check if room is invalid
+                    else {
+                        validRoom = Reservations.checkAvailability(room, date);
+                        if(!validRoom) {
+                            System.out.printf("**ERROR: Room %d is not available on day %d.%n%n**", room, date);
+                        }
                     }
                 }
+                // User inputted non-numerical characters
+                catch (NumberFormatException e) {
+                    System.out.println("**ERROR: Room number must be an integer.**\n");
+                }
+
             }
-            // User inputted non-numerical characters
-            catch (NumberFormatException e) {
-                System.out.println("**ERROR: Room number must be an integer.**\n");
+            // No rooms available, break out of loop
+            else {
+                room = QUIT_NUM;
+                validRoom = true;
             }
 
         } while(!validRoom);
@@ -271,7 +281,7 @@ public class HotelBooking {
 
                 // Check if date was valid
                 if (date < 0) {
-                    System.out.println("**ERROR: Date must be 1/01/2024 or later (DD/MM/YYYY).**\n");
+                    System.out.println("**ERROR: Date must be 01/01/2024 or later (DD/MM/YYYY).**\n");
                 }
                 else {
                     // Check if date was reserved
@@ -314,6 +324,10 @@ public class HotelBooking {
        Removed local declaration of Scanner.
        Added newlines to messages to look less cluttered in console.
        Change default String value to be null
+
+     * 24/05/2024
+     * Raymond Zhang - Fixed bug where entering an ID that is valid but isn't in file crashes program.
+                       Comparison to null should have used ==, not .equals()
     */
     public static void login() {
         // Declare variables
@@ -343,7 +357,7 @@ public class HotelBooking {
                     System.out.println(e + " Problem reading file.");
                 }
 
-                if(queryPin[0].equals(null)) {
+                if(queryPin[0] == null) {
                     System.out.println("**ERROR: ID was not found in system.**\n");
                 } else {
                     validID = true;
@@ -428,6 +442,9 @@ public class HotelBooking {
 
      * 23/05/2024
      * Raymond Zhang - Changed date output to be string
+
+     * 24/05/2024
+     * Raymond Zhang - Changed method call to checkAvailability to align with new parameters
     */
     public static void defaultMenu() {
         // Declare variables
@@ -479,8 +496,8 @@ public class HotelBooking {
                     date = getDateInput();
 
                     // List reservations
-                    // ! Reservations.listReservations(date);
-                    System.out.printf("Listing reservations for day %s.%n", Reservations.dateConverter(date));
+                    Reservations.listReservations(date);
+                    // System.out.printf("Listing reservations for day %s.%n", Reservations.dateConverter(date));
                     break;
 
                 // List reservations under a name
@@ -609,7 +626,7 @@ public class HotelBooking {
                                         newDate = getDateInput();
 
                                         // Check if room is available on new date
-                                        if(Reservations.checkAvailability(newDate, room)) {
+                                        if(Reservations.checkAvailability(room, date)) {
                                             // ! Update.reserveChange(firstName, lastName, false, date, newDate);
                                             System.out.printf("Changed %s %s's reservation date of room %d from day %s from day %s.%n", firstName, lastName, res[0], Reservations.dateConverter(res[1]), Reservations.dateConverter(newDate));
                                             changed = true;
@@ -639,7 +656,7 @@ public class HotelBooking {
                                                 changed = true;
                                             }
                                             // Check if new room is available
-                                            else if(Reservations.checkAvailability(date, newRoom)) {
+                                            else if(Reservations.checkAvailability(newRoom, date)) {
                                                 // ! Update.reserveChange(firstName, lastName, true, date, newDate);
                                                 System.out.printf("Changed %s %s's reservation room on day %s from room %d to room %d.%n", firstName, lastName, Reservations.dateConverter(res[1]), res[0], newRoom);
                                                 changed = true;

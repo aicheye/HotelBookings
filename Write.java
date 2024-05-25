@@ -31,7 +31,7 @@ public class Write
      Description: Adds a reservation to customers.txt and updates days.txt
      Dates Modified:
      * 21/05/2024
-       Sean Yang - Created and completed method (untested)
+       Sean Yang - Created and completed method
 
      * 23/05/2024
        Sean Yang - Found some issues with the method and rewrote it using Query.allCustomers and Query.allDays, now
@@ -122,7 +122,7 @@ public class Write
      Description: Deletes a reservation from customers.txt and days.txt
      Dates Modified
      * 23/05/2024
-       Sean Yang - Created and completed method (tested)
+       Sean Yang - Created and completed method
      */
     public static void delReserve(String firstName, String lastName, int room, int date) throws IOException
     {
@@ -167,7 +167,7 @@ public class Write
      Description: Updates a reservation in customers.txt and days.txt
      Dates Modified:
      * 23/05/2024
-       Sean Yang - Created and completed method (untested)
+       Sean Yang - Created and completed method
      */
     public static void edtReserve(String oldFirst, String oldLast, int room, int date, String newFirst, String newLast) throws IOException
     {
@@ -186,7 +186,7 @@ public class Write
      Description: Updates a reservation in customers.txt and days.txt
      Dates Modified:
      * 23/05/2024
-       Sean Yang - Created and completed method (untested)
+       Sean Yang - Created and completed method
      */
     public static void edtReserve(String firstName, String lastName, boolean changeRoom, int dateOrRoom, int old, int now) throws IOException
     {
@@ -235,7 +235,7 @@ public class Write
      Description: Deletes a room from rooms.txt
      Dates Modified:
      * 23/05/2024
-       Sean Yang - Created and completed method (untested)
+       Sean Yang - Created and completed method
      */
     public static void delRoom(int room) throws IOException
     {
@@ -265,7 +265,7 @@ public class Write
      Description: Adds a new employee to employees.txt
      Dates Modified:
      * 23/05/2024
-       Sean Yang - Created and completed method (untested)
+       Sean Yang - Created and completed method
      */
     public static void addEmployee(String id, String firstName, String lastName, String pin, String isAdmin) throws IOException
     {
@@ -297,7 +297,7 @@ public class Write
      Description: Deletes an employee entry from employees.txt
      Dates Modified:
      * 23/05/2024
-       Sean Yang - Created and completed method (untested)
+       Sean Yang - Created and completed method
      */
     public static void delEmployee(String id) throws IOException
     {
@@ -332,7 +332,7 @@ public class Write
      Description: Change's an employees pin in employees.txt
      Dates Modified:
      * 23/05/2024
-       Sean Yang - Created and completed method (untested)
+       Sean Yang - Created and completed method
      */
     public static void edtPin(String id, String newPin) throws IOException
     {
