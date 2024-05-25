@@ -83,6 +83,9 @@ public class Reservations {
     Dates modified:
      * 23/05/2024
      * Raymond Zhang - Formatted method.
+
+     * 24/05/2024
+     * Raymond Zhang - Change print format to be consistent with other methods
     */
     public static void listReservations(String firstName, String lastName) {
         Object days;
@@ -93,7 +96,7 @@ public class Reservations {
                 List<Integer> value = rooms.get(e);// gets the room numbers
                 for (Object o : value) {
                     days = o;
-                    System.out.printf("%10s\n", dateConverter(days));// prints out each date that the room is booked for
+                    System.out.printf("  %s\n", dateConverter(days));// prints out each date that the room is booked for
                 }
             }
         } catch (IOException e) {
@@ -144,6 +147,9 @@ public class Reservations {
     Return Type: String - returns the date in Georgian Calendar format 2024/1/1
     Parameters: int Days- number of days given by user
     Description: Returns a date
+    Dates modified:
+     * 24/05/2024
+     * Raymond Zhang - Change date string format to be consistent with format in HotelBooking class.
 
     */
     public static String dateConverter(Object days) {
@@ -159,7 +165,7 @@ public class Reservations {
         int year = targetDate.getYear();//runs methods that get the month, day, year of the given date.
 
 
-        combined = day+"/"+month+"/"+year;//combines the date into a dd/mm/yyyy format
+        combined = String.format("%02d/%02d/%02d", day, month, year);//combines the date into a dd/mm/yyyy format
         return combined;
     }
 }
