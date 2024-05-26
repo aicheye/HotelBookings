@@ -20,12 +20,15 @@ public class Reservations
      Description: Just prints out all the available rooms on day. Will indicate if no rooms are available.
      Dates modified:
      * 17/05/2024
-       Sean Liu - Created the shell and main function of the method.
+       Sean Liu - Created the shell and main function of the method
 
      * 24/05/2024
        Raymond Zhang - Changed return type to boolean to indicate empty rooms. Improved coding style.
        Sean Yang - Fixed issue where no rooms would be returned on a date beyond the maximum date booked. Changed
-                  rooms to be an ArrayList
+                   rooms to be an ArrayList
+                
+     * 25/05/2024
+       Raymond Zhang - Changed print format to be consistent with other methods
      */
     public static boolean listAvailableRooms(int date)
     {
@@ -48,7 +51,7 @@ public class Reservations
                 // loop over every room available on the date
                 for(int i = 0; i<size; i++)
                 {
-                    System.out.println("Room " + rooms.get(i)); // prints out all available rooms
+                    System.out.println("  " + rooms.get(i)); // prints out all available rooms
                 }
             }
         }
@@ -103,10 +106,13 @@ public class Reservations
      Description: Lists the room number and dates the room is booked for
      Dates modified:
       * 21/05/2024
-        Sean Liu - created the main function of method
+        Sean Liu - Created the main function of method
 
       * 23/05/2024
-        Raymond Zhang - Formatted method.
+        Raymond Zhang - Formatted method
+      
+      * 24/05/2024
+        Raymond Zhang - Change print format to be consistent with other methods
       */
     public static void listReservations(String firstName, String lastName)
     {
@@ -123,7 +129,7 @@ public class Reservations
                 days = rooms.get(e); // gets the dates that the room is booked for
                 for (int d : days)
                 {
-                    System.out.printf("%10s\n", dateConverter(d));// prints out each date that the room is booked for
+                    System.out.printf("  %s\n", dateConverter(d));// prints out each date that the room is booked for
                 }
             }
         }
@@ -142,10 +148,13 @@ public class Reservations
      Description:  Prints out which rooms on a given specific date
      Dates modified:
      * 21/05/2024
-       Sean Liu
+       Sean Liu - Created and completed method
 
      * 24/05/2024
-       Raymond Zhang - Changed method to only use date as parameter.
+       Raymond Zhang - Changed method to only use date as parameter
+       
+     * 25/05/2024
+       Raymond Zhang - Change print format to be consistent with other methods
      */
     public static void listReservations(int date)
     {
@@ -163,7 +172,7 @@ public class Reservations
             else {
                 System.out.printf("The following reservations have been made on %s:%n", dateConverter(date));
                 for(Integer r : rooms) {
-                    System.out.printf("%10d\n", r);// prints out each date that the room is booked for
+                    System.out.printf("  %d\n", r);// prints out each date that the room is booked for
                 }
             }
         }
@@ -184,7 +193,10 @@ public class Reservations
      Description: Returns a date given the number of days from the start of the year
      Date Modified:
      * 22/05/2024
-       Sean Liu - Created dateConverter to accommodate printing and localized time.
+       Sean Liu - Created dateConverter to accommodate printing and localized time
+     
+     * 24/05/2024
+       Raymond Zhang - Formatted date string to be consistent with main class
      */
     public static String dateConverter(int days)
     {
@@ -199,7 +211,7 @@ public class Reservations
         int month = targetDate.getMonthValue();
         int year = targetDate.getYear();//runs methods that get the month, day, year of the given date.
 
-        combined = day+"/"+month+"/"+year;//combines the date into a dd/mm/yyyy format
+        combined = String.format("%02d/%02d/%02d", day, month, year);//combines the date into a dd/mm/yyyy format
         return combined;
     }
 }
