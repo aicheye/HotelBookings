@@ -3,29 +3,30 @@ import java.util.*;
 import java.time.LocalDate;
 
 /*
- Programmer: Sean Liu
+ Programmer: Sean Liu, Sean Yang, Raymond Zhang
  Program Name: Reservations
  Date: 5/17/2024
- Description: Gives availability of rooms
+ Description: This class contains methods that allow the user to check the availability of rooms on a given date,
+              check if a room is available on a given date, list all reservations for a given person, and list all
+              reservations for a given date.
  */
 public class Reservations
 {
 
     /*
-    Method Name: listAvailableRooms
-    Return Type: boolean - true if rooms are available and false otherwise
-    Parameters: int date - a day that user inputs from main
-    Description: Just prints out all the available rooms on day. Will indicate if no rooms are available.
-    Dates modified:
-    * 17/05/2024
-      Sean Liu - Created the shell and main function of the method.
+     Method Name: listAvailableRooms
+     Return Type: boolean - True if rooms are available and false otherwise
+     Parameters: int date - A day that user inputs from main
+     Description: Just prints out all the available rooms on day. Will indicate if no rooms are available.
+     Dates modified:
+     * 17/05/2024
+       Sean Liu - Created the shell and main function of the method.
 
-    * 24/05/2024
-      Raymond Zhang - Changed return type to boolean to indicate empty rooms. Improved coding style.
-      Sean Yang - Fixed issue where no rooms would be returned on a date beyond the maximum date booked. Changed
+     * 24/05/2024
+       Raymond Zhang - Changed return type to boolean to indicate empty rooms. Improved coding style.
+       Sean Yang - Fixed issue where no rooms would be returned on a date beyond the maximum date booked. Changed
                   rooms to be an ArrayList
-    */
-
+     */
     public static boolean listAvailableRooms(int date)
     {
         // Declare variables
@@ -63,18 +64,18 @@ public class Reservations
 
 
     /*
-    Method Name: checkAvailability
-    Return Type: Boolean - returns true or false if room and date match
-    Parameters: int Date - a day that user inputs from main
-                int room - room number being checked for availability
-    Description: Returns true of false if room is available on given day
-    Dates Modified:
-    * 21/05/2024
-      Sean Liu - Created the main instructions of the method
+     Method Name: checkAvailability
+     Return Type: Boolean - Returns true or false if room and date match
+     Parameters: int Date - A day that user inputs from main
+                 int room - Room number being checked for availability
+     Description: Returns true of false if room is available on given day
+     Dates Modified:
+     * 21/05/2024
+       Sean Liu - Created the main instructions of the method
 
-    * 24/05/2024
-      Sean Yang - Changed the method to use Query.roomAvailable and changed the parameter order
-    */
+     * 24/05/2024
+       Sean Yang - Changed the method to use Query.roomAvailable and changed the parameter order
+     */
     public static boolean checkAvailability (int room, int date)
     {
         // declare variables
@@ -95,18 +96,18 @@ public class Reservations
     }
 
     /*
-    Method Name: listReservations
-    Return Type: void - prints out the day and room number if person has reservation
-    Parameters: String firstName - first name of person
-                String lastName - last name of person
-    Description: Lists the room number and dates the room is booked for
-    Dates modified:
-     * 21/05/2024
-       Sean Liu - created the main function of method
+     Method Name: listReservations
+     Return Type: void - Prints out the day and room number if person has reservation
+     Parameters: String firstName - First name of person
+                 String lastName - Last name of person
+     Description: Lists the room number and dates the room is booked for
+     Dates modified:
+      * 21/05/2024
+        Sean Liu - created the main function of method
 
-     * 23/05/2024
-       Raymond Zhang - Formatted method.
-    */
+      * 23/05/2024
+        Raymond Zhang - Formatted method.
+      */
     public static void listReservations(String firstName, String lastName)
     {
         // declare variables
@@ -135,17 +136,17 @@ public class Reservations
 
     }
     /*
-       Method Name: listReservations
-       Return Type: void
-       Parameters: Integer date - date number that user is searching for
-       Description:  Prints out which rooms on a given specific date
-       Dates modified:
-        * 21/05/2024
-          Sean Liu
+     Method Name: listReservations
+     Return Type: void - Prints out the day and room number if person has reservation
+     Parameters: Integer date - Date number that user is searching for
+     Description:  Prints out which rooms on a given specific date
+     Dates modified:
+     * 21/05/2024
+       Sean Liu
 
-        * 24/05/2024
-          Raymond Zhang - Changed method to only use date as parameter.
-       */
+     * 24/05/2024
+       Raymond Zhang - Changed method to only use date as parameter.
+     */
     public static void listReservations(int date)
     {
         // Declare variables
@@ -177,14 +178,14 @@ public class Reservations
 
 
     /*
-    Method Name: dateConverter
-    Return Type: String - returns the date in dd/mm/yyyy format
-    Parameters: int Days- number of days given by user
-    Description: Returns a date given the number of days from the start of the year
-    Date Modified:
-    * 22/05/2024
-      Sean Liu - Created dateConverter to accommodate printing and localized time.
-    */
+     Method Name: dateConverter
+     Return Type: String - Returns the date in dd/mm/yyyy format
+     Parameters: int Days- Number of days given by user
+     Description: Returns a date given the number of days from the start of the year
+     Date Modified:
+     * 22/05/2024
+       Sean Liu - Created dateConverter to accommodate printing and localized time.
+     */
     public static String dateConverter(int days)
     {
         String combined;
