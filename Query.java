@@ -31,9 +31,9 @@ public class Query
      Description: checks whether a specific reservation exists
      Dates Modified:
      * 24/05/2024
-     * Sean Yang - Created and completed (tested)
+       Sean Yang - Created and completed (tested)
      */
-    public static boolean reservationExists (String firstName, String lastName, int room, int date) throws IOException
+    public static boolean reservationExists(String firstName, String lastName, int room, int date) throws IOException
     {
         // declare variables
         Map<List<String>, Map<Integer, List<Integer>>> customers = allCustomers();
@@ -59,12 +59,12 @@ public class Query
      Description: checks whether a specific room is available for reservation on a given date
      Dates Modified:
      * 24/05/2024
-     * Sean Yang - Created and completed (tested)
+       Sean Yang - Created and completed (tested)
 
      * 25/05/2024
-     * Sean Yang - Fixed issue where roomAvailable would throw an error if the date was beyond the maximum date booked
+       Sean Yang - Fixed issue where roomAvailable would throw an error if the date was beyond the maximum date booked
      */
-    public static boolean roomAvailable (int room, int date) throws IOException
+    public static boolean roomAvailable(int room, int date) throws IOException
     {
         // declare variables
         List<List<Integer>> days = allDays();
@@ -89,7 +89,7 @@ public class Query
     }
 
     /*
-     Method Name: dateQuery
+     Method Name: allAvailableRooms
      Return Type: int[] - An array of the rooms available on a certain date
      Parameters: int date - The date to search
      Description: Returns an array of available rooms on a given date
@@ -105,8 +105,11 @@ public class Query
      * 24/05/2024
        Sean Yang - Fixed issue where no rooms would be returned on a date beyond the maximum date booked. Now returns
                    an ArrayList instead of an array.
+
+     * 25/05/2024
+       Sean Yang - Renamed method to allAvailableRooms to improve clarity since all methods in this class are queries
      */
-    public static List<Integer> dateQuery (int date) throws IOException
+    public static List<Integer> allAvailableRooms(int date) throws IOException
     {
         // init file reader and variables
         List<Integer> rooms = allRooms(); // all the rooms in the hotel
@@ -132,40 +135,7 @@ public class Query
     }
 
     /*
-     Method Name: roomQuery
-     Return Type: int[] - An array of the days a certain room is available
-     Parameters: int room - The rooms to search
-     Description: Returns an array of days a given room is available
-     Dates Modified:
-     * 16/05/2024
-       Sean Yang - Created and completed method (tested)
-
-     * 17/05/2024
-       Sean Yang - Fixed method to close file reader
-       Raymond Zhang - Moved variable declarations to beginning of method.
-
-     * 25/05/2024
-     * Sean Yang - Rewrote method using allDays and allRooms methods to improve conciseness
-    */
-    public static List<Integer> roomQuery (int room) throws IOException
-    {
-        // declare variables
-        List<List<Integer>> days = allDays();
-        List<Integer> rooms = allRooms();
-        List<Integer> available = new ArrayList<Integer>();
-
-        // loop over all days
-        for (int i=0; i<days.size(); i++)
-        {
-            // if the room is not booked on that day, add it to available
-            if (!days.get(i).contains(room)) available.add(i);
-        }
-
-        return available;
-    }
-
-    /*
-     Method Name: customerQuery
+     Method Name: customerReservations
      Return Type: HashMap<Integer, ArrayList<Integer>> - A hashmap (key: room, value: array of the days) of the
                                                          rooms & days a customer has booked
      Parameters: String firstName - The first name of the customer
@@ -178,8 +148,11 @@ public class Query
      * 17/05/2024
        Sean Yang - Fixed method to close file reader
        Raymond Zhang - Moved variable declarations to beginning of method
+
+     * 25/05/2024
+       Sean Yang - Renamed method to customerReservations to increase clarity since all methods in this class are queries
     */
-    public static Map<Integer, List<Integer>> customerQuery(String firstName, String lastName) throws IOException
+    public static Map<Integer, List<Integer>> customerReservations(String firstName, String lastName) throws IOException
     {
         // init file reader and variables
         BufferedReader br = new BufferedReader(new FileReader(CUSTOMERS_DB));
@@ -194,7 +167,7 @@ public class Query
             line = br.readLine();
             // check if EOF
             if (line == null) end = true;
-                // if not EOF continue
+            // if not EOF continue
             else
             {
                 f = line;
@@ -209,7 +182,7 @@ public class Query
                         line = br.readLine();
                         // check if we are at a new customer or not
                         if (line.equals(CUSTOMER_DELIMITER)) searching = false;
-                            // if we are not at a new customer, continue looping
+                        // if we are not at a new customer, continue looping
                         else {
                             room = Integer.parseInt(line); // create a new variable for the current room
 
@@ -251,7 +224,7 @@ public class Query
     }
 
     /*
-     Method Name: employeePinQuery
+     Method Name: employeePin
      Return Type: String[0] - The pin of the employee, null if the employee doesn't exist
                   String[1] - Whether the employee is admin or not (0 or 1)
      Parameters: int id - The employee id to search for
@@ -264,9 +237,10 @@ public class Query
        Sean Yang - Fixed method to close file reader
 
      * 25/05/2024
-     * Sean Yang - Rewrote method using allEmployees method to improve conciseness
+       Sean Yang - Rewrote method using allEmployees method to improve conciseness
+                   Renamed method to employeePin to reduce verboseness since all methods in this class are queries
      */
-    public static String[] employeePinQuery (String id) throws IOException
+    public static String[] employeePin(String id) throws IOException
     {
         // declare variables
         List<HashMap<String, String>> employees = allEmployees();
@@ -323,7 +297,7 @@ public class Query
         name = new ArrayList<String>();
         name.add(fName);
         name.add(lName);
-        customers.put(name, customerQuery(fName, lName));
+        customers.put(name, customerReservations(fName, lName));
         for (int i=2; i<db.size()-2; i++)
         {
             // check if there is a new customer
@@ -335,7 +309,7 @@ public class Query
                 name = new ArrayList<String>();
                 name.add(fName);
                 name.add(lName);
-                customers.put(name, customerQuery(fName, lName));
+                customers.put(name, customerReservations(fName, lName));
             }
         }
         return customers;

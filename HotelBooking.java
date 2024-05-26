@@ -220,7 +220,7 @@ public class HotelBooking {
 
         // Get customer reservations
         try {
-            customerReservations = Query.customerQuery(firstName, lastName); // Reservations made by the customer
+            customerReservations = Query.customerReservations(firstName, lastName); // Reservations made by the customer
         } catch (IOException e) {
             System.out.println(e + " Problem reading file.");
         }
@@ -351,7 +351,7 @@ public class HotelBooking {
             if(employeeID.matches( "^[0-9]{6}$")) {
                 // Check if employee is in system
                 try {
-                    queryPin = Query.employeePinQuery(employeeID);
+                    queryPin = Query.employeePin(employeeID);
                 }
                 catch (IOException e) {
                     System.out.println(e + " Problem reading file.");
@@ -698,7 +698,7 @@ public class HotelBooking {
                     try {
                         // Employee can only change PIN if they know their old PIN
                         // Get employee's previous PIN for reference
-                        oldPIN = Query.employeePinQuery(employeeID)[0];
+                        oldPIN = Query.employeePin(employeeID)[0];
 
                         do {
                             // Get old PIN
