@@ -29,6 +29,13 @@ public class Write
                  int room - The room number they are reserving
                  int date - The date they are reserving
      Description: Adds a reservation to customers.txt and updates days.txt
+     Dates Modified:
+     * 21/05/2024
+       Sean Yang - Created and completed method
+
+     * 23/05/2024
+       Sean Yang - Found some issues with the method and rewrote it using Query.allCustomers and Query.allDays, now
+                   works as expected.
      */
     public static void addReserve(String firstName, String lastName, int room, int date) throws IOException
     {
@@ -113,6 +120,9 @@ public class Write
                  int room - The room number
                  int date - The date
      Description: Deletes a reservation from customers.txt and days.txt
+     Dates Modified
+     * 23/05/2024
+       Sean Yang - Created and completed method
      */
     public static void delReserve(String firstName, String lastName, int room, int date) throws IOException
     {
@@ -125,7 +135,7 @@ public class Write
         String op; // the log message
 
         // remove reservation from customers
-        customers.get(name).get(room).remove(date);
+        customers.get(name).get(room).remove((Integer) date);
         // check if the room booking is now empty and remove the room
         if (customers.get(name).get(room).size() == 0) customers.get(name).remove(room);
         // check if the customer has no remaining reservations and remove the room
@@ -147,7 +157,7 @@ public class Write
     }
 
     /*
-     Method Name: edtReserve
+     Method Name: edtReserve (changing the name)
      Parameters: String oldFirst - The first name of the reservation
                  String oldLast - The last name of the reservation
                  int room - The room number
@@ -155,26 +165,18 @@ public class Write
                  String newFirst - The new first name
                  String newLast - The new last name
      Description: Updates a reservation in customers.txt and days.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method
      */
     public static void edtReserve(String oldFirst, String oldLast, int room, int date, String newFirst, String newLast) throws IOException
     {
-        // declare variables
-        String op; // the log message
-
         delReserve(oldFirst, oldLast, room, date); // delete the old reservation
         addReserve(newFirst, newLast, room, date); // add a new reservation
-
-        // log changes
-        op = "RES edtn";
-        op += " " + oldFirst + " " + oldLast;
-        op += " " + room;
-        op += " " + date;
-        op += " " + newFirst + " " + newFirst;
-        logOp(op);
     }
 
     /*
-     Method Name: delReserve
+     Method Name: edtReserve (changing the room or date)
      Parameters: String firstName - The first name of the customer
                  String lastName - The last name of the customer
                  boolean changeRoom - Whether the user wants to change the room
@@ -182,38 +184,22 @@ public class Write
                  int old - The old value
                  int now - The new value
      Description: Updates a reservation in customers.txt and days.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method
      */
     public static void edtReserve(String firstName, String lastName, boolean changeRoom, int dateOrRoom, int old, int now) throws IOException
     {
-        // declare variables
-        String op; // the log message
-
         // if the user wants to change the room
         if (changeRoom) {
             delReserve(firstName, lastName, old, dateOrRoom); // delete the old reservation
             addReserve(firstName, lastName, now, dateOrRoom); // add a new reservation with the new room
-
-            // log changes
-            op = "RES edtr";
-            op += " " + firstName + " " + lastName;
-            op += " " + old;
-            op += " " + dateOrRoom;
-            op += " " + now;
-            logOp(op);
         }
 
         // if the user wants to change the date
         else {
             delReserve(firstName, lastName, dateOrRoom, old); // delete the old reservation
-            delReserve(firstName, lastName, dateOrRoom, now); // add a new reservation with the new date
-
-            // log changes
-            op = "RES edtd";
-            op += " " + firstName + " " + lastName;
-            op += " " + dateOrRoom;
-            op += " " + old;
-            op += " " + now;
-            logOp(op);
+            addReserve(firstName, lastName, dateOrRoom, now); // add a new reservation with the new date
         }
     }
 
@@ -221,6 +207,9 @@ public class Write
      Method Name: addRoom
      Parameters: int room - The room to be added
      Description: Adds a room to rooms.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void addRoom(int room) throws IOException
     {
@@ -244,6 +233,9 @@ public class Write
      Method Name: delRoom
      Parameters: int room - The room to be removed
      Description: Deletes a room from rooms.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method
      */
     public static void delRoom(int room) throws IOException
     {
@@ -271,6 +263,9 @@ public class Write
                  String pin - The employee's login pin
                  String isAdmin - Whether this employee is an admin or not
      Description: Adds a new employee to employees.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method
      */
     public static void addEmployee(String id, String firstName, String lastName, String pin, String isAdmin) throws IOException
     {
@@ -300,6 +295,9 @@ public class Write
      Method Name: delEmployee
      Parameters: String id - The employee to remove
      Description: Deletes an employee entry from employees.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method
      */
     public static void delEmployee(String id) throws IOException
     {
@@ -332,25 +330,34 @@ public class Write
      Parameters: String id - The employee to edit
                  String newPin - The employee's pin
      Description: Change's an employees pin in employees.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method
      */
     public static void edtPin(String id, String newPin) throws IOException
     {
         // declare variables
         List<HashMap<String, String>> employees = Query.allEmployees();
+        String oldPin = "";
         String op; // the log message
 
         // loop over the employees and locate the correct id to update
         for (HashMap<String, String> e : employees) {
-            // if the id matches, change their pin
-            if (e.get("id").equals(id)) e.put("pin", newPin);
+            // if the id matches, change their pin and save the old pin
+            if (e.get("id").equals(id))
+            {
+                e.put("pin", newPin);
+                oldPin = e.get("oldPin");
+            }
         }
 
         // write to file using allEmployees
         allEmployees(employees);
 
         // log changes
-        op = "EE edit";
+        op = "PIN";
         op += " " + id;
+        op += " " + oldPin;
         op += " " + newPin;
         logOp(op);
     }
@@ -360,6 +367,9 @@ public class Write
      Parameters: String id - the id of the user currently logged in
                  String isAdmin - whether the user is admin (1 for admin, 0 for normal user)
      Description: logs a new user in log.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void logUser(String id, String isAdmin) throws IOException
     {
@@ -380,6 +390,9 @@ public class Write
      Method Name: logOp
      Parameters: String op - the operation to be logged
      Description: logs an operation to log.txt
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void logOp(String op) throws IOException
     {
@@ -398,6 +411,9 @@ public class Write
      Method Name: allCustomers
      Parameters: Map<List<String>, Map<Integer, List<Integer>>> customers: a java representation of customers.txt
      Description: converts java parseable data into days.txt data structure
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void allCustomers(Map<List<String>, Map<Integer, List<Integer>>> customers) throws IOException
     {
@@ -448,6 +464,9 @@ public class Write
      Method Name: allDays
      Parameters: List<List<Integer>> days: a java representation of days.txt: each index represents a date with reservations
      Description: converts java parseable data into days.txt data structure
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void allDays(List<List<Integer>> days) throws IOException
     {
@@ -482,6 +501,9 @@ public class Write
      Method Name: allRooms
      Parameters: List<Integer> rooms - an ArrayList containing every room
      Description: converts java parseable data into rooms.txt data structure
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void allRooms(List<Integer> rooms) throws IOException
     {
@@ -504,6 +526,9 @@ public class Write
      Method Name: allEmployees
      Parameters: List<HashMap<String, String>> employees - an ArrayList containing data about every employee
      Description: converts java parseable data into employees.txt data structure
+     Dates Modified:
+     * 23/05/2024
+       Sean Yang - Created and completed method (tested)
      */
     public static void allEmployees(List<HashMap<String, String>> employees) throws IOException
     {
