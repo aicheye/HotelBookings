@@ -5,8 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 
-// TODO: Testing
-
 /*
  Programmer: Raymond Zhang
  Program name: HotelBooking
@@ -18,7 +16,6 @@ import java.time.temporal.ChronoUnit;
     * Update class not yet implemented
     * Write.edtPin not yet implemented
 
- TODO: Test menu, add admin menu options
 */
 
 public class HotelBooking {
@@ -98,6 +95,9 @@ public class HotelBooking {
      * 24/05/2024
      * Raymond Zhang - Changed method call to checkAvailability to align with new parameters.
        Change quit number to -1
+
+     * 25/05/2024
+     * Raymond Zhang - Fixed room validation by checking for values less than 100 instead of 0.
     */
     public static int getRoomInput(int date) {
         // Declare variables
@@ -122,16 +122,21 @@ public class HotelBooking {
                         validRoom = true;
                     }
                     // Check if room is invalid
+                    else if(room <= 100) {
+                        System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
+                    }
+
+                    // Check if room is available
                     else {
                         validRoom = Reservations.checkAvailability(room, date);
                         if(!validRoom) {
-                            System.out.printf("**ERROR: Room %d is not available on day %d.%n%n**", room, date);
+                            System.out.printf("**ERROR: Room %d is not available on day %d.**%n%n", room, date);
                         }
                     }
                 }
                 // User inputted non-numerical characters
                 catch (NumberFormatException e) {
-                    System.out.println("**ERROR: Room number must be an integer.**\n");
+                    System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
                 }
 
             }
@@ -166,6 +171,9 @@ public class HotelBooking {
 
      * 24/05/2024
      * Raymond Zhang - Added option to quit.
+
+     * 25/05/2024
+     * Raymond Zhang - Added quit messages
     */
 
     public static int getDateInput() {
@@ -181,6 +189,7 @@ public class HotelBooking {
 
             // User chose to quit
             if (dateStr.equals(String.valueOf(QUIT_NUM))) {
+                System.out.println("Operation aborted.");
                 date = QUIT_NUM;
                 validDate = true;
             }
@@ -229,6 +238,9 @@ public class HotelBooking {
      * 24/05/2024
      * Raymond Zhang - Added option to quit, made print formatting a bit neater.
        Changed quit value to -1
+
+     * 25/05/2024
+     * Raymond Zhang - Added quit message
     */
     public static int[] getReservation(String firstName, String lastName) {
         // Declare variables
@@ -301,6 +313,7 @@ public class HotelBooking {
 
                 // User chose to abort
                 if(line.equals(String.valueOf(QUIT_NUM))) {
+                    System.out.println("Operation aborted.");
                     room = QUIT_NUM;
                     date = QUIT_NUM;
                     validDate = true;
@@ -361,6 +374,9 @@ public class HotelBooking {
        Comparison to null should have used ==, not .equals()
        Changed quit value to -1.
        Fixed NullPointerException from assigning null value to queryPin[1] by assigning "" instead
+
+     * 25/05/2024
+     * Raymond Zhang - Changed call to display menu to align with changes made to displayMenu().
     */
     public static void login() {
         // Declare variables
@@ -429,24 +445,19 @@ public class HotelBooking {
 
         } while(!validPIN);
 
-        // Display menu according to employee type
-        switch(queryPin[1]) {
-            // Employee menu
-            case "0":
-                defaultMenu();
-                break;
-            // Admin menu
-            case "1":
-                adminMenu();
-                break;
-        }
+        // Employee menu
+        if(queryPin[1].equals("0"))
+            displayMenu(false);
+        // Admin menu
+        else if(queryPin[1].equals("1"))
+            displayMenu(true);
 
         // Reset current employee ID
         employeeID = null;
     }
 
     /*
-     Method Name: defaultMenu
+     Method Name: displayMenu
      Return Type: void
      Parameters: N/A
      Description: Displays the main menu for regular employees.
@@ -482,13 +493,33 @@ public class HotelBooking {
        Added option to quit when entering date
        Fixed issue with room and date being mixed up when canceling a reservation
        Added quit messages
+
+     * 25/05/2024
+     * Raymond Zhang - Added cases for admin menu.
+       Changed method name to displayMenu and added parameter for employee/admin.
+       Refactored variable declaration for clarity
+       Fix bug in reservation change where room and date values were not updated
     */
-    public static void defaultMenu() {
+    public static void displayMenu(boolean isAdmin) {
         // Declare variables
-        int choiceMenu = -1, choiceChange = -1, date = -1, room = -1, newDate = -1, newRoom = -1;
-        int[] res; // reservation: [room, date]
-        boolean running = true, validPIN = false, changed = false;
-        String line, firstName, lastName, pin, oldPIN, newPIN, firstNew, lastNew;
+        int choiceMenu = -1; // Choice for main menu
+        int choiceChange = -1; // Choice for changing reservations menu
+        int date = -1, room = -1; // Date and room
+        int newDate = -1, newRoom = -1; // New date and room for changing reservations
+        int[] res; // Reservation (room, date) for cancelling and changing reservations
+        boolean running = true; // Main menu looping condition
+        boolean validPIN = false; // Looping condition for entering PIN for changing PIN and adding employee
+        boolean changed = false; // Looping condition for changing reservations
+        boolean validRoom = false; // Looping condition for getting room num for adding/deleting rooms
+        boolean validID = false; // Looping condition for entering ID for adding employee
+        String line; // Gets input
+        String firstName, lastName; // Customer name for listing/cancelling/changing reservations
+        String pin, oldPIN, newPIN; // PIN for changing PIN and adding new employee
+        String firstNew, lastNew; // Customer new name for changing reservation name
+        String newID; // ID for adding/deleting employee
+        String checkID; // Will successfully get a PIN if the ID exists, null otherwise
+        String newIsAdmin; // Choice for employee or admin (y/n)
+        List<Integer> hotelRooms; // All hotel rooms for adding/deleting rooms
 
         while(running) {
             // Print menu
@@ -501,7 +532,19 @@ public class HotelBooking {
             System.out.println("5. Cancel a reservation.");
             System.out.println("6. Change a reservation.");
             System.out.println("7. Change PIN.");
-            System.out.println("8. Logout.");
+
+            // Additional admin options
+            if(isAdmin) {
+                System.out.println("8. Add a hotel room.");
+                System.out.println("9. Delete a hotel room.");
+                System.out.println("10. Add an employee.");
+                System.out.println("11. Delete an employee.");
+                System.out.println("12. Logout.");
+            }
+            else {
+                System.out.println("8. Logout.");
+            }
+
             System.out.println();
             System.out.print("Enter your selection: ");
 
@@ -563,7 +606,7 @@ public class HotelBooking {
 
                     // List reservations
                     Reservations.listReservations(firstName, lastName);
-                    System.out.printf("Listing reservations for %s %s.%n", firstName, lastName);
+                    // System.out.printf("Listing reservations for %s %s.%n", firstName, lastName);
                     break;
 
                 // Make a reservation
@@ -633,6 +676,8 @@ public class HotelBooking {
 
                     // Get the reservation of choice
                     res = getReservation(firstName, lastName);
+                    room = res[0];
+                    date = res[1];
 
                     // User did not choose to abort
                     if(res[0] != QUIT_NUM) {
@@ -786,6 +831,7 @@ public class HotelBooking {
                                     }
                                     // User chooses to quit; break out of loop
                                     else if(newPIN.equals(String.valueOf(QUIT_NUM))) {
+                                        System.out.println("PIN change aborted.");
                                         validPIN = true;
                                     }
                                     // PIN was invalid
@@ -797,6 +843,7 @@ public class HotelBooking {
                             }
                             // User chooses to quit; break out of loop
                             else if(pin.equals(String.valueOf(QUIT_NUM))) {
+                                System.out.println("PIN change aborted.");
                                 validPIN = true;
                             }
                             // Invalid PIN was entered
@@ -819,33 +866,311 @@ public class HotelBooking {
 
                     break;
 
-                // Logout
+                // Logout or admin options
                 case 8:
-                    System.out.println("Heading to login screen...");
-                    running = false;
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                    // Admin options
+                    if(isAdmin) {
+                        switch(choiceMenu) {
+                            // Add hotel room
+                            case 8:
+                                // Try to get all rooms
+                                try {
+                                    hotelRooms = Query.getAllRooms();
+
+                                    do {
+                                        // Get room from user
+                                        System.out.print("Enter a room to add (-1 to cancel): ");
+                                        line = sc.nextLine();
+
+                                        // Get room value
+                                        try {
+                                            room = Integer.parseInt(line);
+
+                                            // User aborted
+                                            if(room == QUIT_NUM) {
+                                                System.out.println("Room addition aborted.");
+                                                validRoom = true;
+                                            }
+                                            // Room is invalid
+                                            else if(room <= 100) {
+                                                System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
+                                            }
+                                            // Room already exists
+                                            else if(hotelRooms.contains(room)) {
+                                                System.out.printf("**ERROR: Room %d already exists.**%n%n", room);
+                                            }
+                                            // Valid Room entered
+                                            else {
+                                                Write.addRoom(room);
+                                                System.out.printf("Room %d was successfully added to the hotel.%n", room);
+                                                validRoom = true;
+                                            }
+                                        }
+                                        // User inputted non-numerical characters
+                                        catch (NumberFormatException e) {
+                                            System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
+                                        }
+
+                                    } while(!validRoom);
+                                }
+                                catch (IOException e) {
+                                    System.out.println(e +  " Problem reading file.");
+                                }
+
+                                    // Reset looping condition
+                                    validRoom = false;
+
+                                break;
+
+                            // Delete hotel room
+                            case 9:
+                                // Try to get all rooms
+                                try {
+                                    hotelRooms = Query.getAllRooms();
+
+                                    do {
+                                        // Get room from user
+                                        System.out.print("Enter a room to delete (-1 to cancel): ");
+                                        line = sc.nextLine();
+
+                                        // Get room value
+                                        try {
+                                            room = Integer.parseInt(line);
+
+                                            // User aborted
+                                            if(room == QUIT_NUM) {
+                                                System.out.println("Room deletion aborted.");
+                                                validRoom = true;
+                                            }
+                                            // Room is invalid
+                                            else if(room <= 100) {
+                                                System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
+                                            }
+                                            // Room does not exist
+                                            else if(!hotelRooms.contains(room)) {
+                                                System.out.printf("**ERROR: Room %d does not exist.**%n%n", room);
+                                            }
+                                            // Valid Room entered
+                                            else {
+                                                Write.delRoom(room);
+                                                System.out.printf("Room %d was removed added to the hotel.%n", room);
+                                                validRoom = true;
+                                            }
+                                        }
+                                        // User inputted non-numerical characters
+                                        catch (NumberFormatException e) {
+                                            System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
+                                        }
+
+                                    } while(!validRoom);
+                                }
+                                catch (IOException e) {
+                                    System.out.println(e +  " Problem reading file.");
+                                }
+
+                                // Reset looping condition
+                                validRoom = false;
+
+                                break;
+
+                            // Add employee
+                            case 10:
+
+                                // Get employee ID
+                                do {
+                                    System.out.print("Enter the new employee's id (-1 to quit): ");
+                                    newID = sc.nextLine();
+
+                                    // Check if ID is valid (six integers)
+                                    // ? Create constant for ID length
+                                    if(newID.matches( "^[0-9]{6}$")) {
+                                        // Check if employee is in system
+                                        try {
+                                            checkID = Query.getEmployeePin(newID)[0];
+
+                                            // Employee is already in system, cannot add as new employee
+                                            if(checkID != null) {
+                                                System.out.println("**ERROR: ID is already in system.**\n");
+                                            }
+                                            else {
+                                                validID = true;
+                                            }
+                                        }
+                                        catch (IOException e) {
+                                            System.out.println(e + " Problem reading file.");
+                                        }
+
+                                    }
+                                    // User aborted operation
+                                    else if(newID.equals(String.valueOf(QUIT_NUM))) {
+                                        System.out.println("Employee addition aborted.");
+                                        validID = true;
+                                    }
+                                    // ID was invalid
+                                    else {
+                                        System.out.println("**ERROR: ID must be a six-digit integer.**\n");
+                                    }
+
+                                } while(!validID);
+
+                                // Get new name
+                                System.out.print("Enter the new employee's first name: ");
+                                firstName = sc.nextLine();
+                                System.out.print("Enter the new employee's last name: ");
+                                lastName = sc.nextLine();
+
+                                // Get employee PIN
+                                do {
+                                    System.out.print("Enter the new employee's PIN (-1 to cancel): ");
+                                    newPIN = sc.nextLine();
+
+                                    // New PIN is valid; change PIN and break
+                                    // ? Create constant for PIN length
+                                    if(newPIN.matches("^[0-9]{4}$")) {
+                                        validPIN = true;
+                                    }
+                                    // User chooses to quit; break out of loop
+                                    else if(newPIN.equals(String.valueOf(QUIT_NUM))) {
+                                        System.out.println("Employee addition aborted");
+                                        validPIN = true;
+                                    }
+                                    // PIN was invalid
+                                    else {
+                                        System.out.println("**ERROR: New PIN must be a four-digit integer.**\n");
+                                    }
+
+                                } while (!validPIN);
+
+                                // Determine if new employee is admin or not
+                                do {
+                                    // Get choice
+                                    System.out.print("Is the new employee an admin (y/n, -1 to cancel)? ");
+                                    newIsAdmin = sc.nextLine().toLowerCase(); // convert to lower for case insensitivity
+
+                                    switch(newIsAdmin) {
+                                        // Add admin and quit
+                                        case "yes":
+                                        case "y":
+                                            try {
+                                                Write.addEmployee(newID, firstName, lastName, newPIN, "1");
+                                                System.out.printf("Successfully added %s %s with id %s and PIN %s as admin.%n", firstName, lastName, newID, newPIN);
+                                                newIsAdmin = String.valueOf(QUIT_NUM);
+                                                break;
+                                            }
+                                            catch (IOException e) {
+                                                System.out.println(e + " Problem reading file.");
+                                            }
+                                        // Add employee and quit
+                                        case "no":
+                                        case "n":
+                                            try{
+                                                Write.addEmployee(newID, firstName, lastName, newPIN, "0");
+                                                System.out.printf("Successfully added %s %s with id %s and PIN %s as employee.%n", firstName, lastName, newID, newPIN);
+                                                newIsAdmin = String.valueOf(QUIT_NUM);
+                                            }
+                                            catch( IOException e) {
+                                                System.out.println(e + " Problem reading file.");
+                                            }
+                                            break;
+
+                                        // Quit
+                                        case "-1":
+                                            System.out.println("Employee addition aborted.");
+                                            break;
+                                        // Invalid choice made
+                                        default:
+                                            System.out.println("**ERROR: Please enter y, n, or -1.**\n");
+                                            break;
+                                    }
+                                } while(!newIsAdmin.equals(String.valueOf(QUIT_NUM)));
+
+                                // Reset looping conditions
+                                validID = false;
+                                validPIN = false;
+
+                                break;
+
+                            // Delete employee
+                            case 11:
+                                // Run until valid employee ID was found
+                                do {
+                                    // Get employee ID
+                                    System.out.print("Enter employee ID (-1 to quit): ");
+
+                                    newID = sc.nextLine();
+
+                                    // Check if ID is valid (six integers)
+                                    if (newID.matches("^[0-9]{6}$")) {
+                                        // Check if employee is in system
+                                        try {
+                                            checkID = Query.getEmployeePin(newID)[0];
+                                            // Employee not in system
+                                            if (checkID == null) {
+                                                System.out.println("**ERROR: ID was not found in system.**\n");
+                                            }
+                                            // Employee in system; delete employee
+                                            else {
+                                                try {
+                                                    Write.delEmployee(newID);
+                                                    System.out.printf("Removed employee %s from the system.%n", newID);
+                                                } catch (IOException e) {
+                                                    System.out.println(e + " Problem reading file.");
+                                                }
+                                                validID = true;
+                                            }
+                                        } catch (IOException e) {
+                                            System.out.println(e + " Problem reading file.");
+                                        }
+
+                                    }
+                                    // User aborted operation
+                                    else if (newID.equals(String.valueOf(QUIT_NUM))) {
+                                        System.out.println("Employee deletion aborted.");
+                                        validID = true;
+                                    }
+                                    // ID was invalid
+                                    else {
+                                        System.out.println("**ERROR: ID must be a six-digit integer.**\n");
+                                    }
+
+                                } while (!validID);
+
+                                // Reset looping condition
+                                validID = false;
+
+                                break;
+
+                            // Admin logout
+                            case 12:
+                                System.out.println("Heading to login screen...");
+                                running = false;
+                                break;
+                        }
+                    }
+                    // Regular employee logs out
+                    else if(choiceMenu == 8) {
+                        System.out.println("Heading to login screen...");
+                        running = false;
+                    }
+                    // Regular employee made invalid choice
+                    else {
+                        System.out.println("**ERROR: Choice must be an integer from 1 to 8.**\n");
+                    }
+
                     break;
 
                 // Invalid choice
                 default:
-                    System.out.println("**ERROR: Choice must be an integer from 1 to 8.**\n");
+                    System.out.printf("**ERROR: Choice must be an integer from 1 to %d.**\n", (isAdmin?12:8));
                     break;
             }
             System.out.println("(Press Enter to continue)");
             sc.nextLine();
         }
-    }
-
-    /*
-     Method Name: adminMenu
-     Return Type: void
-     Parameters: N/A
-     Description: Displays the main menu for regular employees.
-     Dates Modified:
-     * 16/05/2024
-     * Raymond Zhang - Created method.
-    */
-    public static void adminMenu() {
-
     }
 
     /*
