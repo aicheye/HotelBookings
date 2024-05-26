@@ -16,6 +16,7 @@ public class Reservations {
     Return Type: Void, just prints out the available rooms
     Parameters: int Date - a day that user inputs from main
     Description: Just prints out all the available rooms on day
+    Date Modified: 5/17/2024
      */
 
     public static void listAvailableRooms(int date) {
@@ -44,7 +45,7 @@ public class Reservations {
     Parameters: int Date - a day that user inputs from main
                 int room - room number being checked for availability
     Description: Returns true of false if room is available on given day
-
+    Date Modified:5/17/2024
     */
     public static boolean checkAvailability(int date, int room) {
         boolean roomfound = false;
@@ -68,7 +69,7 @@ public class Reservations {
     Parameters: String firstName - first name of person
                 String lastName - last name of person
     Description: Lists the room number and dates the room is booked for
-
+    Date Modified: 5/22/2024
     */
     public static void listReservations(String firstName, String lastName) {
         Object days;
@@ -76,7 +77,7 @@ public class Reservations {
             Map<Integer, List<Integer>> rooms = Query.customerQuery(firstName, lastName);
     for  (int e: rooms.keySet()) {//gets each room #
         System.out.printf("%s %s has booked Room %d for:\n", firstName, lastName, e);
-        List<Integer> value = rooms.get(e);//gets the room numbers
+        List<Integer> value = rooms.get(e);//gets the room number and dates that it is booked for
         for (Object o : value) {
             days = o;
             System.out.printf("%10s\n", dateConverter(days));//prints out each date that the room is booked for
@@ -96,7 +97,7 @@ public class Reservations {
                    String lastName - last name of person
                    Object date - date number that user is searching for
        Description:  Prints out which rooms are booked by the customer on given specific date
-
+        Date Modified:5/17/2024
        */
     public static void listReservations(String firstName, String lastName, Object date) {
         try {
@@ -122,13 +123,12 @@ public class Reservations {
         }
     }
 
-
-
     /*
     Method Name: dateConverter
     Return Type: String - returns the date in Georgian Calendar format 2024/1/1
     Parameters: int Days- number of days given by user
     Description: Returns a date
+    Date Modified:5/17/2024
 
     */
     public static String dateConverter(Object days) {
