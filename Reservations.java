@@ -24,6 +24,8 @@ public class Reservations
       Raymond Zhang - Changed return type to boolean to indicate empty rooms. Improved coding style.
       Sean Yang - Fixed issue where no rooms would be returned on a date beyond the maximum date booked. Changed
                   rooms to be an ArrayList
+    * 25/05/2024
+      Raymond Zhang - Changed print format to be consistent with other methods
     */
 
     public static boolean listAvailableRooms(int date)
@@ -47,7 +49,7 @@ public class Reservations
                 // loop over every room available on the date
                 for(int i = 0; i<size; i++)
                 {
-                    System.out.println("Room " + rooms.get(i)); // prints out all available rooms
+                    System.out.println("  " + rooms.get(i)); // prints out all available rooms
                 }
             }
         }
@@ -125,7 +127,7 @@ public class Reservations
                 days = rooms.get(e); // gets the dates that the room is booked for
                 for (int d : days)
                 {
-                    System.out.printf("%10s\n", dateConverter(d));// prints out each date that the room is booked for
+                    System.out.printf("  %s\n", dateConverter(d));// prints out each date that the room is booked for
                 }
             }
         }
@@ -148,6 +150,9 @@ public class Reservations
 
         * 24/05/2024
           Raymond Zhang - Changed method to only use date as parameter.
+
+        * 25/05/2024
+          Raymond Zhang - Change print format to be consistent with other methods
        */
     public static void listReservations(int date)
     {
@@ -165,7 +170,7 @@ public class Reservations
             else {
                 System.out.printf("The following reservations have been made on %s:%n", dateConverter(date));
                 for(Integer r : rooms) {
-                    System.out.printf("%10d\n", r);// prints out each date that the room is booked for
+                    System.out.printf("  %d\n", r);// prints out each date that the room is booked for
                 }
             }
         }
