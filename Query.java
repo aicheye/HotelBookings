@@ -60,17 +60,32 @@ public class Query
      Dates Modified:
      * 24/05/2024
      * Sean Yang - Created and completed (tested)
+
+     * 25/05/2024
+     * Sean Yang - Fixed issue where roomAvailable would throw an error if the date was beyond the maximum date booked
      */
     public static boolean roomAvailable (int room, int date) throws IOException
     {
         // declare variables
         List<List<Integer>> days = allDays();
         List<Integer> rooms = allRooms();
+        boolean available = false;
 
-        // check if the reservation exists
-        return days.size() - 1 <= date &&
-                rooms.contains(room) &&
-                !days.get(date).contains(room);
+        // check if the date is within the range of days
+        if (date <= days.size() - 1)
+        {
+            // check if the room is available
+            if (rooms.contains(room) && !days.get(date).contains(room))
+                available = true;
+        }
+
+        // if the date is beyond the range of days, the room is available
+        else
+        {
+            available = true;
+        }
+
+        return available;
     }
 
     /*
@@ -128,54 +143,25 @@ public class Query
      * 17/05/2024
        Sean Yang - Fixed method to close file reader
        Raymond Zhang - Moved variable declarations to beginning of method.
+
+     * 25/05/2024
+     * Sean Yang - Rewrote method using allDays and allRooms methods to improve conciseness
     */
-    public static int[] roomQuery (int room) throws IOException
+    public static List<Integer> roomQuery (int room) throws IOException
     {
-        // init file reader and variables
-        BufferedReader br = new BufferedReader(new FileReader(DAYS_DB));
-        List<Integer> days = new ArrayList<Integer>(); // ArrayList of the days a room is available
-        int day;
-        int[] arr;
-        boolean end = false, searching, contains;
+        // declare variables
+        List<List<Integer>> days = allDays();
+        List<Integer> rooms = allRooms();
+        List<Integer> available = new ArrayList<Integer>();
 
-        // loop through every day
-        while (!end)
+        // loop over all days
+        for (int i=0; i<days.size(); i++)
         {
-            String line = br.readLine();
-            // check if EOF
-            if (line == null) end = true;
-            // if not EOF continue
-            else
-            {
-                day = Integer.parseInt(line);
-
-                // loop through every available room on that day
-                contains = false; // whether the day contains the room
-                searching = true;
-                while (searching)
-                {
-                    line = br.readLine();
-                    // check if there are no other rooms on the day
-                    if (line.equals(DATE_DELIMITER)) searching = false;
-                    // check if the room is available under the current date, if it is, append to ArrayList
-                    else if (Integer.parseInt(line) == room) contains = true;
-                }
-
-                // if the day does not contain the room, append to ArrayList
-                if (!contains) days.add(day);
-            }
+            // if the room is not booked on that day, add it to available
+            if (!days.get(i).contains(room)) available.add(i);
         }
 
-        arr = new int[days.size()]; // the array which will be returned
-        for (int i=0; i<days.size(); i++) // converts ArrayList into array
-        {
-            arr[i] = days.get(i);
-        }
-
-        // close file reader
-        br.close();
-
-        return arr;
+        return available;
     }
 
     /*
@@ -276,44 +262,29 @@ public class Query
 
      * 17/05/2024
        Sean Yang - Fixed method to close file reader
+
+     * 25/05/2024
+     * Sean Yang - Rewrote method using allEmployees method to improve conciseness
      */
     public static String[] employeePinQuery (String id) throws IOException
     {
-        // init variables and file reader
-        String pin = null; // pin of the employee
-        String admin = null; // whether the employee is admin
-        String line;
-        BufferedReader br = new BufferedReader(new FileReader(EMPLOYEES_DB));
-        boolean foundId = false;
+        // declare variables
+        List<HashMap<String, String>> employees = allEmployees();
+        String pin = null;
+        String isAdmin = null;
 
-        while (!foundId)
+        // loop over all employees
+        for (HashMap<String, String> emp : employees)
         {
-            line = br.readLine();
-
-            // check if EOF
-            if (line == null) foundId = true;
-
-            // check if the employee id matches
-            else if (line.equals(id)) {
-                br.readLine();
-                br.readLine();
-
-                // update pin admin and foundId
-                pin = br.readLine();
-                admin = br.readLine();
-                foundId = true;
-            }
-
-            else {
-                // skip next lines
-                for (int i=0; i<4; i++) br.readLine();
+            // if the employee id matches, return the pin and admin status
+            if (emp.get("id").equals(id))
+            {
+                pin = emp.get("pin");
+                isAdmin = emp.get("isAdmin");
             }
         }
 
-        // close file reader
-        br.close();
-
-        return new String[]{pin, admin}; // returns an array with two indices
+        return new String[]{pin, isAdmin};
     }
 
     /*
@@ -367,10 +338,6 @@ public class Query
                 customers.put(name, customerQuery(fName, lName));
             }
         }
-
-        // close file reader
-        br.close();
-
         return customers;
     }
 
