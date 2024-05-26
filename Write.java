@@ -40,8 +40,8 @@ public class Write
     public static void addReserve(String firstName, String lastName, int room, int date) throws IOException
     {
         // declare variables
-        Map<List<String>, Map<Integer, List<Integer>>> customers = Query.allCustomers(); // get all customers
-        List<List<Integer>> days = Query.allDays(); // get all days
+        Map<List<String>, Map<Integer, List<Integer>>> customers = Query.getAllCustomers(); // get all customers
+        List<List<Integer>> days = Query.getAllDays(); // get all days
         boolean customerExists = false; // whether the customer is in the database
         boolean customerBookedRoom = false; // whether the customer has previously booked this room
         List<String> Name = new ArrayList<String>(); // ArrayList representing the customer's full name
@@ -102,8 +102,8 @@ public class Write
         }
 
         // write to file using allCustomers and allDays
-        allCustomers(customers);
-        allDays(days);
+        updateAllCustomers(customers);
+        updateAllDays(days);
 
         // log changes
         op = "RES add";
@@ -127,8 +127,8 @@ public class Write
     public static void delReserve(String firstName, String lastName, int room, int date) throws IOException
     {
         // declare variables
-        Map<List<String>, Map<Integer, List<Integer>>> customers = Query.allCustomers(); // get all customers
-        List<List<Integer>> days = Query.allDays(); // get all days
+        Map<List<String>, Map<Integer, List<Integer>>> customers = Query.getAllCustomers(); // get all customers
+        List<List<Integer>> days = Query.getAllDays(); // get all days
         List<String> name = new ArrayList<>(); // ArrayList representing the customer's full name
         name.add(firstName);
         name.add(lastName);
@@ -145,8 +145,8 @@ public class Write
         days.get(date).remove((Integer) room);
 
         // write to file using allCustomers and allDays
-        allCustomers(customers);
-        allDays(days);
+        updateAllCustomers(customers);
+        updateAllDays(days);
 
         // log changes
         op = "RES del";
@@ -214,14 +214,14 @@ public class Write
     public static void addRoom(int room) throws IOException
     {
         // declare variables
-        List<Integer> rooms = Query.allRooms();
+        List<Integer> rooms = Query.getAllRooms();
         String op; // the log message
 
         // append to ArrayList
         rooms.add(room);
 
         // write using allRooms
-        allRooms(rooms);
+        updateAllRooms(rooms);
 
         // log changes
         op = "ROOM add";
@@ -240,14 +240,14 @@ public class Write
     public static void delRoom(int room) throws IOException
     {
         // declare variables
-        List<Integer> rooms = Query.allRooms();
+        List<Integer> rooms = Query.getAllRooms();
         String op; // the log message
 
         // remove from ArrayList
         rooms.remove((Integer) room);
 
         // write using allRooms
-        allRooms(rooms);
+        updateAllRooms(rooms);
 
         // log changes
         op = "ROOM del";
@@ -270,7 +270,7 @@ public class Write
     public static void addEmployee(String id, String firstName, String lastName, String pin, String isAdmin) throws IOException
     {
         // declare variables
-        List<HashMap<String, String>> employees = Query.allEmployees();
+        List<HashMap<String, String>> employees = Query.getAllEmployees();
         HashMap<String, String> newEmployee = new HashMap<String, String>();
         String op; // the log message
 
@@ -283,7 +283,7 @@ public class Write
         employees.add(newEmployee);
 
         // write to file using allEmployees
-        allEmployees(employees);
+        updateAllEmployees(employees);
 
         // log changes
         op = "EE add";
@@ -302,7 +302,7 @@ public class Write
     public static void delEmployee(String id) throws IOException
     {
         // declare variables
-        List<HashMap<String, String>> employees = Query.allEmployees();
+        List<HashMap<String, String>> employees = Query.getAllEmployees();
         int index = -1; // the index of the employee to be removed
         String op; // the log message
 
@@ -317,7 +317,7 @@ public class Write
         if (index != -1) employees.remove(index);
 
         // write to file using allEmployees
-        allEmployees(employees);
+        updateAllEmployees(employees);
 
         // log changes
         op = "EE del";
@@ -337,7 +337,7 @@ public class Write
     public static void edtPin(String id, String newPin) throws IOException
     {
         // declare variables
-        List<HashMap<String, String>> employees = Query.allEmployees();
+        List<HashMap<String, String>> employees = Query.getAllEmployees();
         String oldPin = "";
         String op; // the log message
 
@@ -352,7 +352,7 @@ public class Write
         }
 
         // write to file using allEmployees
-        allEmployees(employees);
+        updateAllEmployees(employees);
 
         // log changes
         op = "PIN";
@@ -408,14 +408,17 @@ public class Write
     }
 
     /*
-     Method Name: allCustomers
+     Method Name: updateAllCustomers
      Parameters: Map<List<String>, Map<Integer, List<Integer>>> customers: a java representation of customers.txt
      Description: converts java parseable data into days.txt data structure
      Dates Modified:
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
+
+     * 25/05/2024
+       Sean Yang - Changed the method name to updateAllCustomers for clarity
      */
-    public static void allCustomers(Map<List<String>, Map<Integer, List<Integer>>> customers) throws IOException
+    public static void updateAllCustomers(Map<List<String>, Map<Integer, List<Integer>>> customers) throws IOException
     {
         // init file writer and variables
         BufferedWriter bw = new BufferedWriter(new FileWriter(CUSTOMERS_DB));
@@ -461,14 +464,17 @@ public class Write
     }
 
     /*
-     Method Name: allDays
+     Method Name: updateAllDays
      Parameters: List<List<Integer>> days: a java representation of days.txt: each index represents a date with reservations
      Description: converts java parseable data into days.txt data structure
      Dates Modified:
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
+
+     * 25/05/2024
+       Sean Yang - Changed the method name to updateAllDays for clarity
      */
-    public static void allDays(List<List<Integer>> days) throws IOException
+    public static void updateAllDays(List<List<Integer>> days) throws IOException
     {
         // init file writer and variables
         BufferedWriter bw = new BufferedWriter(new FileWriter(DAYS_DB));
@@ -498,14 +504,17 @@ public class Write
     }
 
     /*
-     Method Name: allRooms
+     Method Name: updateAllRooms
      Parameters: List<Integer> rooms - an ArrayList containing every room
      Description: converts java parseable data into rooms.txt data structure
      Dates Modified:
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
+
+     * 25/05/2024
+       Sean Yang - Changed the method name to updateAllRooms for clarity
      */
-    public static void allRooms(List<Integer> rooms) throws IOException
+    public static void updateAllRooms(List<Integer> rooms) throws IOException
     {
         // init file writer and variables
         BufferedWriter bw = new BufferedWriter(new FileWriter(ROOMS_DB));
@@ -523,14 +532,17 @@ public class Write
     }
 
     /*
-     Method Name: allEmployees
+     Method Name: updateAllEmployees
      Parameters: List<HashMap<String, String>> employees - an ArrayList containing data about every employee
      Description: converts java parseable data into employees.txt data structure
      Dates Modified:
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
+
+     * 25/05/2024
+       Sean Yang - Changed the method name to updateAllEmployees for clarity
      */
-    public static void allEmployees(List<HashMap<String, String>> employees) throws IOException
+    public static void updateAllEmployees(List<HashMap<String, String>> employees) throws IOException
     {
         // init file writer and variables
         BufferedWriter bw = new BufferedWriter(new FileWriter(EMPLOYEES_DB));
