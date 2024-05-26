@@ -194,7 +194,7 @@ public class Query
             line = br.readLine();
             // check if EOF
             if (line == null) end = true;
-            // if not EOF continue
+                // if not EOF continue
             else
             {
                 f = line;
@@ -209,7 +209,7 @@ public class Query
                         line = br.readLine();
                         // check if we are at a new customer or not
                         if (line.equals(CUSTOMER_DELIMITER)) searching = false;
-                        // if we are not at a new customer, continue looping
+                            // if we are not at a new customer, continue looping
                         else {
                             room = Integer.parseInt(line); // create a new variable for the current room
 

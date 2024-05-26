@@ -17,6 +17,8 @@ public class Reservations {
     Parameters: int date - a day that user inputs from main
     Description: Just prints out all the available rooms on day. Will indicate if no rooms are available.
     Dates modified:
+    *17/05/2024
+    Sean Liu - Created the shell and main function of the method.
     * 24/05/2024
     * Raymond Zhang - Changed return type to boolean to indicate empty rooms. Improved coding style.
     * Sean Yang - Fixed issue where no rooms would be returned on a date beyond the maximum date booked. Changed
@@ -57,6 +59,8 @@ public class Reservations {
                 int room - room number being checked for availability
     Description: Returns true of false if room is available on given day
     Dates Modified:
+    * 21/05/2024
+    * Sean Liu - Created the main instructions of the method
     * 24/05/2024
     * Sean Yang - Changed the method to use Query.roomAvailable and changed the parameter order
     */
@@ -81,6 +85,8 @@ public class Reservations {
                 String lastName - last name of person
     Description: Lists the room number and dates the room is booked for
     Dates modified:
+     * 21/05/2024
+     * Sean Liu - created the main function of method
      * 23/05/2024
      * Raymond Zhang - Formatted method.
     */
@@ -107,6 +113,8 @@ public class Reservations {
        Parameters: Integer date - date number that user is searching for
        Description:  Prints out which rooms on a given specific date
        Dates modified:
+        * 21/05/2024
+        * Sean Liu
         * 24/05/2024
         * Raymond Zhang - Changed method to only use date as parameter.
        */
@@ -141,10 +149,12 @@ public class Reservations {
 
     /*
     Method Name: dateConverter
-    Return Type: String - returns the date in Georgian Calendar format 2024/1/1
+    Return Type: String - returns the date in dd/mm/yyyy format
     Parameters: int Days- number of days given by user
     Description: Returns a date
-
+    Date Modified:
+        * 22/05/2024
+        * Sean Liu - Created dateConverter to accommodate printing and localized time.
     */
     public static String dateConverter(Object days) {
         String combined;
