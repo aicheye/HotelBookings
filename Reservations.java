@@ -13,31 +13,44 @@ public class Reservations {
 
     /*
     Method Name: listAvailableRooms
-    Return Type: Void, just prints out the available rooms
-    Parameters: int Date - a day that user inputs from main
-    Description: Just prints out all the available rooms on day
-    Date Modified: 5/17/2024
-     */
+    Return Type: boolean - true if rooms are available and false otherwise
+    Parameters: int date - a day that user inputs from main
+    Description: Just prints out all the available rooms on day. Will indicate if no rooms are available.
+    Dates modified:
+    *17/05/2024
+    Sean Liu - Created the shell and main function of the method.
+    * 24/05/2024
+    * Raymond Zhang - Changed return type to boolean to indicate empty rooms. Improved coding style.
+    * Sean Yang - Fixed issue where no rooms would be returned on a date beyond the maximum date booked. Changed
+                  rooms to be an ArrayList
+    */
 
-    public static void listAvailableRooms(int date) {
+    public static boolean listAvailableRooms(int date) {
+        // Declare variables
+        int size = 0;
+        List<Integer> rooms;
         try {
-            int[] rooms = Query.dateQuery(date);
-            int size = rooms.length;//checks how many available rooms there are
+            // Get available rooms
+            rooms = Query.dateQuery(date);
+            size = rooms.size();//checks how many available rooms there are
+
+            // Check if any rooms are available
             if (size == 0) {
-                System.out.println("There are no rooms available");
-            } else {
-                System.out.println("Rooms Available:");
-                int i = 0;
-                while (i < size) {
-                    System.out.println("Room " + rooms[i]);//prints out all available rooms
-                    i++;
+                System.out.printf("There are no rooms available on %s.%n%n", dateConverter(date));
+            }
+            else {
+                System.out.printf("Rooms available on %s:%n", dateConverter(date));
+                for(int i = 0; i<size; i++) {
+                    System.out.println("Room " + rooms.get(i));//prints out all available rooms
                 }
             }
         } catch (IOException e) {
-            System.out.println(e);
+            System.out.println(e + " Problem reading file.");
         }
 
+        return size != 0;
     }
+
 
     /*
     Method Name: checkAvailability
@@ -45,22 +58,24 @@ public class Reservations {
     Parameters: int Date - a day that user inputs from main
                 int room - room number being checked for availability
     Description: Returns true of false if room is available on given day
-    Date Modified:5/17/2024
+    Dates Modified:
+    * 21/05/2024
+    * Sean Liu - Created the main instructions of the method
+    * 24/05/2024
+    * Sean Yang - Changed the method to use Query.roomAvailable and changed the parameter order
     */
-    public static boolean checkAvailability(int date, int room) {
-        boolean roomfound = false;
-        try {
-            int[] dateAvailable = Query.dateQuery(date);
-            for (int j : dateAvailable) {
-                if (j == room) {//checks if the room number is equal to the room number that is available.
-                    roomfound = true;
-                    break;//stops the for loop once it finds the room number is free/available on the date.
-                }
-            }
-        } catch (IOException e) {
+    public static boolean checkAvailability (int room, int date)
+    {
+        boolean roomFound = false;
+        try
+        {
+            roomFound = Query.roomAvailable(room, date);
+        }
+        catch (IOException e)
+        {
             System.out.println(e);
         }
-        return roomfound;//returns true or false depending if the conditions were met
+        return roomFound; //returns true or false depending if the conditions were met
     }
 
     /*
@@ -69,23 +84,25 @@ public class Reservations {
     Parameters: String firstName - first name of person
                 String lastName - last name of person
     Description: Lists the room number and dates the room is booked for
-    Date Modified: 5/22/2024
+    Dates modified:
+     * 21/05/2024
+     * Sean Liu - created the main function of method
+     * 23/05/2024
+     * Raymond Zhang - Formatted method.
     */
     public static void listReservations(String firstName, String lastName) {
         Object days;
         try {
             Map<Integer, List<Integer>> rooms = Query.customerQuery(firstName, lastName);
-    for  (int e: rooms.keySet()) {//gets each room #
-        System.out.printf("%s %s has booked Room %d for:\n", firstName, lastName, e);
-        List<Integer> value = rooms.get(e);//gets the room number and dates that it is booked for
-        for (Object o : value) {
-            days = o;
-            System.out.printf("%10s\n", dateConverter(days));//prints out each date that the room is booked for
-        }
-        }
-        }
-        catch (IOException e)
-        {
+            for (int e : rooms.keySet()) {// gets each room #
+                System.out.printf("%s %s has booked Room %d for:\n", firstName, lastName, e);
+                List<Integer> value = rooms.get(e);// gets the room numbers
+                for (Object o : value) {
+                    days = o;
+                    System.out.printf("%10s\n", dateConverter(days));// prints out each date that the room is booked for
+                }
+            }
+        } catch (IOException e) {
             System.out.println(e);
         }
 
@@ -93,43 +110,51 @@ public class Reservations {
     /*
        Method Name: listReservations
        Return Type: void
-       Parameters: String firstName - first name of person
-                   String lastName - last name of person
-                   Object date - date number that user is searching for
-       Description:  Prints out which rooms are booked by the customer on given specific date
-        Date Modified:5/17/2024
+       Parameters: Integer date - date number that user is searching for
+       Description:  Prints out which rooms on a given specific date
+       Dates modified:
+        * 21/05/2024
+        * Sean Liu
+        * 24/05/2024
+        * Raymond Zhang - Changed method to only use date as parameter.
        */
-    public static void listReservations(String firstName, String lastName, Object date) {
+    public static void listReservations(Integer date) {
+        // Declare variables
+        List<Integer> rooms;
+
         try {
-            Object days;
-            Map<Integer, List<Integer>> rooms = Query.customerQuery(firstName, lastName);
-            System.out.printf("%s %s has booked the following rooms on %s: \n",firstName,lastName, dateConverter(date));
-            for  (int e: rooms.keySet()) {//gets each room #
-                List<Integer> value = rooms.get(e);//value is assigned the date the room numbers are booked
-                for (Object o : value) {
-                    days = o;//days are being assigned
-                    if (days==date){
-                        System.out.printf("%4s \n", e);//prints out the room numbers
-                    }
+            rooms = Query.allDays().get(date);
+
+            // Check if reservations have been made on the date
+            if(rooms.isEmpty()) {
+                System.out.printf("No reservations have been made on %s.%n%n", dateConverter(date));
+            }
+            // Print reservations
+            else {
+                System.out.printf("The following reservations have been made on %s:%n", dateConverter(date));
+                for(Integer r : rooms) {
+                    System.out.printf("%10d\n", r);// prints out each date that the room is booked for
                 }
-
-
-
             }
         }
-        catch (IOException e)
-        {
-            System.out.println(e);
+        // Unrecorded date was entered
+        catch (IndexOutOfBoundsException e) {
+            System.out.printf("No reservations have been made on %s.%n%n", dateConverter(date));
+        }
+        catch(IOException e) {
+            System.out.println(e + " Problem reading file.");
         }
     }
 
+
     /*
     Method Name: dateConverter
-    Return Type: String - returns the date in Georgian Calendar format 2024/1/1
+    Return Type: String - returns the date in dd/mm/yyyy format
     Parameters: int Days- number of days given by user
     Description: Returns a date
-    Date Modified:5/17/2024
-
+    Date Modified:
+        * 22/05/2024
+        * Sean Liu - Created dateConverter to accommodate printing and localized time.
     */
     public static String dateConverter(Object days) {
         String combined;
