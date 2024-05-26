@@ -5,7 +5,9 @@ import java.io.*;
  Programmer: Sean Yang, Raymond Zhang
  Program Name: Query
  Date: 16/05/2024
- Description: Performs various queries on database (.txt) files
+ Description: This class contains methods that allow the user to check if a reservation exists, check if a room is
+              available on a given date, list all available rooms on a given date, list all reservations for a given
+              person, and list all reservations for a given date.
 */
 
 public class Query
@@ -264,7 +266,7 @@ public class Query
     /*
      Method Name: getAllCustomers
      Return Type: HashMap<String, HashMap<Integer, ArrayList<Integer>>> - A nested hashmap representing the customers'
-                                                                          names and rooms booked
+                                                                          names and rooms booked on each day
      Description: Returns all customers and the rooms/days they have booked
      Dates Modified:
      * 22/05/2024
@@ -289,7 +291,6 @@ public class Query
             db.add(line);
             line = br.readLine();
         }
-
 
         // loop over customers.txt and find each customer
         fName = db.get(0);
@@ -317,8 +318,8 @@ public class Query
 
     /*
      Method Name: getAllDays
-     Return Type: List<List<Integer>>
-     Description: returns all days and the rooms reserved on that day. the index of the first ArrayList represents the date
+     Return Type: List<List<Integer>> - A list of all days and the rooms reserved on that day
+     Description: Returns all days and the rooms reserved on that day. the index of the first ArrayList represents the date
      Dates Modified:
      * 22/05/2024
        Sean Yang - Created and completed methods (tested)
@@ -369,8 +370,8 @@ public class Query
 
     /*
      Method Name: getAllRooms
-     Return Type: List<List<Integer>>
-     Description: returns all rooms in the hotel
+     Return Type: List<List<Integer>> - A list of all rooms in the hotel
+     Description: Returns all rooms in an ArrayList
      Dates Modified:
      * 22/05/2024
        Sean Yang - Created and completed methods (tested)
@@ -401,8 +402,8 @@ public class Query
 
     /*
      Method Name: getAllEmployees
-     Return Type: List<HashMap<String, String>>
-     Description: returns all employees in an ArrayList
+     Return Type: List<HashMap<String, String>> - A list of all employees in the hotel
+     Description: Returns all employees in an ArrayList
      Dates Modified:
      * 22/05/2024
        Sean Yang - Created and completed methods (tested)

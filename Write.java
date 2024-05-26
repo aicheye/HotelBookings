@@ -5,7 +5,8 @@ import java.io.*;
  Programmer: Sean Yang
  Program Name: Write
  Date: 17/05/2024
- Description: Performs various writes to database (.txt) files
+ Description: This class contains methods that allow the user to add, delete, and edit reservations, rooms, and employees
+              in the database. It also allows the user to log in and log operations.
  */
 
 public class Write
@@ -28,7 +29,7 @@ public class Write
                  String lastName - The last name of the customer making the reservation
                  int room - The room number they are reserving
                  int date - The date they are reserving
-     Description: Adds a reservation to customers.txt and updates days.txt
+     Description: Adds a reservation to customers.txt and days.txt
      Dates Modified:
      * 21/05/2024
        Sean Yang - Created and completed method
@@ -364,9 +365,9 @@ public class Write
 
     /*
      Method Name: logUser
-     Parameters: String id - the id of the user currently logged in
-                 String isAdmin - whether the user is admin (1 for admin, 0 for normal user)
-     Description: logs a new user in log.txt
+     Parameters: String id - The id of the user currently logged in
+                 String isAdmin - Whether the user is admin (1 for admin, 0 for normal user)
+     Description: Logs a new user in log.txt
      Dates Modified:
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
@@ -409,8 +410,9 @@ public class Write
 
     /*
      Method Name: updateAllCustomers
-     Parameters: Map<List<String>, Map<Integer, List<Integer>>> customers: a java representation of customers.txt
-     Description: converts java parseable data into days.txt data structure
+     Parameters: Map<List<String>, Map<Integer, List<Integer>>> customers - A java representation of customers.txt: each key
+                 is a customer's name and each value is a map of room numbers to a list of dates
+     Description: Converts java parseable data into days.txt data structure
      Dates Modified:
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
@@ -465,8 +467,8 @@ public class Write
 
     /*
      Method Name: updateAllDays
-     Parameters: List<List<Integer>> days: a java representation of days.txt: each index represents a date with reservations
-     Description: converts java parseable data into days.txt data structure
+     Parameters: List<List<Integer>> days - A java representation of days.txt: each index represents a date with reservations
+     Description: Converts java parseable data into days.txt data structure
      Dates Modified:
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
@@ -505,8 +507,8 @@ public class Write
 
     /*
      Method Name: updateAllRooms
-     Parameters: List<Integer> rooms - an ArrayList containing every room
-     Description: converts java parseable data into rooms.txt data structure
+     Parameters: List<Integer> rooms - A java representation of rooms.txt: each value represents a room number
+     Description: Converts java parseable data into rooms.txt data structure
      Dates Modified:
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
@@ -533,8 +535,9 @@ public class Write
 
     /*
      Method Name: updateAllEmployees
-     Parameters: List<HashMap<String, String>> employees - an ArrayList containing data about every employee
-     Description: converts java parseable data into employees.txt data structure
+     Parameters: List<HashMap<String, String>> employees - A java representation of employees.txt: each index represents an
+                 employee with their id, first name, last name, pin, and whether they are an admin
+     Description: Converts java parseable data into employees.txt data structure
      Dates Modified:
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
