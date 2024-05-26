@@ -1,0 +1,13 @@
+111111 0
+RES add Sean Yang 302 1
+RES del Sean Yang 302 1
+RES add Sean Yang 302 2
+RES del Sean Yang 302 2
+RES add Sean Liu 302 2
+RES del Sean Liu 302 2
+RES add Sean Liu 202 2
+RES del Sean Liu 202 2
+RES add Sean Liu 202 3
+RES del Sean Liu 202 3
+ROOM add 401
+ROOM del 401
