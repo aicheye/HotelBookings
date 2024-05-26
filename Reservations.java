@@ -33,7 +33,7 @@ public class Reservations
         List<Integer> rooms;
         try {
             // Get available rooms
-            rooms = Query.allAvailableRooms(date);
+            rooms = Query.getAvailableRooms(date);
             size = rooms.size();//checks how many available rooms there are
 
             // Check if any rooms are available
@@ -114,7 +114,7 @@ public class Reservations
 
         try
         {
-            Map<Integer, List<Integer>> rooms = Query.customerReservations(firstName, lastName);
+            Map<Integer, List<Integer>> rooms = Query.getReservations(firstName, lastName);
             // loop over each room number
             for (int e : rooms.keySet())
             {
@@ -152,7 +152,7 @@ public class Reservations
         List<Integer> rooms;
 
         try {
-            rooms = Query.allDays().get(date);
+            rooms = Query.getAllDays().get(date);
 
             // Check if reservations have been made on the date
             if(rooms.isEmpty()) {
