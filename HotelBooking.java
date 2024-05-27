@@ -129,7 +129,7 @@ public class HotelBooking
        Raymond Zhang - Changed method call to checkAvailability to align with new parameters.
        Change quit number to -1
 
-     * 25/05/2024
+     * 27/05/2024
        Raymond Zhang - Fixed room validation by checking for values less than 100 instead of 0.
     */
     public static int getRoomInput(int date)
@@ -212,7 +212,7 @@ public class HotelBooking
      * 24/05/2024
        Raymond Zhang - Added an option to quit.
 
-     * 25/05/2024
+     * 27/05/2024
        Raymond Zhang - Added quit messages
      */
     public static int getDateInput()
@@ -225,7 +225,7 @@ public class HotelBooking
         // Get the date from user
         do
         {
-            System.out.print("Enter the date (-1 to cancel): ");
+            System.out.print("Enter the date (DD/MM/YYYY, -1 to cancel): ");
             dateStr = sc.nextLine();
 
             // User chose to quit
@@ -286,7 +286,7 @@ public class HotelBooking
        Raymond Zhang - Added an option to quit, made print formatting a bit neater.
        Changed quit value to -1
 
-     * 25/05/2024
+     * 27/05/2024
       Raymond Zhang - Added a quit message
      */
     public static int[] getReservation(String firstName, String lastName) {
@@ -446,7 +446,7 @@ public class HotelBooking
        Fixed NullPointerException from assigning null value to queryPin[1] by assigning "" instead
        Sean Yang - Added constants for ID & pin length and welcome message upon login
 
-     * 25/05/2024
+     * 27/05/2024
        Raymond Zhang - Changed call to the display menu to align with changes made to displayMenu().
      */
     public static void login()
@@ -582,13 +582,12 @@ public class HotelBooking
        Fixed issue with room and date being mixed up when canceling a reservation
        Added quit messages
 
-     * 25/05/2024
-       Raymond Zhang - Added cases for the admin menu.
-       Changed method name to displayMenu and added parameter for employee/admin.
-       Refactored variable declaration for clarity
-       Fix bug in reservation change where room and date values were not updated
-
      * 27/05/2024
+       Raymond Zhang - Added cases for the admin menu.
+                       Changed method name to displayMenu and added parameter for employee/admin.
+                       Refactored variable declaration for clarity.
+                       Fix bug in reservation change where room and date values were not updated.
+                       Added a check to prevent admin from deleting themselves.
        Sean Yang - Replaced calls to Update with calls to Reservations
                    Added a check to validate that there are no reservations to a room before deleting it
      */
@@ -1291,6 +1290,10 @@ public class HotelBooking
                                             if (checkID == null)
                                             {
                                                 System.out.println("**ERROR: ID was not found in system.**\n");
+                                            }
+                                            // Employee cannot delete themselves
+                                            else if(newID.equals(employeeID)) {
+                                                System.out.println("**ERROR: You cannot delete yourself.**\n");
                                             }
                                             // Employee in system; delete employee
                                             else
