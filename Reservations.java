@@ -5,14 +5,15 @@ import java.util.*;
 /*
  Programmer: Sean Liu, Sean Yang, Raymond Zhang
  Program Name: Reservations
- Date: 5/17/2024
+ Last Modified: 5/27/2024
  Description: This class contains methods that allow the user to check the availability of rooms on a given date,
               check if a room is available on a given date, list all reservations for a given person, and list all
               reservations for a given date.
+              It also allows the user to create, cancel, and change reservations.
  */
+
 public class Reservations
 {
-
     /*
      Method Name: listAvailableRooms
      Return Type: boolean - True if rooms are available and false otherwise
