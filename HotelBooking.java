@@ -211,9 +211,6 @@ public class HotelBooking
 
      * 24/05/2024
        Raymond Zhang - Added an option to quit.
-
-     * 27/05/2024
-       Raymond Zhang - Added quit messages
      */
     public static int getDateInput()
     {
@@ -231,7 +228,6 @@ public class HotelBooking
             // User chose to quit
             if (dateStr.equals(String.valueOf(QUIT_NUM)))
             {
-                System.out.println("Operation aborted.");
                 date = QUIT_NUM;
                 validDate = true;
             }
