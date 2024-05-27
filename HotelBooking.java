@@ -9,7 +9,7 @@ import java.time.temporal.ChronoUnit;
 /*
  Programmer: Raymond Zhang, Sean Yang
  Program name: HotelBooking
- Last Modified: 17/05/2024
+ Last Modified: 27/05/2024
  Description: Runs the main loop for the login screen and menu selection
  */
 
@@ -129,7 +129,7 @@ public class HotelBooking
        Raymond Zhang - Changed method call to checkAvailability to align with new parameters.
        Change quit number to -1
 
-     * 25/05/2024
+     * 27/05/2024
        Raymond Zhang - Fixed room validation by checking for values less than 100 instead of 0.
     */
     public static int getRoomInput(int date)
@@ -211,9 +211,6 @@ public class HotelBooking
 
      * 24/05/2024
        Raymond Zhang - Added an option to quit.
-
-     * 25/05/2024
-       Raymond Zhang - Added quit messages
      */
     public static int getDateInput()
     {
@@ -225,13 +222,12 @@ public class HotelBooking
         // Get the date from user
         do
         {
-            System.out.print("Enter the date (-1 to cancel): ");
+            System.out.print("Enter the date (DD/MM/YYYY, -1 to cancel): ");
             dateStr = sc.nextLine();
 
             // User chose to quit
             if (dateStr.equals(String.valueOf(QUIT_NUM)))
             {
-                System.out.println("Operation aborted.");
                 date = QUIT_NUM;
                 validDate = true;
             }
@@ -286,7 +282,7 @@ public class HotelBooking
        Raymond Zhang - Added an option to quit, made print formatting a bit neater.
        Changed quit value to -1
 
-     * 25/05/2024
+     * 27/05/2024
       Raymond Zhang - Added a quit message
      */
     public static int[] getReservation(String firstName, String lastName) {
@@ -446,7 +442,7 @@ public class HotelBooking
        Fixed NullPointerException from assigning null value to queryPin[1] by assigning "" instead
        Sean Yang - Added constants for ID & pin length and welcome message upon login
 
-     * 25/05/2024
+     * 27/05/2024
        Raymond Zhang - Changed call to the display menu to align with changes made to displayMenu().
      */
     public static void login()
@@ -582,13 +578,13 @@ public class HotelBooking
        Fixed issue with room and date being mixed up when canceling a reservation
        Added quit messages
 
-     * 25/05/2024
-       Raymond Zhang - Added cases for the admin menu.
-       Changed method name to displayMenu and added parameter for employee/admin.
-       Refactored variable declaration for clarity
-       Fix bug in reservation change where room and date values were not updated
-
      * 27/05/2024
+       Raymond Zhang - Added cases for the admin menu.
+                       Changed method name to displayMenu and added parameter for employee/admin.
+                       Refactored variable declaration for clarity.
+                       Fix bug in reservation change where room and date values were not updated.
+                       Added a check to prevent admin from deleting themselves.
+                       Fixed bug where entering quit number would not quit when adding an employee.
        Sean Yang - Replaced calls to Update with calls to Reservations
                    Added a check to validate that there are no reservations to a room before deleting it
      */
@@ -1181,90 +1177,92 @@ public class HotelBooking
 
                                 } while (!validID);
 
-                                // Get new name
-                                System.out.print("Enter the new employee's first name: ");
-                                firstName = sc.nextLine();
-                                System.out.print("Enter the new employee's last name: ");
-                                lastName = sc.nextLine();
+                                // User did not quit
+                                if(!newID.equals(String.valueOf(QUIT_NUM))) {
+                                    // Get new name
+                                    System.out.print("Enter the new employee's first name: ");
+                                    firstName = sc.nextLine();
+                                    System.out.print("Enter the new employee's last name: ");
+                                    lastName = sc.nextLine();
 
-                                // Get employee PIN
-                                do
-                                {
-                                    System.out.print("Enter the new employee's PIN (-1 to cancel): ");
-                                    newPIN = sc.nextLine();
-
-                                    // New PIN is valid; change PIN and break
-                                    if (newPIN.matches("^[0-9]{" + PIN_LENGTH + "}$"))
+                                    // Get employee PIN
+                                    do
                                     {
-                                        validPIN = true;
-                                    }
+                                        System.out.print("Enter the new employee's PIN (-1 to cancel): ");
+                                        newPIN = sc.nextLine();
 
-                                    // User chooses to quit; break out of loop
-                                    else if(newPIN.equals(String.valueOf(QUIT_NUM)))
-                                    {
-                                        System.out.println("Employee addition aborted");
-                                        validPIN = true;
-                                    }
+                                        // New PIN is valid; change PIN and break
+                                        if (newPIN.matches("^[0-9]{" + PIN_LENGTH + "}$"))
+                                        {
+                                            validPIN = true;
+                                        }
 
-                                    // PIN was invalid
-                                    else
-                                    {
-                                        System.out.println("**ERROR: New PIN must be a four-digit integer.**\n");
-                                    }
-
-                                } while (!validPIN);
-
-                                // Determine if the new employee is admin or not
-                                do
-                                {
-                                    // Get choice
-                                    System.out.print("Is the new employee an admin (y/n, -1 to cancel)? ");
-                                    newIsAdmin = sc.nextLine().toLowerCase(); // convert to lower for case insensitivity
-
-                                    switch (newIsAdmin)
-                                    {
-                                        // Add admin and quit
-                                        case "yes":
-                                        case "y":
-                                            try
-                                            {
-                                                Write.addEmployee(newID, firstName, lastName, newPIN, "1");
-                                                System.out.printf("Successfully added %s %s with id %s and PIN %s as admin.%n", firstName, lastName, newID, newPIN);
-                                                newIsAdmin = String.valueOf(QUIT_NUM);
-
-                                                break;
-                                            }
-                                            catch (IOException e)
-                                            {
-                                                System.out.println(e + " Problem reading file.");
-                                            }
-                                        // Add employee and quit
-                                        case "no":
-                                        case "n":
-                                            try
-                                            {
-                                                Write.addEmployee(newID, firstName, lastName, newPIN, "0");
-                                                System.out.printf("Successfully added %s %s with id %s and PIN %s as employee.%n", firstName, lastName, newID, newPIN);
-                                                newIsAdmin = String.valueOf(QUIT_NUM);
-                                            }
-                                            catch( IOException e)
-                                            {
-                                                System.out.println(e + " Problem reading file.");
-                                            }
-                                            break;
-
-                                        // Quit
-                                        case "-1":
+                                        // User chooses to quit; break out of loop
+                                        else if(newPIN.equals(String.valueOf(QUIT_NUM)))
+                                        {
                                             System.out.println("Employee addition aborted.");
-                                            break;
+                                            validPIN = true;
+                                        }
 
-                                        // Invalid choice made
-                                        default:
-                                            System.out.println("**ERROR: Please enter y, n, or -1.**\n");
-                                            break;
+                                        // PIN was invalid
+                                        else
+                                        {
+                                            System.out.println("**ERROR: New PIN must be a four-digit integer.**\n");
+                                        }
+
+                                    } while (!validPIN);
+
+                                    // User did not quit
+                                    if(!newPIN.equals(String.valueOf(QUIT_NUM))){
+                                        // Determine if the new employee is admin or not
+                                        do {
+                                            // Get choice
+                                            System.out.print("Is the new employee an admin (y/n, -1 to cancel)? ");
+                                            newIsAdmin = sc.nextLine().toLowerCase(); // convert to lower for case
+                                                                                      // insensitivity
+
+                                            switch (newIsAdmin) {
+                                                // Add admin and quit
+                                                case "yes":
+                                                case "y":
+                                                    try {
+                                                        Write.addEmployee(newID, firstName, lastName, newPIN, "1");
+                                                        System.out.printf(
+                                                                "Successfully added %s %s with id %s and PIN %s as admin.%n",
+                                                                firstName, lastName, newID, newPIN);
+                                                        newIsAdmin = String.valueOf(QUIT_NUM);
+
+                                                        break;
+                                                    } catch (IOException e) {
+                                                        System.out.println(e + " Problem reading file.");
+                                                    }
+                                                    // Add employee and quit
+                                                case "no":
+                                                case "n":
+                                                    try {
+                                                        Write.addEmployee(newID, firstName, lastName, newPIN, "0");
+                                                        System.out.printf(
+                                                                "Successfully added %s %s with id %s and PIN %s as employee.%n",
+                                                                firstName, lastName, newID, newPIN);
+                                                        newIsAdmin = String.valueOf(QUIT_NUM);
+                                                    } catch (IOException e) {
+                                                        System.out.println(e + " Problem reading file.");
+                                                    }
+                                                    break;
+
+                                                // Quit
+                                                case "-1":
+                                                    System.out.println("Employee addition aborted.");
+                                                    break;
+
+                                                // Invalid choice made
+                                                default:
+                                                    System.out.println("**ERROR: Please enter y, n, or -1.**\n");
+                                                    break;
+                                            }
+                                        } while (!newIsAdmin.equals(String.valueOf(QUIT_NUM)));
                                     }
-                                } while (!newIsAdmin.equals(String.valueOf(QUIT_NUM)));
-
+                                }
                                 // Reset looping conditions
                                 validID = false;
                                 validPIN = false;
@@ -1291,6 +1289,10 @@ public class HotelBooking
                                             if (checkID == null)
                                             {
                                                 System.out.println("**ERROR: ID was not found in system.**\n");
+                                            }
+                                            // Employee cannot delete themselves
+                                            else if(newID.equals(employeeID)) {
+                                                System.out.println("**ERROR: You cannot delete yourself.**\n");
                                             }
                                             // Employee in system; delete employee
                                             else
