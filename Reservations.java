@@ -22,12 +22,12 @@ public class Reservations
        Sean Liu - Created the shell and main function of the method
 
      * 24/05/2024
-       Raymond Zhang - Changed return type to boolean to indicate empty rooms. Improved coding style.
+       Raymond Zhang - Changed the return type to boolean to indicate empty rooms. Improved coding style.
        Sean Yang - Fixed issue where no rooms would be returned on a date beyond the maximum date booked. Changed
                    rooms to be an ArrayList
                 
      * 25/05/2024
-       Raymond Zhang - Changed print format to be consistent with other methods
+       Raymond Zhang - Changed print formatting to be consistent with other methods
      */
     public static boolean listAvailableRooms(int date)
     {

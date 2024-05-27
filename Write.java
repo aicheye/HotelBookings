@@ -330,7 +330,7 @@ public class Write
      Method Name: edtPin
      Parameters: String id - The employee to edit
                  String newPin - The employee's pin
-     Description: Change's an employees pin in employees.txt
+     Description: Changes an employees' pin in employees.txt
      Dates Modified:
      * 23/05/2024
        Sean Yang - Created and completed method

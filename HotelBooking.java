@@ -33,7 +33,7 @@ public class HotelBooking
        Sean Liu - Created dateConverter to accommodate printing and localized time
 
      * 24/05/2024
-       Raymond Zhang - Formatted date string to be consistent with main class
+       Raymond Zhang - Formatted date string to be consistent with the main class
 
      * 27/05/2024
        Sean Yang - Moved dateConverter from Reservations.java to HotelBooking.java
@@ -59,12 +59,12 @@ public class HotelBooking
     /*
      Method Name: dateStrToInt
      Return Type: int - The number of days pass since the start date (Jan 1, 2024).
-                        Will return -1 if date is Dec 31, 2023 or if invalid date format was given.
+                        Will return -1 if date is Dec 31, 2023 or if an invalid date format was given.
      Parameters: String - A date in dd/MM/yyyy
      Description: Converts a formatted date into a number representing the number of days past since Jan 01, 2024.
      Dates modified:
      * 23/05/2024
-     * Raymond Zhang - Created and finished method.
+       Raymond Zhang - Created and finished method.
     */
     public static int dateStrToInt(String dateStr)
     {
@@ -96,20 +96,21 @@ public class HotelBooking
      Description: Continuously receives input from user until an available room number is entered
      Dates modified:
      * 17/05/2024
-     * Raymond Zhang - Created and finished method. Has yet to be tested.
+       Raymond Zhang - Created and finished method.
+                       Yet to be tested.
 
      * 21/05/2024
-     * Raymond Zhang - Replaced method calls to Reservation.java with print statements for testing.
+       Raymond Zhang - Replaced method calls to Reservation.java with print statements for testing.
        Fixed infinite loop in input validation by reading line outside try-catch block
        Changed error messages to stand out more.
        Removed local declaration of Scanner.
 
      * 24/05/2024
-     * Raymond Zhang - Changed method call to checkAvailability to align with new parameters.
+       Raymond Zhang - Changed method call to checkAvailability to align with new parameters.
        Change quit number to -1
 
      * 25/05/2024
-     * Raymond Zhang - Fixed room validation by checking for values less than 100 instead of 0.
+       Raymond Zhang - Fixed room validation by checking for values less than 100 instead of 0.
     */
     public static int getRoomInput(int date)
     {
@@ -134,7 +135,7 @@ public class HotelBooking
                     if(room == QUIT_NUM) {
                         validRoom = true;
                     }
-                    // Check if room is invalid
+                    // Check if the room is invalid
                     else if(room <= 100)
                     {
                         System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
@@ -188,7 +189,7 @@ public class HotelBooking
      * Raymond Zhang - Changed date to string input.
 
      * 24/05/2024
-     * Raymond Zhang - Added option to quit.
+     * Raymond Zhang - Added an option to quit.
 
      * 25/05/2024
      * Raymond Zhang - Added quit messages
@@ -218,7 +219,7 @@ public class HotelBooking
             else
             {
                 date = dateStrToInt(dateStr);
-                // Check if date is invalid
+                // Check if the date is invalid
                 if(date < 0)
                 {
                     System.out.println("**ERROR: Date must be 01/01/2024 or later (DD/MM/YYYY).**\n");
@@ -239,32 +240,34 @@ public class HotelBooking
      Method Name: getReservation
      Return Type: int[] - A reservation made on a room by the customer on a date ([date, room])
      Parameters: String firstName, String lastName - The name of the customer
-     Description: Lists all reservations made by the user and allows user to select the date
-                  and room of one of them. Error will be thrown if customer has no reservations
-                  in file. User may choose to abort the cancellation by setting the room to 0.
+     Description: Lists all reservations made by the user and allows the user to select the date
+                  and room of one of them.
+                  Error will be thrown if the customer has no reservations in the file.
+                  The user may choose to abort the cancellation by setting the room to -1.
      Dates modified:
      * 17/05/2024
-     * Raymond Zhang - Created and finished method. Has yet to be tested.
+       Raymond Zhang - Created and finished method.
+                       Yet to be tested.
 
      * 21/05/2024
-     * Raymond Zhang - Replaced method calls to Reservation.java with print statements for testing.
+       Raymond Zhang - Replaced method calls to Reservation.java with print statements for testing.
        Renamed customRooms to customerRooms. Added IOException handling.
        Fixed infinite loop in input validation by reading line outside try-catch block
        Changed error messages to stand out more.
        Removed local declaration of Scanner.
 
      * 22/05/2024
-     * Raymond Zhang - Swapped room and date to match with Query method call
+       Raymond Zhang - Swapped room and date to match with Query method call
 
      * 23/05/2024
-     * Raymond Zhang - Changed date to string during input and output.
+       Raymond Zhang - Changed date to string during input and output.
 
      * 24/05/2024
-     * Raymond Zhang - Added option to quit, made print formatting a bit neater.
+       Raymond Zhang - Added an option to quit, made print formatting a bit neater.
        Changed quit value to -1
 
      * 25/05/2024
-     * Raymond Zhang - Added quit message
+      Raymond Zhang - Added a quit message
     */
     public static int[] getReservation(String firstName, String lastName) {
         // Declare variables
@@ -288,7 +291,7 @@ public class HotelBooking
         if(customerReservations.isEmpty())
         {
             System.out.printf("**ERROR: %s %s has no reservations in file.**%n%n", firstName, lastName);
-            room = QUIT_NUM; // Quit current operation
+            room = QUIT_NUM; // Quit the current operation
         }
 
         else
@@ -318,7 +321,7 @@ public class HotelBooking
                     validDate = true; // Skip next loop
                 }
 
-                // Check if room is invalid
+                // Check if the room is invalid
                 else if (room < 0)
                 {
                     System.out.println("**ERROR: Room must be an non-negative integer value.**\n");
@@ -365,7 +368,7 @@ public class HotelBooking
                     // Convert date to int
                     date = dateStrToInt(line);
 
-                    // Check if date was valid
+                    // Check if the date was valid
                     if (date < 0)
                     {
                         System.out.println("**ERROR: Date must be 01/01/2024 or later (DD/MM/YYYY).**\n");
@@ -373,7 +376,7 @@ public class HotelBooking
 
                     else
                     {
-                        // Check if date was reserved
+                        // Check if the date was reserved
                         validDate = customerDates.contains(date);
                         if (!validDate)
                         {
@@ -396,38 +399,41 @@ public class HotelBooking
                   the entered ID is valid and in the system. If so, then the user
                   must enter their corresponding PIN until they get it correct.
                   Alternatively, the user may enter -1 to return to the login screen.
-                  Once the user is successfully logged in, the according  menu will
+                  Once the user is successfully logged in, the according menu will
                   be displayed depending on if the user is an admin or not.
      Dates Modified:
      * 16/05/2024
-     * Raymond Zhang - Created method. Implemented user input for employee
+       Raymond Zhang - Created method. Implemented user input for employee
        ID and PIN, with input validation loops. Method has yet to be tested,
        UI may need improvement.
 
      * 17/05/2024
-     * Raymond Zhang - Reformatted input validation to be consistent with other methods.
-       Closed the Scanner. Testing still not done.
+       Raymond Zhang - Reformatted input validation to be consistent with other methods.
+       Closed the Scanner. Testing is still not done.
 
      * 21/05/2024
-     * Raymond Zhang - Added IOException handling. Changed ID and PIN data type to String.
+       Raymond Zhang - Added IOException handling. Changed ID and PIN data type to String.
        Fixed infinite loop in input validation by reading line outside try-catch block
        Changed error messages to stand out more.
        Removed local declaration of Scanner.
-       Added newlines to messages to look less cluttered in console.
-       Change default String value to be null
+       Added newlines to messages to look less cluttered in the console.
+       Change the default String value to be null
 
      * 24/05/2024
-     * Raymond Zhang - Fixed bug where entering an ID that is valid but isn't in file crashes program.
+       Raymond Zhang - Fixed bug where entering an ID that is valid but isn't in file crashes program.
        Comparison to null should have used ==, not .equals()
        Changed quit value to -1.
        Fixed NullPointerException from assigning null value to queryPin[1] by assigning "" instead
+       Sean Yang - Added logging to file when a user successfully signs in, added constants for ID & pin length
 
      * 25/05/2024
-     * Raymond Zhang - Changed call to display menu to align with changes made to displayMenu().
+       Raymond Zhang - Changed call to the display menu to align with changes made to displayMenu().
     */
     public static void login()
     {
         // Declare variables
+        final String ID_LENGTH = "6";
+        final String PIN_LENGTH = "4";
         String pin;
         String[] queryPin = {null, null};
         boolean validID = false, validPIN = false;
@@ -444,12 +450,12 @@ public class HotelBooking
             employeeID = sc.nextLine();
 
             // Check if ID is valid (six integers)
-            if(employeeID.matches( "^[0-9]{6}$"))
+            if(employeeID.matches( "^[0-9]{" + ID_LENGTH + "}$"))
             {
-                // Check if employee is in system
+                // Check if the employee is in the system
                 try
                 {
-                    queryPin = Query.getEmployeePin(employeeID);
+                    queryPin = Query.getEmployee(employeeID);
                 }
                 catch (IOException e)
                 {
@@ -492,8 +498,7 @@ public class HotelBooking
                 validPIN = true;
             }
             // PIN was invalid
-            // ? Create constant for PIN length
-            else if(!pin.matches("^[0-9]{4}$")) {
+            else if(!pin.matches("^[0-9]{" + PIN_LENGTH + "}$")) {
                 System.out.println("**ERROR: PIN must be a four-digit integer.**\n");
             }
             // PIN does not match
@@ -535,16 +540,17 @@ public class HotelBooking
      Description: Displays the main menu for regular employees.
      Dates Modified:
      * 16/05/2024
-     * Raymond Zhang - Created method. Created menu list and implemented selection
+       Raymond Zhang - Created method.
+                       Created menu list and implemented selection
        functionality. Options for 1, 2, 3, 8, and invalid cases have been implemented
-       but not tested. UI may need improvement.
+       but not tested. The UI may need improvement.
 
      * 17/05/2024
-     * Raymond Zhang - Finished all cases except 6. Testing has yet to be done.
+       Raymond Zhang - Finished all cases except 6. Testing has yet to be done.
 
      * 21/05/2024
-     * Raymond Zhang - Replaced method calls to Reservation.java, Update.java and Write.java with print statements for testing.
-       Added IOException handling to case 7. Changed PIN data type to String.
+       Raymond Zhang - Replaced method calls to Reservation.java, Update.java and Write.java with print statements for testing.
+       Added IOException handling to case 7. Changed the PIN datatype to String.
        Fixed infinite loop in input validation by reading line outside try-catch block
        Changed error messages to stand out more.
        Removed local declaration of Scanner.
@@ -553,21 +559,21 @@ public class HotelBooking
        Reset looping variable in case 7
 
      * 22/05/2024
-     * Raymond Zhang - Finished all cases. Swapped date and room in case 5 and 6.
-       Added enter to continue feature to allow for changes to be read.
+       Raymond Zhang - Finished all cases. Swapped date and room in case 5 and 6.
+       Added a confirmation to continue (by pressing the enter key) to allow for changes to be read.
 
      * 23/05/2024
-     * Raymond Zhang - Changed date output to be string
+       Raymond Zhang - Changed date output to be string
 
      * 24/05/2024
-     * Raymond Zhang - Changed method call to checkAvailability to align with new parameters.
+       Raymond Zhang - Changed method call to checkAvailability to align with new parameters.
        Replaced print statements with finished method calls.
        Added option to quit when entering date
        Fixed issue with room and date being mixed up when canceling a reservation
        Added quit messages
 
      * 25/05/2024
-     * Raymond Zhang - Added cases for admin menu.
+       Raymond Zhang - Added cases for the admin menu.
        Changed method name to displayMenu and added parameter for employee/admin.
        Refactored variable declaration for clarity
        Fix bug in reservation change where room and date values were not updated
@@ -575,7 +581,9 @@ public class HotelBooking
     public static void displayMenu(boolean isAdmin)
     {
         // Declare variables
-        int choiceMenu; // Choice for main menu
+        final String ID_LENGTH = "6";
+        final String PIN_LENGTH = "4";
+        int choiceMenu; // Choice for the main menu
         int choiceChange; // Choice for changing reservations menu
         int date, room = -1; // Date and room
         int newDate, newRoom; // New date and room for changing reservations
@@ -813,7 +821,7 @@ public class HotelBooking
                                 case 2:
 
                                     do {
-                                        // Get new date
+                                        // Get the new date
                                         newDate = getDateInput();
 
                                         // Let user know that they quit
@@ -901,7 +909,7 @@ public class HotelBooking
                     {
                         // Employee can only change PIN if they know their old PIN
                         // Get employee's previous PIN for reference
-                        oldPIN = Query.getEmployeePin(employeeID)[0];
+                        oldPIN = Query.getEmployee(employeeID)[0];
 
                         do
                         {
@@ -919,8 +927,7 @@ public class HotelBooking
                                     newPIN = sc.nextLine();
 
                                     // New PIN is valid; change PIN and break
-                                    // ? Create constant for PIN length
-                                    if (newPIN.matches("^[0-9]{4}$"))
+                                    if (newPIN.matches("^[0-9]{" + PIN_LENGTH + "}$"))
                                     {
                                         Write.edtPin(employeeID, newPIN);
                                         validPIN = true;
@@ -949,7 +956,7 @@ public class HotelBooking
                             }
 
                             // Invalid PIN was entered
-                            else if (!pin.matches("^[0-9]{4}$"))
+                            else if (!pin.matches("^[0-9]{" + PIN_LENGTH+ "}$"))
                             {
                                 System.out.println("**ERROR: New PIN must be a four-digit integer.**\n");
                             }
@@ -1008,7 +1015,7 @@ public class HotelBooking
                                                 validRoom = true;
                                             }
 
-                                            // Room is invalid
+                                            // The room is invalid
                                             else if (room <= 100)
                                             {
                                                 System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
@@ -1071,7 +1078,7 @@ public class HotelBooking
                                                 System.out.println("Room deletion aborted.");
                                                 validRoom = true;
                                             }
-                                            // Room is invalid
+                                            // The room is invalid
                                             else if (room <= 100)
                                             {
                                                 System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
@@ -1116,15 +1123,14 @@ public class HotelBooking
                                     newID = sc.nextLine();
 
                                     // Check if ID is valid (six integers)
-                                    // ? Create constant for ID length
-                                    if (newID.matches( "^[0-9]{6}$"))
+                                    if (newID.matches( "^[0-9]{" + ID_LENGTH + "}$"))
                                     {
-                                        // Check if employee is in system
+                                        // Check if the employee is in the system
                                         try
                                         {
-                                            checkID = Query.getEmployeePin(newID)[0];
+                                            checkID = Query.getEmployee(newID)[0];
 
-                                            // Employee is already in system, cannot add as new employee
+                                            // Employee is already in the system, cannot add as new employee
                                             if (checkID != null)
                                             {
                                                 System.out.println("**ERROR: ID is already in system.**\n");
@@ -1169,8 +1175,7 @@ public class HotelBooking
                                     newPIN = sc.nextLine();
 
                                     // New PIN is valid; change PIN and break
-                                    // ? Create constant for PIN length
-                                    if (newPIN.matches("^[0-9]{4}$"))
+                                    if (newPIN.matches("^[0-9]{" + PIN_LENGTH + "}$"))
                                     {
                                         validPIN = true;
                                     }
@@ -1190,7 +1195,7 @@ public class HotelBooking
 
                                 } while (!validPIN);
 
-                                // Determine if new employee is admin or not
+                                // Determine if the new employee is admin or not
                                 do
                                 {
                                     // Get choice
@@ -1258,12 +1263,12 @@ public class HotelBooking
                                     newID = sc.nextLine();
 
                                     // Check if ID is valid (six integers)
-                                    if (newID.matches("^[0-9]{6}$")) {
-                                        // Check if employee is in system
+                                    if (newID.matches("^[0-9]{" + ID_LENGTH + "}$")) {
+                                        // Check if the employee is in the system
                                         try
                                         {
-                                            checkID = Query.getEmployeePin(newID)[0];
-                                            // Employee not in system
+                                            checkID = Query.getEmployee(newID)[0];
+                                            // Employee not in the system
                                             if (checkID == null)
                                             {
                                                 System.out.println("**ERROR: ID was not found in system.**\n");
@@ -1345,7 +1350,8 @@ public class HotelBooking
     /*
      Dates Modified:
      * 16/05/2024
-     * Raymond Zhang - Created method. Implemented main loop.
+     * Raymond Zhang - Created method.
+                       Implemented the main loop.
     */
     public static void main(String[] args)
     {

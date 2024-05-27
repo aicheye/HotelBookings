@@ -101,7 +101,7 @@ public class Query
 
      * 17/05/2024
        Sean Yang - Fixed method to close file reader
-       Raymond Zhang - Moved variable declarations to beginning of method.
+       Raymond Zhang - Moved variable declarations to the beginning of method.
                        Closed readRoom file reader.
 
      * 24/05/2024
@@ -149,7 +149,7 @@ public class Query
     {
         // Declare variables
         List<Integer> roomsReserved = getAllDays().get(date);
-        Set<List<String>> customers = getAllCustomers().keySet(); // set of all the customers names
+        Set<List<String>> customers = getAllCustomers().keySet(); // set of all the customers' names
 
         // Prepare a list to hold the reservations for the given date
         Map<String, List<Integer>> reservationsOnDate = new HashMap<>();
@@ -189,7 +189,7 @@ public class Query
 
      * 17/05/2024
        Sean Yang - Fixed method to close file reader
-       Raymond Zhang - Moved variable declarations to beginning of method
+       Raymond Zhang - Moved variable declarations to the beginning of method
 
      * 27/05/2024
        Sean Yang - Renamed method to getReservationsCustomer to increase clarity since all methods in this class are queries
@@ -237,7 +237,7 @@ public class Query
                                 line = br.readLine();
                                 // check if we are at a new room
                                 if (line.equals(ROOM_DELIMITER)) inRoom = false;
-                                    // if we are not at a new room add to the room ArrayList
+                                    // if we are not at a new room, add to the room ArrayList
                                 else {
                                     reservations.get(room).add(Integer.parseInt(line));
                                 }
@@ -246,7 +246,7 @@ public class Query
                     }
                 }
 
-                // if the first and last name do not match, keep reading until we reach a new customer
+                // if the first and last names do not match, keep reading until we reach a new customer
                 else
                 {
                     searching = true;
@@ -282,7 +282,7 @@ public class Query
        Sean Yang - Rewrote method using allEmployees method to improve conciseness
                    Renamed method to getEmployeePin to reduce verboseness since all methods in this class are queries
      */
-    public static String[] getEmployeePin(String id) throws IOException
+    public static String[] getEmployee(String id) throws IOException
     {
         // declare variables
         List<HashMap<String, String>> employees = getAllEmployees();
@@ -363,7 +363,8 @@ public class Query
     /*
      Method Name: getAllDays
      Return Type: List<List<Integer>> - A list of all days and the rooms reserved on that day
-     Description: Returns all days and the rooms reserved on that day. the index of the first ArrayList represents the date
+     Description: Returns all days and the rooms reserved on that day.
+     The index of the first ArrayList represents the date
      Dates Modified:
      * 22/05/2024
        Sean Yang - Created and completed methods (tested)
