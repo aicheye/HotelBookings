@@ -587,6 +587,9 @@ public class HotelBooking
        Changed method name to displayMenu and added parameter for employee/admin.
        Refactored variable declaration for clarity
        Fix bug in reservation change where room and date values were not updated
+
+     * 27/05/2024
+       Sean Yang - Replaced calls to Update with calls to Reservations
      */
     public static void displayMenu(boolean isAdmin)
     {
@@ -730,7 +733,7 @@ public class HotelBooking
                         // Make reservation if user did not quit
                         if (room != QUIT_NUM)
                         {
-                            Update.reserveCreate(firstName, lastName, room, date);
+                            Reservations.reserveCreate(firstName, lastName, room, date);
                             System.out.printf("Created reservation for %s %s for room %d on day %s.%n", firstName, lastName, room, dateIntToStr(date));
                         }
                     }
@@ -760,7 +763,7 @@ public class HotelBooking
                     // User did not choose to abort
                     if (room != QUIT_NUM)
                     {
-                        Update.reserveCancel(firstName, lastName, room, date);
+                        Reservations.reserveCancel(firstName, lastName, room, date);
                     }
 
                     break;
@@ -823,7 +826,7 @@ public class HotelBooking
                                     lastNew = sc.nextLine();
 
                                     // Change name of reservation
-                                    Update.reserveChange(firstName, lastName, room, date, firstNew, lastNew);
+                                    Reservations.reserveChange(firstName, lastName, room, date, firstNew, lastNew);
 
                                     break;
 
@@ -841,7 +844,7 @@ public class HotelBooking
                                         }
                                         // Check if room is available on new date
                                         else if(Reservations.checkAvailability(room, newDate)) {
-                                            Update.reserveChange(firstName, lastName, false, room, date, newDate);
+                                            Reservations.reserveChange(firstName, lastName, false, room, date, newDate);
                                             changed = true;
                                         } else {
                                             System.out.printf("**ERROR: Room %d is unavailable on day %s.**%n%n", room, dateIntToStr(newDate));
@@ -874,7 +877,7 @@ public class HotelBooking
                                             // Check if new room is available
                                             else if (Reservations.checkAvailability(newRoom, date))
                                             {
-                                                Update.reserveChange(firstName, lastName, true, date, room, newRoom);
+                                                Reservations.reserveChange(firstName, lastName, true, date, room, newRoom);
                                                 changed = true;
                                             }
                                             else
