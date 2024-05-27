@@ -9,7 +9,7 @@ import java.time.temporal.ChronoUnit;
 /*
  Programmer: Raymond Zhang, Sean Yang
  Program name: HotelBooking
- Last Modified: 17/05/2024
+ Last Modified: 27/05/2024
  Description: Runs the main loop for the login screen and menu selection
  */
 
@@ -1105,7 +1105,7 @@ public class HotelBooking
                                             else
                                             {
                                                 Write.delRoom(room);
-                                                System.out.printf("Room %d was removed added to the hotel.%n", room);
+                                                System.out.printf("Room %d was removed from the hotel.%n", room);
                                                 validRoom = true;
                                             }
                                         }
@@ -1196,7 +1196,7 @@ public class HotelBooking
                                     // User chooses to quit; break out of loop
                                     else if(newPIN.equals(String.valueOf(QUIT_NUM)))
                                     {
-                                        System.out.println("Employee addition aborted");
+                                        System.out.println("Employee addition aborted.");
                                         validPIN = true;
                                     }
 
