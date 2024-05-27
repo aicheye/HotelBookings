@@ -1354,6 +1354,7 @@ public class HotelBooking
 
         // Program should keep running until forced termination
         // Always returns to home (login) screen
+        // noinspection ConstantValue, LoopConditionNotUpdatedInsideLoop
         while (running)
         {
             login();
