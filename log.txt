@@ -1,13 +1,16 @@
-111111 0
-RES add Sean Yang 302 1
-RES del Sean Yang 302 1
-RES add Sean Yang 302 2
-RES del Sean Yang 302 2
-RES add Sean Liu 302 2
-RES del Sean Liu 302 2
-RES add Sean Liu 202 2
-RES del Sean Liu 202 2
-RES add Sean Liu 202 3
-RES del Sean Liu 202 3
-ROOM add 401
-ROOM del 401
+111111 0 RES add John Doe 101 0
+111111 0 RES add Raymond Zhang 204 91
+111111 0 RES del Raymond Zhang 204 91
+111111 0 RES add Raymond Zhang 101 91
+111111 0 RES add Raymond Zhang 101 92
+111111 0 RES add John Doe 101 1
+000000 1 ROOM add 301
+000000 1 ROOM add 302
+000000 1 ROOM add 303
+000000 1 ROOM add 304
+000000 1 EE add 430624
+000000 1 RES add Raymond Zhang 304 359
+000000 1 RES add Raymond Zhang 304 360
+430624 0 RES add Raymond Zhang 304 361
+000000 1 EE add 999999
+000000 1 EE del 999999

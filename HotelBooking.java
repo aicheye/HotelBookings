@@ -1,4 +1,5 @@
-import java.util.*; // Import libraries
+// import libraries
+import java.util.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -6,7 +7,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 
 /*
- Programmer: Raymond Zhang
+ Programmer: Raymond Zhang, Sean Yang
  Program name: HotelBooking
  Last Modified: 17/05/2024
  Description: Runs the main loop for the login screen and menu selection
@@ -87,6 +88,25 @@ public class HotelBooking
         }
 
         return daysBetween;
+    }
+
+    /*
+     Method Name: getEmployeeID
+     Return Type: String - The ID of the employee currently logged in to the system
+     Parameters: N/A
+     Description: Accessor method for ID of the currently logged in employee
+     Dates modified:
+     * 17/05/2024
+       Raymond Zhang - Created and finished method.
+
+     * 21/05/2024
+       Raymond Zhang - Changed the return type to String.
+
+     * 25/05/2024
+       Sean Yang - Renamed method to getCurrentEmployee
+    */
+    public static String getCurrentEmployee() {
+        return employeeID;
     }
 
     /*
@@ -178,23 +198,23 @@ public class HotelBooking
      Description: Continuously receives input from user until a valid (non-negative) date is entered
      Dates modified:
      * 17/05/2024
-     * Raymond Zhang - Created and finished method. Has yet to be tested.
+       Raymond Zhang - Created and finished method.
+                       Has yet to be tested.
 
      * 21/05/2024
-     * Raymond Zhang - Fixed infinite loop in input validation by reading line outside try-catch block
+       Raymond Zhang - Fixed infinite loop in input validation by reading line outside try-catch block
        Changed error message to stand out more.
        Removed local declaration of Scanner.
 
      * 23/05/2024
-     * Raymond Zhang - Changed date to string input.
+       Raymond Zhang - Changed date to string input.
 
      * 24/05/2024
-     * Raymond Zhang - Added an option to quit.
+       Raymond Zhang - Added an option to quit.
 
      * 25/05/2024
-     * Raymond Zhang - Added quit messages
-    */
-
+       Raymond Zhang - Added quit messages
+     */
     public static int getDateInput()
     {
         // Declare variable
@@ -268,7 +288,7 @@ public class HotelBooking
 
      * 25/05/2024
       Raymond Zhang - Added a quit message
-    */
+     */
     public static int[] getReservation(String firstName, String lastName) {
         // Declare variables
         Map<Integer, List<Integer>> customerReservations = new HashMap<Integer, List<Integer>>();
@@ -424,11 +444,11 @@ public class HotelBooking
        Comparison to null should have used ==, not .equals()
        Changed quit value to -1.
        Fixed NullPointerException from assigning null value to queryPin[1] by assigning "" instead
-       Sean Yang - Added logging to file when a user successfully signs in, added constants for ID & pin length
+       Sean Yang - Added constants for ID & pin length and welcome message upon login
 
      * 25/05/2024
        Raymond Zhang - Changed call to the display menu to align with changes made to displayMenu().
-    */
+     */
     public static void login()
     {
         // Declare variables
@@ -511,16 +531,6 @@ public class HotelBooking
         // output welcome message
         if (queryPin[1].equals("0")) System.out.println("\nWelcome, " + queryPin[2] + " " + queryPin[3] + "!");
 
-        // log to file
-        try
-        {
-            Write.logUser(employeeID, queryPin[1]);
-        }
-        catch (IOException e)
-        {
-            System.out.println(e + " Problem writing to file.");
-        }
-
         // Employee menu
         if (queryPin[1].equals("0"))
             displayMenu(false);
@@ -577,7 +587,7 @@ public class HotelBooking
        Changed method name to displayMenu and added parameter for employee/admin.
        Refactored variable declaration for clarity
        Fix bug in reservation change where room and date values were not updated
-    */
+     */
     public static void displayMenu(boolean isAdmin)
     {
         // Declare variables

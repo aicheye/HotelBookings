@@ -1,10 +1,11 @@
+// import libraries
 import java.util.*;
 import java.io.*;
 
 /*
  Programmer: Sean Yang
  Program Name: Write
- Date: 17/05/2024
+ Last Modified: 27/05/2024
  Description: This class contains methods that allow the user to add, delete, and edit reservations, rooms, and employees
               in the database. It also allows the user to log in and log operations.
  */
@@ -364,30 +365,6 @@ public class Write
     }
 
     /*
-     Method Name: logUser
-     Parameters: String id - The id of the user currently logged in
-                 String isAdmin - Whether the user is admin (1 for admin, 0 for normal user)
-     Description: Logs a new user in log.txt
-     Dates Modified:
-     * 23/05/2024
-       Sean Yang - Created and completed method (tested)
-     */
-    public static void logUser(String id, String isAdmin) throws IOException
-    {
-        // init file writer
-        BufferedWriter bw = new BufferedWriter(new FileWriter(LOG_DB, true));
-
-        // write to file
-        bw.write("\n");
-        bw.write(id);
-        bw.write(" ");
-        bw.write(isAdmin);
-
-        // close file writer
-        bw.close();
-    }
-
-    /*
      Method Name: logOp
      Parameters: String op - the operation to be logged
      Description: logs an operation to log.txt
@@ -402,7 +379,9 @@ public class Write
 
         // write to file
         bw.write("\n");
-        bw.write(op);
+        bw.write(HotelBooking.getCurrentEmployee());
+        bw.write(" " + Query.getEmployee(HotelBooking.getCurrentEmployee())[1]);
+        bw.write(" " + op);
 
         // close file writer
         bw.close();

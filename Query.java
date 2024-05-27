@@ -1,14 +1,15 @@
+// import libraries
 import java.util.*;
 import java.io.*;
 
 /*
  Programmer: Sean Yang, Raymond Zhang
  Program Name: Query
- Date: 16/05/2024
+ Last Modified: 27/05/2024
  Description: This class contains methods that allow the user to check if a reservation exists, check if a room is
               available on a given date, list all available rooms on a given date, list all reservations for a given
               person, and list all reservations for a given date.
-*/
+ */
 
 public class Query
 {
@@ -235,9 +236,11 @@ public class Query
                             inRoom = true;
                             while (inRoom) {
                                 line = br.readLine();
+
                                 // check if we are at a new room
                                 if (line.equals(ROOM_DELIMITER)) inRoom = false;
-                                    // if we are not at a new room, add to the room ArrayList
+
+                                // if we are not at a new room, add to the room ArrayList
                                 else {
                                     reservations.get(room).add(Integer.parseInt(line));
                                 }
