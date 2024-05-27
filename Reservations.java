@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.*;
-import java.time.LocalDate;
 
 /*
  Programmer: Sean Liu, Sean Yang, Raymond Zhang
@@ -35,7 +34,8 @@ public class Reservations
         // Declare variables
         int size = 0;
         List<Integer> rooms;
-        try {
+        try
+        {
             // Get available rooms
             rooms = Query.getAvailableRooms(date);
             size = rooms.size();//checks how many available rooms there are
@@ -43,11 +43,11 @@ public class Reservations
             // Check if any rooms are available
             if (size == 0)
             {
-                System.out.printf("There are no rooms available on %s.%n%n", dateConverter(date));
+                System.out.printf("There are no rooms available on %s.%n%n", HotelBooking.dateIntToStr(date));
             }
             else
             {
-                System.out.printf("Rooms available on %s:%n", dateConverter(date));
+                System.out.printf("Rooms available on %s:%n", HotelBooking.dateIntToStr(date));
                 // loop over every room available on the date
                 for(int i = 0; i<size; i++)
                 {
@@ -121,7 +121,7 @@ public class Reservations
 
         try
         {
-            Map<Integer, List<Integer>> rooms = Query.getReservations(firstName, lastName);
+            Map<Integer, List<Integer>> rooms = Query.getReservationsCustomer(firstName, lastName);
             // loop over each room number
             for (int e : rooms.keySet())
             {
@@ -129,7 +129,7 @@ public class Reservations
                 days = rooms.get(e); // gets the dates that the room is booked for
                 for (int d : days)
                 {
-                    System.out.printf("  %s\n", dateConverter(d));// prints out each date that the room is booked for
+                    System.out.printf("  %s\n", HotelBooking.dateIntToStr(d));// prints out each date that the room is booked for
                 }
             }
         }
@@ -159,59 +159,32 @@ public class Reservations
     public static void listReservations(int date)
     {
         // Declare variables
-        List<Integer> rooms;
+        Map<String, List<Integer>> reservations;
 
         try {
-            rooms = Query.getAllDays().get(date);
+            reservations = Query.getReservationsDate(date); //gets the reservations that are booked on the given date
 
             // Check if reservations have been made on the date
-            if(rooms.isEmpty()) {
-                System.out.printf("No reservations have been made on %s.%n%n", dateConverter(date));
+            if(reservations.isEmpty()) {
+                System.out.printf("No reservations have been made on %s.%n%n", HotelBooking.dateIntToStr(date));
             }
             // Print reservations
             else {
-                System.out.printf("The following reservations have been made on %s:%n", dateConverter(date));
-                for(Integer r : rooms) {
-                    System.out.printf("  %d\n", r);// prints out each date that the room is booked for
+                System.out.printf("The following reservations have been made on %s:%n", HotelBooking.dateIntToStr(date));
+                for(String customer : reservations.keySet()) {
+                    // output the customer's name
+                    System.out.println(customer);
+                    // output the room numbers
+                    for(int r : reservations.get(customer)) System.out.println("  " + r);
                 }
             }
         }
         // Unrecorded date was entered
         catch (IndexOutOfBoundsException e) {
-            System.out.printf("No reservations have been made on %s.%n%n", dateConverter(date));
+            System.out.printf("No reservations have been made on %s.%n%n", HotelBooking.dateIntToStr(date));
         }
         catch(IOException e) {
             System.out.println(e + " Problem reading file.");
         }
-    }
-
-
-    /*
-     Method Name: dateConverter
-     Return Type: String - Returns the date in dd/mm/yyyy format
-     Parameters: int Days- Number of days given by user
-     Description: Returns a date given the number of days from the start of the year
-     Date Modified:
-     * 22/05/2024
-       Sean Liu - Created dateConverter to accommodate printing and localized time
-     
-     * 24/05/2024
-       Raymond Zhang - Formatted date string to be consistent with main class
-     */
-    public static String dateConverter(int days)
-    {
-        String combined;
-        LocalDate startDate = LocalDate.of(2024, 1, 1);//puts in start date
-
-        // Calculate the target date by adding the number of days to the start date
-        LocalDate targetDate = startDate.plusDays(days);
-
-        // Extract the day, month, and year from the target date
-        int day = targetDate.getDayOfMonth();
-        int month = targetDate.getMonthValue();
-        int year = targetDate.getYear();//runs methods that get the month, day, year of the given date.
-
-        combined = String.format("%02d/%02d/%02d", day, month, year);//combines the date into a dd/mm/yyyy format
-        return combined;
     }
 }

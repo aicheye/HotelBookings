@@ -108,7 +108,7 @@ public class Update {
             }
             else
             {
-                System.out.println("**ERROR: The reservation you are trying to change does not exist."); // output error
+                System.out.println("**ERROR: The reservation you are trying to change does not exist.**"); // output error
             }
         }
         // output if there is an issue reading the file
@@ -149,7 +149,7 @@ public class Update {
                 }
                 else
                 {
-                    System.out.println("**ERROR: The reservation you are trying to change does not exist."); // output error
+                    System.out.println("**ERROR: The reservation you are trying to change does not exist.**"); // output error
                 }
             }
             // runs if the user wants to change the date
@@ -164,7 +164,7 @@ public class Update {
                 }
                 else
                 {
-                    System.out.println("**ERROR: The reservation you are trying to change does not exist."); // output error
+                    System.out.println("**ERROR: The reservation you are trying to change does not exist.**"); // output error
                 }
             }
         }

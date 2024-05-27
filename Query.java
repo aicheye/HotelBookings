@@ -63,7 +63,7 @@ public class Query
      * 24/05/2024
        Sean Yang - Created and completed (tested)
 
-     * 25/05/2024
+     * 27/05/2024
        Sean Yang - Fixed issue where roomAvailable would throw an error if the date was beyond the maximum date booked
      */
     public static boolean roomAvailable(int room, int date) throws IOException
@@ -108,7 +108,7 @@ public class Query
        Sean Yang - Fixed issue where no rooms would be returned on a date beyond the maximum date booked. Now returns
                    an ArrayList instead of an array.
 
-     * 25/05/2024
+     * 27/05/2024
        Sean Yang - Renamed method to getAvailableRooms to improve clarity since all methods in this class are queries
      */
     public static List<Integer> getAvailableRooms(int date) throws IOException
@@ -137,11 +137,51 @@ public class Query
     }
 
     /*
-     Method Name: getReservations
-     Return Type: HashMap<Integer, ArrayList<Integer>> - A hashmap (key: room, value: array of the days) of the
-                                                         rooms & days a customer has booked
+     Method Name: getReservationsDate
+     Return Type: Map<String, List<Integer>> - A list of reservations on a given date as a HashMap of customers
+     Parameters: int date - The date to search
+     Description: Returns all reservations on a given date as a list of HashMaps of customers
+     Dates Modified:
+     * 24/05/2024
+       Sean Yang - Created and completed method (tested)
+     */
+    public static Map<String, List<Integer>> getReservationsDate(int date) throws IOException
+    {
+        // Declare variables
+        List<Integer> roomsReserved = getAllDays().get(date);
+        Set<List<String>> customers = getAllCustomers().keySet(); // set of all the customers names
+
+        // Prepare a list to hold the reservations for the given date
+        Map<String, List<Integer>> reservationsOnDate = new HashMap<>();
+
+        // Iterate over all rooms reserved on the given date
+        for (int r: roomsReserved) {
+            // Iterate over each customer
+            for (List<String> name : customers)
+            {
+                // Check if this customer has reserved the room
+                if (reservationExists(name.get(0), name.get(1), r, date))
+                {
+                    // Create a new ArrayList to store the reservation if the customer is not already in the HashMap
+                    if (!reservationsOnDate.containsKey(name.get(0) + " " + name.get(1)))
+                    {
+                        reservationsOnDate.put(name.get(0) + " " + name.get(1), new ArrayList<>());
+                    }
+                    reservationsOnDate.get(name.get(0) + " " + name.get(1)).add(r); // Add the room to the customer's reservation
+                }
+            }
+        }
+
+        return reservationsOnDate;
+    }
+
+    /*
+     Method Name: getReservationsCustomer
+     Return Type: Map<Integer, List<Integer>> - A hashmap (key: room, value: array of the days) of the rooms & days a
+                                                customer has booked
      Parameters: String firstName - The first name of the customer
                  String lastName - The last name of the customer
+
      Description: Returns the rooms a customer has booked and the days they have booked it for
      Dates Modified:
      * 16/05/2024
@@ -151,10 +191,10 @@ public class Query
        Sean Yang - Fixed method to close file reader
        Raymond Zhang - Moved variable declarations to beginning of method
 
-     * 25/05/2024
-       Sean Yang - Renamed method to getReservations to increase clarity since all methods in this class are queries
+     * 27/05/2024
+       Sean Yang - Renamed method to getReservationsCustomer to increase clarity since all methods in this class are queries
     */
-    public static Map<Integer, List<Integer>> getReservations(String firstName, String lastName) throws IOException
+    public static Map<Integer, List<Integer>> getReservationsCustomer(String firstName, String lastName) throws IOException
     {
         // init file reader and variables
         BufferedReader br = new BufferedReader(new FileReader(CUSTOMERS_DB));
@@ -238,7 +278,7 @@ public class Query
      * 17/05/2024
        Sean Yang - Fixed method to close file reader
 
-     * 25/05/2024
+     * 27/05/2024
        Sean Yang - Rewrote method using allEmployees method to improve conciseness
                    Renamed method to getEmployeePin to reduce verboseness since all methods in this class are queries
      */
@@ -248,6 +288,8 @@ public class Query
         List<HashMap<String, String>> employees = getAllEmployees();
         String pin = null;
         String isAdmin = null;
+        String firstName = "";
+        String lastName = "";
 
         // loop over all employees
         for (HashMap<String, String> emp : employees)
@@ -257,10 +299,12 @@ public class Query
             {
                 pin = emp.get("pin");
                 isAdmin = emp.get("isAdmin");
+                firstName = emp.get("firstName");
+                lastName = emp.get("lastName");
             }
         }
 
-        return new String[]{pin, isAdmin};
+        return new String[]{pin, isAdmin, firstName, lastName};
     }
 
     /*
@@ -298,7 +342,7 @@ public class Query
         name = new ArrayList<String>();
         name.add(fName);
         name.add(lName);
-        customers.put(name, getReservations(fName, lName));
+        customers.put(name, getReservationsCustomer(fName, lName));
         for (int i=2; i<db.size()-2; i++)
         {
             // check if there is a new customer
@@ -310,7 +354,7 @@ public class Query
                 name = new ArrayList<String>();
                 name.add(fName);
                 name.add(lName);
-                customers.put(name, getReservations(fName, lName));
+                customers.put(name, getReservationsCustomer(fName, lName));
             }
         }
         return customers;

@@ -347,8 +347,8 @@ public class Write
             // if the id matches, change their pin and save the old pin
             if (e.get("id").equals(id))
             {
+                oldPin = e.get("pin");
                 e.put("pin", newPin);
-                oldPin = e.get("oldPin");
             }
         }
 
@@ -417,7 +417,7 @@ public class Write
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
 
-     * 25/05/2024
+     * 24/05/2024
        Sean Yang - Changed the method name to updateAllCustomers for clarity
      */
     public static void updateAllCustomers(Map<List<String>, Map<Integer, List<Integer>>> customers) throws IOException
@@ -473,7 +473,7 @@ public class Write
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
 
-     * 25/05/2024
+     * 24/05/2024
        Sean Yang - Changed the method name to updateAllDays for clarity
      */
     public static void updateAllDays(List<List<Integer>> days) throws IOException
@@ -513,7 +513,7 @@ public class Write
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
 
-     * 25/05/2024
+     * 24/05/2024
        Sean Yang - Changed the method name to updateAllRooms for clarity
      */
     public static void updateAllRooms(List<Integer> rooms) throws IOException
@@ -542,7 +542,7 @@ public class Write
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
 
-     * 25/05/2024
+     * 24/05/2024
        Sean Yang - Changed the method name to updateAllEmployees for clarity
      */
     public static void updateAllEmployees(List<HashMap<String, String>> employees) throws IOException
