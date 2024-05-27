@@ -590,6 +590,7 @@ public class HotelBooking
 
      * 27/05/2024
        Sean Yang - Replaced calls to Update with calls to Reservations
+                   Added a check to validate that there are no reservations to a room before deleting it
      */
     public static void displayMenu(boolean isAdmin)
     {
@@ -1100,6 +1101,11 @@ public class HotelBooking
                                             else if (!hotelRooms.contains(room))
                                             {
                                                 System.out.printf("**ERROR: Room %d does not exist.**%n%n", room);
+                                            }
+                                            // Check if any reservations have been made for the room
+                                            else if (Query.getReservationsRoom(room).size() > 0)
+                                            {
+                                                System.out.printf("**ERROR: Room %d has reservations and cannot be deleted.**%n%n", room);
                                             }
                                             // Valid Room entered
                                             else

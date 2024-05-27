@@ -6,9 +6,8 @@ import java.io.*;
  Programmer: Sean Yang, Raymond Zhang
  Program Name: Query
  Last Modified: 27/05/2024
- Description: This class contains methods that allow the user to check if a reservation exists, check if a room is
-              available on a given date, list all available rooms on a given date, list all reservations for a given
-              person, and list all reservations for a given date.
+ Description: This class contains methods that allow the user to query various database files and returns java
+              parseable information about these files.
  */
 
 public class Query
@@ -141,39 +140,82 @@ public class Query
      Method Name: getReservationsDate
      Return Type: Map<String, List<Integer>> - A list of reservations on a given date as a HashMap of customers
      Parameters: int date - The date to search
-     Description: Returns all reservations on a given date as a list of HashMaps of customers
+     Description: Returns all reservations on a given date as a HashMaps of customers and an ArrayList of rooms
      Dates Modified:
      * 24/05/2024
        Sean Yang - Created and completed method (tested)
      */
     public static Map<String, List<Integer>> getReservationsDate(int date) throws IOException
     {
-        // Declare variables
+        // declare variables
         List<Integer> roomsReserved = getAllDays().get(date);
         Set<List<String>> customers = getAllCustomers().keySet(); // set of all the customers' names
+        Map<String, List<Integer>> reservationsOnDate = new HashMap<String, List<Integer>>();
 
-        // Prepare a list to hold the reservations for the given date
-        Map<String, List<Integer>> reservationsOnDate = new HashMap<>();
-
-        // Iterate over all rooms reserved on the given date
+        // iterate over all rooms reserved on the given date
         for (int r: roomsReserved) {
-            // Iterate over each customer
+            // iterate over each customer
             for (List<String> name : customers)
             {
-                // Check if this customer has reserved the room
+                // check if this customer has reserved the room
                 if (reservationExists(name.get(0), name.get(1), r, date))
                 {
-                    // Create a new ArrayList to store the reservation if the customer is not already in the HashMap
+                    // create a new ArrayList to store the reservation if the customer is not already in the HashMap
                     if (!reservationsOnDate.containsKey(name.get(0) + " " + name.get(1)))
                     {
-                        reservationsOnDate.put(name.get(0) + " " + name.get(1), new ArrayList<>());
+                        reservationsOnDate.put(name.get(0) + " " + name.get(1), new ArrayList<Integer>());
                     }
-                    reservationsOnDate.get(name.get(0) + " " + name.get(1)).add(r); // Add the room to the customer's reservation
+                    reservationsOnDate.get(name.get(0) + " " + name.get(1)).add(r); // add the room to the customer's reservation
                 }
             }
         }
 
         return reservationsOnDate;
+    }
+
+    /*
+     Method Name: getReservationsRoom
+     Return Type: Map<String, List<Integer>> - A list of reservations for a given room as a HashMap of customers
+     Parameters: int room - The room to search
+     Description: Returns all reservations for a given room as a HashMap of customer names and an ArrayList of days
+     Dates Modified:
+     * 27/05/2024
+       Sean Yang - Created and completed method (tested)
+     */
+    public static Map<String, List<Integer>> getReservationsRoom(int room) throws IOException
+    {
+        // declare variables
+        List<List<Integer>> days = getAllDays();
+        Map<String, List<Integer>> reservationsOnDate;
+        Map<String, List<Integer>> allReservations = new HashMap<String, List<Integer>>();
+
+        // iterate over each day
+        for (int i=0; i<days.size(); i++)
+        {
+            // check if the room is reserved on this day
+            if (days.get(i).contains(room))
+            {
+                // get reservations on this day
+                reservationsOnDate = getReservationsDate(i);
+                // iterate over reservations
+                for (String name: reservationsOnDate.keySet())
+                {
+                    // check if the room is reserved by this customer
+                    if (reservationsOnDate.get(name).contains(room))
+                    {
+                        // create a new ArrayList to store the reservation if the customer is not already in the HashMap
+                        if (!allReservations.containsKey(name))
+                        {
+                            allReservations.put(name, new ArrayList<Integer>());
+                        }
+                        // add the date to the customer's reservation
+                        allReservations.get(name).add(i);
+                    }
+                }
+            }
+        }
+
+        return allReservations;
     }
 
     /*

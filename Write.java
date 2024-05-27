@@ -7,7 +7,7 @@ import java.io.*;
  Program Name: Write
  Last Modified: 27/05/2024
  Description: This class contains methods that allow the user to add, delete, and edit reservations, rooms, and employees
-              in the database. It also allows the user to log in and log operations.
+              in the database. It also allows the user to log operations.
  */
 
 public class Write
@@ -98,7 +98,7 @@ public class Write
         else
         {
             // keep adding until the size of days is large enough
-            while (days.size()-1 < date) days.add(new ArrayList<>());
+            while (days.size() - 1 < date) days.add(new ArrayList<Integer>());
             // add the room to the date
             days.get(date).add(room);
         }
@@ -131,7 +131,7 @@ public class Write
         // declare variables
         Map<List<String>, Map<Integer, List<Integer>>> customers = Query.getAllCustomers(); // get all customers
         List<List<Integer>> days = Query.getAllDays(); // get all days
-        List<String> name = new ArrayList<>(); // ArrayList representing the customer's full name
+        List<String> name = new ArrayList<String>(); // ArrayList representing the customer's full name
         name.add(firstName);
         name.add(lastName);
         String op; // the log message
