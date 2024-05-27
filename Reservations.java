@@ -112,27 +112,42 @@ public class Reservations
 
       * 23/05/2024
         Raymond Zhang - Formatted method
-      
+
       * 24/05/2024
         Raymond Zhang - Change print format to be consistent with other methods
+
+      * 27/05/2024
+        Raymond Zhang - Added message to indicate if no reservations have been made
       */
     public static void listReservations(String firstName, String lastName)
     {
         // declare variables
         List<Integer> days;
+        Map<Integer, List<Integer>> rooms;
 
         try
         {
-            Map<Integer, List<Integer>> rooms = Query.getReservationsCustomer(firstName, lastName);
-            // loop over each room number
-            for (int e : rooms.keySet())
+            // Get reservations of the customer
+            rooms = Query.getReservationsCustomer(firstName, lastName);
+
+            // Check if customer has made any reservations
+            if(!rooms.isEmpty())
             {
+              // loop over each room number
+              for (int e : rooms.keySet())
+              {
                 System.out.printf("%s %s has booked Room %d for:\n", firstName, lastName, e);
                 days = rooms.get(e); // gets the dates that the room is booked for
                 for (int d : days)
                 {
-                    System.out.printf("  %s\n", HotelBooking.dateIntToStr(d));// prints out each date that the room is booked for
+                  System.out.printf("  %s\n", HotelBooking.dateIntToStr(d));// prints out each date that the room is booked for
                 }
+              }
+            }
+            // Let user know if no reservations have been made by customer
+            else
+            {
+              System.out.printf("%s %s has not made any reservations.%n%n", firstName, lastName);
             }
         }
 
