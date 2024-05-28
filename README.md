@@ -1,41 +1,158 @@
 # Hotel Booking System
 
-Sean Liu, Sean Yang, Raymond Zhang
+## Control Flow
 
-## Requirements
+[Flowchart](https://drive.google.com/file/d/1YJkL57tfEXFMBmD-4oAJvd7AGb7UpFbH/view?usp=drive_link)
 
-You will not have to worry about the requirements stage, as this document will effectively serve as your project requirements document.  Your client (i.e., Mr. Skuja) has requested that you design a hotel reservation booking system.  Your system must have the following features:
+## Methods
 
-- It must store the information of hotel’s employee accounts in a saved file.
-  - Each employee should have a 6-digit employee ID number, a first & last name, and a 4-digit persona identification number (PIN) which works as a password.
-  - Your system should also have an administrator account with the employee ID 000000 and the default password of **1234**
-- When your system begins, it should prompt the user to enter their employee ID number and then their PIN.
-  - If they enter a valid employee number but an incorrect PIN, your program should give an error message informing them that it is an incorrect PIN.
-  - If they do not enter a valid employee number, your software should print a message stating that the employee number does not exist.
-  - If an incorrect PIN is given, your program should enter a loop, prompted for the user to retry their password, or enter 0 to go back to the login screen.
-  - If the login is successful, the user should be given access to a menu of options.
-  - Once the user finishes with the reservation and logs out, this login process should **loop infinitely**.  The device your software is intended to run on will be running constantly, and will be powered off when the software is to be shut down.
-- Once a user is successfully logged in, they should be able to use a menu system to do any of the following:
-  - List the available rooms for a given date
-  - List all the reservations for a given date
-  - Look up all the reservations made under a certain name
-  - Make a reservation for a room
-    - This should ask for the first and last name of a customer, and a date
-    - The system will then output a list of rooms available on that date, and allow the user to choose one of them
-    - The system should then save the reservation in your file system, including the customer name, the room booked, the date, and the employee who made the reservation
-  - Cancel a reservation for a room
-    - This should ask for the first and last name of a customer, and then list all of the reservations they have made by date and room number
-    - The system should then allow the user to choose which reservation to cancel, or to abort the cancellation
-    - The system should then update the reservation file system
-  - Change the details on a reservation
-    - Customer name should be able to be changed
-    - Dates and room number should be able to be changed as well, but the system should check that the room is available on the new date.
-  - Change their PIN number
-  - Log out (return to the user login loop)
-- If the user logs in on the administrator account, they should have additional options:
-  - Add a hotel room
-  - Delete a hotel room
-  - Add an employee
-  - Delete an employee
-- Any time the user makes a change to something in the system which should be persistent information – whether booking or cancelling a reservation, changing a PIN, adding or deleting rooms or employees – those details should be saved to a file.
-- Your system should ensure that any actions performed make sense (for example, a user should not be able to book a room that is already reserved on a certain date, or cancel a reservation that does not exist) and should make use of input validation loops whenever input is allowed.  It should not be possible to crash the system.
+| *Class (.java file)* | *Methods* | *Method Description(s)* |
+| --- | --- | --- |
+| HotelBooking (driver) | `static void main(String[] args)`<br><br>`static void login()`<br><br>`static void displayMenu(boolean isAdmin)`<br><br>`static int getDateInput()`<br><br>`static int getRoomInput(int date)`<br><br>`static int[] getReservation(String firstName, String lastName)`<br><br>`static String getCurrentUser()`<br><br>`static int dateStrToInt(String dateStr)`<br><br>`static String dateIntToStr(int days)` | **\*main**: Driver code. Continuously loops the login screen.<br><br>**login**: Continuously asks for employee ID until a valid one is entered. Then, get the employee PIN until successful or 0 is entered to go back. Will start the according menu method if successful.<br><br>**displayMenu**: Outputs the menu and asks for an integer input to select an operation. Will display additional options for admin.<br><br>**getDateInput**: Helper method for getting a valid date from the user.<br><br>**getRoomInput**: Helper method for getting a valid room on a given date.<br><br>**getReservation**: Helper method for getting a reservation made by a customer. Reservation is represented as a room and a date.<br><br>**getCurrentUser**: Accessor method for the `employeeID` variable, which represents the currently logged in employee.<br><br>**dateStrToInt**: Converts a formatted date into a number representing the number of days past since Jan 01, 2024.<br><br>**dateIntToStr**: Converts an integer representing the number of days since Jan 01, 2024 to a readable string |
+| Reservations | `static boolean listAvailableRooms (int date)`<br><br>`static void listReservations (int date)`<br><br>`static void listReservations (String firstName, String lastName)`<br><br>`static boolean checkAvailability (int date, int room)`<br><br>`static void reserveCreate (String firstName, String lastName, int room, int date)`<br><br>`static void reserveCancel (String firstName, String lastName, int room, int date)`<br><br>`static void reserveChange (String firstOld, String lastOld, int room, int date, String firstNew, String lastNew)`<br><br>`static void reserveChange (String firstName, String lastName, boolean changeRoom, int roomOrDate int old, int now)` | **listAvailableRooms**: Lists all available rooms on a given date. Returns `false` if no rooms are available.<br><br>**listReservations**: Lists all reservations for a given date or name. Output a message if no reservations were made for the given date and/or name.<br><br>Sample output:<br><pre>Customer [firstName] [lastName] has booked the following rooms on [date]:<br><br>  [Room #]<br>  [Room #]</pre><br>**checkAvailability**: Checks if a room is available on a given date.<br><br>**reserveCreate**: Creates a reservation for a given room and date.<br><br>**reserveCancel**: Cancels a reservation and outputs if the reservation does not exist.<br><br>**reserveChange**: Adjusts the name, room #, and date of reservation. There are two `reserveChange` methods: one handles changing the name, and the other handles changing the date or room. |
+| Query (file reader) | `static boolean reservationExists (String firstName, String lastName, int room, int date)`<br><br>`static boolean roomAvailable (int room, int date)`<br><br>`static List<Integer> getAvailableRooms(int date)`<br><br>`static Map<String, List<Integer> getReservationsDate (int date)`<br><br>`static Map<String, List<Integer>> getReservationsRoom (int room)`<br><br>`static Map<Integer, List<Integer>> getReservationsCustomer (String firstName, lastName)`<br><br>`static String[] getEmployee (String id)`<br><br>`static Map<List<String>, Map<Integer, List<Integer>>> getAllCustomers()`<br><br>`static List<List<Integer>> getAllDays()`<br><br>`static List<Integer> getAllRooms()`<br><br>`static List<HashMap<String, String>> getAllEmployees()` | **reservationExists**: Checks whether a specific reservation exists.<br><br>**roomAvailable**: Checks whether a room is available for reservation on a given date.<br><br>**getAvailableRooms**: Returns an array of available rooms on a given date.<br><br>**getReservationsDate**: Returns all reservations on a given date as a HashMaps of customers and an ArrayList of rooms.<br><br>**getReservationsRoom**: Returns all reservations for a given room as a HashMap of customer names and an ArrayList of days.<br><br>**getReservationsCustomer**: Returns the rooms a customer has booked and the days they have booked it for.<br><br>**getAllCustomers**: Returns all customers and the rooms/days they have booked.<br><br>**getAllDays**: Returns all days and the rooms reserved on that day. The index of the first ArrayList represents the date.<br><br>**getAllRooms**: Returns a list of all rooms in the hotel.<br><br>**getAllEmployees**: Returns all employees in an ArrayList. |
+| Write (file writer) | `static void addEmployee (String id, String firstName, String lastName, String pin, String isAdmin)`<br><br>`static void delEmployee (String id)`<br><br>`static void addRoom (int room)`<br><br>`static void delRoom (int room)`<br><br>`static void addReserve (String firstName, string lastName, int room, int date)`<br><br>`static void delReserve (String firstName, String lastName, int room, int date)`<br><br>`static void edtReserve (String oldFirst, String oldLast, int room, int date, String newFirst, String newLast)`<br><br>`static void edtReserve (String firstName, string lastName, int code, boolean changeRoom, int roomOrDate, int old, int now)`<br><br>`static void edtPin (String id, int now)`<br><br>`static void logOp (String op)`<br><br>`static void updateAllCustomers (Map<List<String>, Map<Integer, List<Integer>>> customers)`<br><br>`static void updateAllDays(List<List<Integer>> days)`<br><br>`static void updateAllRooms(List<Integer> rooms)`<br><br>`static void updateAllEmployees (List<HashMap<String, String>> employees)` | **addEmployee**: Adds new employee to `employees.txt`.<br><br>**delEmployee**: Searches `employees.txt` for an employee ID and removes their corresponding block from the file.<br><br>**addRoom**: Adds new room number to `rooms.txt`.<br><br>**delRoom**: Completely removes room number from `rooms.txt`.<br><br>**addReserve**: Writes new reservations in `rooms.txt` as well as `customers.txt`.<br><br>**delReserve**: Deletes reservation from `customers.txt` by date and name, and updates `days.txt`.<br><br>**edtReserve**: Updates a reservation in `customers.txt` as well as `days.txt`.<br><br>**edtPin**: Updates a user’s pin in `employeeAccounts.txt`.<br><br>**logOp**: Logs operations to `log.txt`.<br><br>**updateAllCustomers**: Updates the `customers.txt` file.<br><br>**updateAllDays**: Updates the `days.txt` file.<br><br>**updateAllRooms**: Updates the `rooms.txt` file.<br><br>**updateAllEmployees**: Updates the `employees.txt` file. |
+
+## Database Structure
+
+<table>
+  <thead>
+    <tr>
+      <th><p><em>File Name</em></p></th>
+      <th><p><em>Example</em></p></th>
+      <th><p><em>File Description</em></p></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>employees.txt</td>
+      <td>
+        <pre>123456
+John
+Doe
+1234
+0</pre>
+      </td>
+      <td>
+        Stores the account information of each hotel employee in blocks of text. Each block begins with the 6-digit ID number, followed by the employee’s first name, surname, 4-digit PIN, and whether or not they are an admin.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        days.txt
+      </td>
+      <td>
+        <pre>0
+101
+~
+1
+101
+201
+202
+~
+2
+101
+201
+~
+3
+101
+302
+~</pre>
+      </td>
+      <td>
+        <p>Stores the reservation status of each room. Each block begins with a day # and the rooms reserved on that day. Day 0 is an arbitrary date (Unix Epoch).</p><p>Each <code>~</code> indicates a new date.</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>rooms.txt</p>
+      </td>
+      <td>
+        <pre>101
+201
+202
+301
+302</pre>
+      </td>
+      <td>
+        <p>Lists all rooms available for rent in ascending order.</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        customers.txt
+      </td>
+      <td>
+        <pre>Jane
+Doe
+202
+1
+-
+`
+John
+Doe
+101
+0
+1
+2
+3
+-
+201
+1
+2
+-
+302
+3
+-
+`
+Albert
+Jameson
+-
+`</pre>
+      </td>
+      <td>
+        <p>Stores the reservations for each customer. Blocks start with the name of the customer who has reserved a room. Each customer has a list of rooms which they have reserved and the dates they have reserved the rooms for in an array. Day 0 is an arbitrary date (Unix Epoch)</p>
+        <p>Each <code>-</code> indicates a new room which the person has reserved</p>
+        <p>A <code>`</code> indicates a new customer</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>log.txt</p>
+      </td>
+      <td>
+        <div style="width:300px"></div>
+        <pre>123456 0 PIN 123456 1234 5678
+123456 0 RES del John Doe 101 4
+000000 1 ROOM add 301
+000000 1 ROOM del 301
+000000 1 EE del 111111
+000000 1 EE add 100101</pre>
+      </td>
+      <td>
+        <p>Keeps track of changes made in the file system.</p><p>Each block starts with the currently signed-in employee id and if they are an admin or not.</p>
+        <p>Syntax:</p>
+        <ul>
+          <li><code>PIN [id] [old] [new]</code>
+            <ul><li>Changed PIN of <code>[id]</code> from <code>[old]</code> to <code>[new]</code></li></ul>
+          </li>
+          <li><code>RES [add/del] [name] [room] [date]</code>
+            <ul><li>Added/removed/modified a reservation</li><li>Modifying a reservation is logged as a deletion and then an addition</li></ul>
+          </li>
+          <li><code>ROOM [add/del] [#]</code>
+            <ul><li>Added/removed a room</li><li>Modifying a room is logged as a deletion and then an addition</li></ul>
+          </li>
+          <li><code>EE [add/del] [id]</code>
+            <ul><li>Added/removed an employee</li></ul>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Authors
+
+- Sean Liu
+- Sean Yang
+- Raymond Zhang
