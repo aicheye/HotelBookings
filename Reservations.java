@@ -115,6 +115,9 @@ public class Reservations
       
       * 24/05/2024
         Raymond Zhang - Change print format to be consistent with other methods
+
+      * 27/05/2024
+        Sean Yang - Add a print statement if the person has no reservations
       */
     public static void listReservations(String firstName, String lastName)
     {
@@ -133,6 +136,12 @@ public class Reservations
                 {
                     System.out.printf("  %s\n", HotelBooking.dateIntToStr(d));// prints out each date that the room is booked for
                 }
+            }
+
+            // output if it is empty
+            if (rooms.size() < 1)
+            {
+                System.out.println("**ERROR: No reservations found for " + firstName + " " + lastName + ".**\n");
             }
         }
 
@@ -201,9 +210,6 @@ public class Reservations
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
 
-     * 24/05/2024
-       Sean Yang - Update error messages for consistency with HotelBookings
-
      * 27/05/2024
        Sean Yang - Moved method from Update.java to Reservations.java
      */
@@ -239,9 +245,6 @@ public class Reservations
      Dates modified:
      * 23/05/2024
        Sean Yang - reworked function to be more concise
-
-     * 24/05/2024
-       Sean Yang - Update error messages for consistency with HotelBookings
 
      * 27/05/2024
        Sean Yang - Moved method from Update.java to Reservations.java
@@ -281,9 +284,6 @@ public class Reservations
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
 
-     * 24/05/2024
-       Sean Yang - Update error messages for consistency with HotelBookings
-
      * 27/05/2024
        Sean Yang - Moved method from Update.java to Reservations.java
      */
@@ -321,9 +321,6 @@ public class Reservations
      Dates modified:
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
-
-     * 24/05/2024
-       Sean Yang - Update error messages for consistency with HotelBookings
 
      * 27/05/2024
        Sean Yang - Moved method from Update.java to Reservations.java

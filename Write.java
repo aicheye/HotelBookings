@@ -123,8 +123,11 @@ public class Write
                  int date - The date
      Description: Deletes a reservation from customers.txt and days.txt
      Dates Modified
+     * 21/05/2024
+       Sean Yang - Began working on method
+
      * 23/05/2024
-       Sean Yang - Created and completed method
+       Sean Yang - Completed method
      */
     public static void delReserve(String firstName, String lastName, int room, int date) throws IOException
     {
@@ -371,6 +374,9 @@ public class Write
      Dates Modified:
      * 23/05/2024
        Sean Yang - Created and completed method (tested)
+
+     * 24/05/2024
+       Sean Yang - Changed the method to output the currently signed in user with every message
      */
     public static void logOp(String op) throws IOException
     {
