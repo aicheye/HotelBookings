@@ -311,7 +311,7 @@ public class Query
     }
 
     /*
-     Method Name: getEmployeePin
+     Method Name: getEmployee
      Return Type: String[0] - The pin of the employee, null if the employee doesn't exist
                   String[1] - Whether the employee is admin or not (0 or 1)
      Parameters: int id - The employee id to search for
@@ -325,7 +325,7 @@ public class Query
 
      * 27/05/2024
        Sean Yang - Rewrote method using allEmployees method to improve conciseness
-                   Renamed method to getEmployeePin to reduce verboseness since all methods in this class are queries
+                   Renamed method to getEmployee to reduce verboseness since all methods in this class are queries
      */
     public static String[] getEmployee(String id) throws IOException
     {
