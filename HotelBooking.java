@@ -102,7 +102,7 @@ public class HotelBooking
      * 21/05/2024
        Raymond Zhang - Changed the return type to String.
 
-     * 25/05/2024
+     * 27/05/2024
        Sean Yang - Renamed method to getCurrentEmployee
     */
     public static String getCurrentEmployee() {
@@ -131,6 +131,9 @@ public class HotelBooking
 
      * 27/05/2024
        Raymond Zhang - Fixed room validation by checking for values less than 100 instead of 0.
+
+     * 27/05/2024
+       Sean Yang - Fixed an error where input validation would not check if the room was an integer
     */
     public static int getRoomInput(int date)
     {
@@ -148,36 +151,39 @@ public class HotelBooking
                 // Receive input for room number
                 System.out.print("Enter the room number (-1 to cancel): ");
                 line = sc.nextLine();
-                try {
+                try
+                {
                     room = Integer.parseInt(line);
 
                     // User cancels reservation
-                    if(room == QUIT_NUM) {
+                    if (room == QUIT_NUM)
+                    {
                         validRoom = true;
                     }
                     // Check if the room is invalid
-                    else if(room <= 100)
+                    else if (room <= 100)
                     {
-                        System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
+                        System.out.println("**ERROR: Room number must be an integer greater than 100.**\n");
                     }
 
                     // Check if room is available
                     else
                     {
                         validRoom = Reservations.checkAvailability(room, date);
-                        if(!validRoom)
+                        if (!validRoom)
                         {
-                            System.out.printf("**ERROR: Room %d is not available on day %d.**%n%n", room, date);
+                            System.out.printf("**ERROR: Room %d is not available on %s.**%n%n", room, dateIntToStr(date));
                         }
                     }
                 }
+
                 // User inputted non-numerical characters
                 catch (NumberFormatException e)
                 {
-                    System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
+                    System.out.println("**ERROR: Room number must be an integer greater than 100.**\n");
                 }
-
             }
+
             // No rooms available, break out of loop
             else
             {
@@ -1029,7 +1035,7 @@ public class HotelBooking
                                             // The room is invalid
                                             else if (room <= 100)
                                             {
-                                                System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
+                                                System.out.println("**ERROR: Room number must be an integer greater than 100.**\n");
                                             }
 
                                             // Room already exists
@@ -1050,7 +1056,7 @@ public class HotelBooking
                                         // User inputted non-numerical characters
                                         catch (NumberFormatException e)
                                         {
-                                            System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
+                                            System.out.println("**ERROR: Room number must be an integer greater than 100.**\n");
                                         }
 
                                     } while (!validRoom);
@@ -1092,7 +1098,7 @@ public class HotelBooking
                                             // The room is invalid
                                             else if (room <= 100)
                                             {
-                                                System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
+                                                System.out.println("**ERROR: Room number must be an integer greater than 100.**\n");
                                             }
                                             // Room does not exist
                                             else if (!hotelRooms.contains(room))
@@ -1115,7 +1121,7 @@ public class HotelBooking
                                         // User inputted non-numerical characters
                                         catch (NumberFormatException e)
                                         {
-                                            System.out.println("**ERROR: Room number must be an integer greater than or equal to 100.**\n");
+                                            System.out.println("**ERROR: Room number must be an integer greater than 100.**\n");
                                         }
 
                                     } while (!validRoom);

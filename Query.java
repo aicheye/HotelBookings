@@ -63,7 +63,7 @@ public class Query
      * 24/05/2024
        Sean Yang - Created and completed (tested)
 
-     * 27/05/2024
+     * 25/05/2024
        Sean Yang - Fixed issue where roomAvailable would throw an error if the date was beyond the maximum date booked
      */
     public static boolean roomAvailable(int room, int date) throws IOException
@@ -104,12 +104,10 @@ public class Query
        Raymond Zhang - Moved variable declarations to the beginning of method.
                        Closed readRoom file reader.
 
-     * 24/05/2024
+     * 25/05/2024
        Sean Yang - Fixed issue where no rooms would be returned on a date beyond the maximum date booked. Now returns
                    an ArrayList instead of an array.
-
-     * 27/05/2024
-       Sean Yang - Renamed method to getAvailableRooms to improve clarity since all methods in this class are queries
+                   Renamed method to getAvailableRooms to improve clarity since all methods in this class are queries.
      */
     public static List<Integer> getAvailableRooms(int date) throws IOException
     {
@@ -138,12 +136,17 @@ public class Query
 
     /*
      Method Name: getReservationsDate
-     Return Type: Map<String, List<Integer>> - A list of reservations on a given date as a HashMap of customers
+     Return Type: Map<String, List<Integer>> - A list of reservations on a given date as a HashMap of customers and
+                                               ArrayList of rooms they have reserved
      Parameters: int date - The date to search
      Description: Returns all reservations on a given date as a HashMaps of customers and an ArrayList of rooms
      Dates Modified:
-     * 24/05/2024
+     * 16/05/2024
        Sean Yang - Created and completed method (tested)
+
+     * 25/05/2024
+       Sean Yang - Changed the return type to a HashMap of customers and a list of rooms to improve usability.
+                   Renamed method to getReservationsDate to increase clarity.
      */
     public static Map<String, List<Integer>> getReservationsDate(int date) throws IOException
     {
@@ -179,8 +182,12 @@ public class Query
      Parameters: int room - The room to search
      Description: Returns all reservations for a given room as a HashMap of customer names and an ArrayList of days
      Dates Modified:
-     * 27/05/2024
+     * 16/05/2024
        Sean Yang - Created and completed method (tested)
+
+     * 25/05/2024
+       Sean Yang - Renamed method to getReservationsRoom for clarity and changed it to return the names of the
+                   customers who have reserved the room.
      */
     public static Map<String, List<Integer>> getReservationsRoom(int room) throws IOException
     {
@@ -234,7 +241,7 @@ public class Query
        Sean Yang - Fixed method to close file reader
        Raymond Zhang - Moved variable declarations to the beginning of method
 
-     * 27/05/2024
+     * 25/05/2024
        Sean Yang - Renamed method to getReservationsCustomer to increase clarity since all methods in this class are queries
     */
     public static Map<Integer, List<Integer>> getReservationsCustomer(String firstName, String lastName) throws IOException
@@ -323,7 +330,7 @@ public class Query
      * 17/05/2024
        Sean Yang - Fixed method to close file reader
 
-     * 27/05/2024
+     * 25/05/2024
        Sean Yang - Rewrote method using allEmployees method to improve conciseness
                    Renamed method to getEmployee to reduce verboseness since all methods in this class are queries
      */
@@ -361,8 +368,8 @@ public class Query
      * 22/05/2024
        Sean Yang - Created and completed methods (tested)
 
-     * 23/05/2024
-       Sean Yang - Fix method to close file reader
+     * 25/05/2024
+       Sean Yang - Renamed method to getAllCustomers to increase clarity
     */
     public static Map<List<String>, Map<Integer, List<Integer>>> getAllCustomers() throws IOException
     {
@@ -414,8 +421,8 @@ public class Query
      * 22/05/2024
        Sean Yang - Created and completed methods (tested)
 
-     * 23/05/2024
-       Sean Yang - Fix method to close file reader
+     * 25/05/2024
+       Sean Yang - Renamed method to getAllDays to increase clarity
      */
     public static List<List<Integer>> getAllDays() throws IOException
     {
@@ -466,8 +473,8 @@ public class Query
      * 22/05/2024
        Sean Yang - Created and completed methods (tested)
 
-     * 23/05/2024
-       Sean Yang - Fix method to close file reader
+     * 25/05/2024
+       Sean Yang - Renamed method to getAllRooms to increase clarity
      */
     public static List<Integer> getAllRooms() throws IOException
     {
@@ -497,9 +504,8 @@ public class Query
      Dates Modified:
      * 22/05/2024
        Sean Yang - Created and completed methods (tested)
-
-     * 23/05/2024
-       Sean Yang - Fix method to close file reader
+     * 25/05/2024
+       Sean Yang - Renamed method to getAllEmployees to increase clarity
      */
     public static List<HashMap<String, String>> getAllEmployees() throws IOException
     {
