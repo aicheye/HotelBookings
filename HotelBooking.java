@@ -940,6 +940,7 @@ public class HotelBooking
                                     if (newPIN.matches("^[0-9]{" + PIN_LENGTH + "}$"))
                                     {
                                         Write.edtPin(employeeID, newPIN);
+                                        System.out.println("Pin successfully changed.");
                                         validPIN = true;
                                     }
 
