@@ -376,7 +376,7 @@ public class Write
        Sean Yang - Created and completed method (tested)
 
      * 24/05/2024
-       Sean Yang - Changed the method to output the currently signed in user with every message
+       Sean Yang - Changed the method to output the current user with every message
      */
     public static void logOp(String op) throws IOException
     {
